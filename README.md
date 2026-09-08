@@ -3,11 +3,16 @@
 A separate documentation workspace for the new `source-review-harness` design
 and its integration with `ssr-control`.
 
-**Publication status:** saved locally. The user selected `JennieXLisa/ssr-redesign`.
-Repository metadata checked on 2026-09-08 reports public visibility and default
-branch `main`. File-writing actions are available, but this checkpoint was not
-published because public distribution of the private implementation references
-has not been settled. See [publication handoff](PUBLISH_HANDOFF.md).
+**Publication status:** published to [`JennieXLisa/ssr-redesign`](https://github.com/JennieXLisa/ssr-redesign)
+on branch `main`, at the user's explicit request. Repository visibility remains
+public. The [content checkpoint](https://github.com/JennieXLisa/ssr-redesign/commit/50d0d31ff6b15c6192b2fc176b53cd7c65c5027b)
+contains all 39 current Markdown files from the saved P1-F02 v0.7 package, with
+byte-identical content verified by the Git tree hash. This publication-status
+update does not approve new design choices. See the [publication record](PUBLISH_HANDOFF.md).
+
+Historical save statements inside feature documents describe their original local
+checkpoints; they are not the current GitHub publication status. Superseded
+checkpoint folders remain in the previously supplied archive; see [history](history/README.md).
 
 **Design status:** the eight phases, nine Phase 1 features, Phase 1 behavior
 agreements, P1-F01 implementation direction, and P1-F02 source-reading/pagination, cursor
@@ -89,4 +94,5 @@ verify their new owners after the refactor. [SOURCES.md](SOURCES.md) records the
 reference baseline and its limits. Never treat a snapshot-bound evidence hash as
 proof that a model interpretation is correct.
 
-Earlier roadmap files are retained unchanged under [history](history/README.md).
+Earlier roadmap and feature checkpoint copies remain unchanged in the supplied
+archive, as explained in [history](history/README.md).
