@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P7-F01`, `P7-F02`
 
+**Contract-hardening revision:** apply the concrete corrections in [P7-F03/IMPLEMENTATION_PLAN.md](P7-F03/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Introduce the new behavior as an explicit immutable review contract with testable defaults and a safe compatibility boundary, not as accidental changes to running reviews.
@@ -39,7 +41,7 @@ The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contra
 
 ### Step 1: Implement schema and canonical hashing
 
-Validate all new settings without dropping unknowns. Preserve old hash bytes when parsing a legacy config under legacy mode.
+Validate all new settings without dropping unknowns. Preserve original historical config hashes on read-only inspection; reject legacy runtime activation.
 
 ### Step 2: Build capability preflight
 

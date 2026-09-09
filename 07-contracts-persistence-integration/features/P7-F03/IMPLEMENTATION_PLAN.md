@@ -2,9 +2,17 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P7-F03-configuration-versioning-and-rollout.md), [CONFIGURATION.md](../../../contracts/CONFIGURATION.md), [SDK.md](../../../contracts/SDK.md), P7-F01 migration and P8-F03 release.
 
+## Contract-hardening integration — Collaborative-only cutover and immutable effective configuration
+
+Apply CUTOVER.md: new release creates only collaborative-v1 reviews; explicit legacy execution is rejected, not an alternative default. Old reviews remain historical and cannot be resumed by rewriting their phase/mode. Preserve original bytes and optional read-only inspection separately. Require old writer/lease/provider settlement before storage cutover.
+
+Freeze context/counter, limits, schema/ABI, prefix/runtime and state digests in effective review policy. Pin one new harness/controller pair and test mismatch refusal, clean installed packages and two-store activation failure. Cursor secret repair is an explicit operator action and does not reset budgets or promote old receipts. Rollback requires exact pre-cutover backup/binaries and exclusive writer proof, never an old executable opened on new schema.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Map parsing to immutable review identity
 
-Locate current config models, parser/normalization/hash functions, review creation/resume, backend capability probes, execution-contract construction and controller config-revision services. Add `review.execution_mode` as an explicit typed setting. Existing reviews backfill/remain legacy. The new value `collaborative-v1` applies only to a deliberately created new review under compatible schema/capabilities.
+Locate current config models, parser/normalization/hash functions, review creation/resume, backend capability probes, execution-contract construction and controller config-revision services. Add the single-value `review.execution_mode` contract collaborative-v1 for new reviews. Existing rows retain historical mode identity and are not executable. Capability preflight and exclusive cutover are mandatory.
 
 Keep operator configuration, normalized effective review configuration and per-attempt request overrides distinct. Resolve defaults once through the existing normalizer and bind the effective digest. No worker may reinterpret an omitted setting differently after a package upgrade. An invocation cannot switch an active legacy review to collaborative mode by supplying a tool argument.
 
@@ -24,7 +32,7 @@ A feature is advertised only when its complete path exists: parser, authorizatio
 
 Backend probes must not be inferred from model/package names. A change in model/protocol/context support creates a new recorded route/capability result, not an invisible reinterpretation of an admitted attempt. Paid/live probes require separate explicit authorization where they invoke a provider.
 
-## 4. Preserve legacy contract identity
+## 4. Preserve historical identity without old execution
 
 Keep original prompt text, tool names/order/descriptions/schema encodings, result schema versions, parser scope and execution hashes for old-contract attempts. Add separate collaborative schema/projection versions; do not mutate a shared global definition and then exempt old tests.
 
@@ -58,13 +66,13 @@ Missing optional tools remain visible limitations. Missing mandatory integrity/r
 
 ## 8. Tests
 
-Normalize equivalent explicit/default configurations and compare expected effective digests. Change one behavior setting and verify the relevant contract digest changes. Resume a legacy review after installing collaborative-capable code: original mode/prompts/tool schemas remain unchanged. Reject an attempted in-place mode switch or stale dynamic plan.
+Normalize equivalent explicit/default configurations and compare expected effective digests. Change one behavior setting and verify the relevant contract digest changes. Open an old review read-only after cutover: original mode/prompts/tool hashes remain unchanged and runtime resume is rejected. Reject an attempted in-place mode switch or stale dynamic plan.
 
 Test all cross-field limits, unsupported enums, boolean integers and strict currency without sound provider pricing. Disable regex/analyzer dependencies and verify declared capability behavior without fallback engines or hidden installs. Remove the turn-seal support and verify early publication is not advertised.
 
 Run concurrent secret initialization, crash after key publication before receipt, missing key after receipt, tampered generation and explicit rotation. Assert one established secret, no exposure and correct invalidation/recovery. Test backup restoration of matching/mismatched provisioning records.
 
-Build clean artifacts and run all four baseline/new harness-controller pairs for supported legacy behavior; only the capable new/new pair admits collaborative mode. Simulate rollback incompatibility and ensure the documented restore/recovery path is required instead of opening new schema with an old writer.
+Build clean artifacts and run the matching collaborative harness/controller pair and explicit incompatible-pair refusal tests; no legacy runtime emulation is supported. Simulate rollback incompatibility and ensure the documented restore/recovery path is required instead of opening new schema with an old writer.
 
 ## 9. Delivery sequence and exit
 
