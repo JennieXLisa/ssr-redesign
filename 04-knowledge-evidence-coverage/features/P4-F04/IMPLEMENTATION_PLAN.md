@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P4-F04-evidence-and-sensitive-data.md), [STATE.md](../../../contracts/STATE.md), P1-F03 references and the implementation repositories' existing content policy. Preserve exact permitted source/transcript behavior; do not invent blanket redaction or a copied-source knowledge database.
 
+## Contract-hardening integration — Evidence closure across input and prefix manifests
+
+Bind source/evidence references to actual earlier delivery records and immutable snapshot ranges. The runtime prefix's delivery_manifest_hash references a paged host closure; it does not assert that all files scanned internally were read by the model. Revalidate both provenance and current visibility before consuming it.
+
+Prefix bodies and input/manifest metadata in ssr.db remain source-free; sensitive arguments/query strings and capture records never migrate there for convenience. Hash mismatch, missing required prefix and foreign snapshot must deny consumption. Test UTF-8/long-line evidence, absent capture proof, same-response requested read, historical producer identity and staged reference-set closure without unbounded payload copies.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Trace data by type and destination
 
 Build a concrete flow map for SourceSegment/VerifiedFile bytes, source tool previews, provider messages, tool arguments, checkpoint state, knowledge/artifact prose, operation receipts, notices, SDK DTOs, logs and exports. Label each destination as ordinary source-free state, model context, explicitly enabled sensitive transcript/content, or private host secret storage.
