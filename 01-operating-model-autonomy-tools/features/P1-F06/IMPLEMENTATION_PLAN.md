@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P1-F06-independent-lead-registration.md), [tools](../../../contracts/TOOLS.md), [state](../../../contracts/STATE.md) and P1-F03/P1-F08. The original agent reports a suspicion and continues. It does not supervise or await the investigation.
 
+## Contract-hardening integration — Nonterminal prefix proof and bounded lead registration
+
+Before seed/effect execution, record the accepted requesting response with the exact call tuple and observed input binding. Obtain runtime-prefix-v1 and required transcript-prefix-v1 according to PREFIX_RECEIPTS PR-R06. Prefix sealing ends before this tool's own effects/ACK; never wait for AGENT_TERMINAL or use a fabricated terminal capture. A source read requested in the same response cannot retroactively support the reported lead.
+
+Inside the existing candidate/task transaction, recover exact operation first, then reserve root128/review10000 lead counters with domain writes. A full execution pool still creates queued independent work; a metadata quota failure explicitly returns LIMIT_REACHED with no false ID. Pending required receipt uses a bounded durable pending proposal and is not runnable until proof passes. Test capture-seal→project-link crash, proposer later failure, duplicate operation at full quota, second-counter rollback and immediate follow-up with a live proposer.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Tool and ownership boundary
 
 Expose `report_lead` as a nonterminal collaborative tool to analytical roles, including synthesis when it discovers a separate interaction. Inputs are hypothesis, observations, subject_refs, evidence_refs/source_refs, unknowns, requested_check and optional category. Derive review/snapshot/work/attempt from the broker. A category is organization metadata, not an eligibility whitelist. A grounded unknown-category report is valid.
