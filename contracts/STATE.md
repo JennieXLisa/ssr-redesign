@@ -2,13 +2,15 @@
 
 Contract: collaborative-v1 · Design specification; append-only migrations are allocated from the implementation checkout, not from this document.
 
+**Implementation is blocked by [CONTRACT_HARDENING.md](../CONTRACT_HARDENING.md).** The yield ordering below has been corrected against harness `0989172`; new public states, prefix receipts, terminal DTOs and migration semantics are not made implementation-ready by this amendment.
+
 ## 1. Identities and authorities
 
 Use existing project, snapshot, review, file, symbol, relationship, task, agent-run, candidate, evidence and document IDs. A logical inquiry is a task with a typed work descriptor; its ID survives attempt changes. A worker slot has no durable knowledge ownership. `root_work_id` groups an inquiry and its requested work for accounting, not an authority grant. A context request has its own identity because multiple callers can depend on one producer.
 
 Three checks stay separate: execution authority (attempt/lease/control generation), research authority (snapshot/source policy), and submission authority (owned deliverable, candidate revision and accepted inputs). Source readability does not imply result visibility. Permission is rechecked at use; signed IDs or cursors do not bypass any check.
 
-The existing TaskService/coordinator owns transitions. Add `WAITING_DEPENDENCY` only for collaborative tasks. Allowed paths: RUNNING → PENDING for a useful checkpoint/yield, RUNNING → WAITING_DEPENDENCY for registered unresolved requirements, WAITING_DEPENDENCY → PENDING when a qualifying answer or explicit unresolved outcome enables another step. Terminal work never reopens because of an optional notice. Retry/failure counters are separate from normal continuation count; every actual execution still increments the attempt identity and consumes its actual resources.
+The existing orchestration/coordinator authority owns transitions. Add `WAITING_DEPENDENCY` only through the complete state-machine hardening/migration gate. A yield first records a durable prepared intent while the task remains RUNNING with its original lease. Only after the exact predecessor is terminal and its required runtime/transcript receipts have settled may one guarded transaction publish PENDING or WAITING_DEPENDENCY and clear that lease. Answers arriving during settlement record wake information but do not requeue the task. WAITING_DEPENDENCY → PENDING requires the same settlement and wait-generation checks. [YIELD_SETTLEMENT.md](YIELD_SETTLEMENT.md) defines the mandatory ordering, recovery rules and race tests; it supersedes the earlier early-requeue prescription. Terminal work never reopens because of an optional notice. Retry/failure counters are separate from normal continuation count; every actual execution still increments the attempt identity and consumes its actual resources.
 
 New task kinds: `FOCUSED_ANALYSIS` and `CONTEXT_REVIEW`. Existing SYMBOL_REVIEW, FILE_REVIEW, LINK_REVIEW, INVESTIGATION and FALSIFICATION retain their domains. New review mode has an ANALYZING activity state after indexing; legacy review states remain unchanged for legacy configurations. A review's activity state is not the candidate readiness predicate.
 

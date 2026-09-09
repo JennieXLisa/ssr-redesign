@@ -12,6 +12,16 @@ Deliver a source/module/test map, current schema/protocol/package versions and t
 
 Exit: owners and unchanged authority are documented; baseline tests have recorded outcomes; selected implementation branch is explicit. No new default or schema number is inferred from old design documents.
 
+## H0 — Contract hardening (blocking gate after baseline inspection)
+
+Read [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md). R0 factual inspection and isolated contract fixtures may proceed, but do not begin affected R1–R7 feature implementation on the basis of the current draft. Close the listed receipt, synthesis, context, exact SDK/role, state migration, outcome, operation-IR and cutover contracts first. Structural document validation alone does not close H0.
+
+The initial yield correction is [YIELD_SETTLEMENT.md](contracts/YIELD_SETTLEMENT.md): prepare durably while RUNNING, finish the original attempt's mandatory settlement, then publish WAITING_DEPENDENCY or PENDING atomically. Do not implement the former early-requeue sequence or use generic claim cleanup to terminate a settling predecessor.
+
+The old-mode/default and four legacy/refactored-pair statements below are suspended requirements pending H09's explicit cutover scope. Preserving existing source/evidence and mutation authorities does not automatically require retaining the old runtime workflow. No destructive migration or live installation follows from this gate.
+
+Exit: each H0 item has a concrete normative contract, executable contract fixtures, an owner and reviewed traceability. Runtime/installed-package validation remains a separate requirement during implementation. H10 refreshes baseline, manifest and publication/validation records over the final tree; do not reuse stale checksums as certification.
+
 ## R1 — Shared contract foundation, access and basic navigation
 
 Implement shared outcome/reference/operation contracts and the new immutable mode/capability identity. Extend BrokerScope research policy separately from assignment ownership. Add file locator queries, symbol/file/relationship navigation, verified source pages and the persistent key codec. Preserve all legacy schemas/hashes and stored inputs. Include current source-selection/reference/error tests before expanding agent permissions.

@@ -1,79 +1,95 @@
 # P3-F03 — Answers and continuations: implementation plan
 
-Updated: 2026-09-09. Documentation only. Read the [feature](../P3-F03-answers-and-continuations.md), [STATE.md](../../../contracts/STATE.md), P4-F01 publication and P6-F02 yield. This feature links accepted answer availability to an existing logical task without retaining an idle model slot.
+Updated: 2026-09-09. Documentation only. **Implementation blocked by [H0 contract hardening](../../../CONTRACT_HARDENING.md).** Read the [feature](../P3-F03-answers-and-continuations.md), [STATE.md](../../../contracts/STATE.md), [yield settlement contract](../../../contracts/YIELD_SETTLEMENT.md), P4-F01 publication and P6-F02 finalization. This amendment replaces the unsafe early requeue in the previous section 4; it does not claim an implementation or runtime test.
 
 ## 1. Validate an answer for the exact question revision
 
-`publish_context_answer` supplies request_id, request_revision, outcome, analysis, evidence/source refs, unresolved facets and scope_checked. Resolve the request under the producer's routed authority and current review/snapshot. Reject an unknown revision or unrelated producer; broad source permission alone is not permission to answer any hidden request.
+`publish_context_answer` supplies request_id, request_revision, outcome, analysis, evidence/source refs, unresolved facets and scope_checked. Resolve the request under the producer's routed authority and current review/snapshot. Reject an unknown revision or unrelated producer; broad source permission alone is not permission to answer a hidden request.
 
-Outcomes are ANSWERED, CONTRADICTED_ASSUMPTION, INCONCLUSIVE and NEEDS_DIFFERENT_SCOPE. The payload must identify which requested facets were checked and which remain unresolved. A contradicted assumption is useful analytical output, not validation failure. Malformed structure/reference is a rejection, not INCONCLUSIVE.
+Outcomes are ANSWERED, CONTRADICTED_ASSUMPTION, INCONCLUSIVE and NEEDS_DIFFERENT_SCOPE. Identify which requested facets were checked and which remain unresolved. A contradicted assumption is useful analytical output, not validation failure. A malformed structure or reference is a rejection, not INCONCLUSIVE.
 
-Prepare source-free analysis and verified references through P1-F03. Preserve producer authorship and source-delivery evidence. Do not use another worker's private notes as supporting evidence or infer complete scope from a generic summary.
+Prepare source-free analysis and verified references through P1-F03. Preserve producer authorship and source-delivery evidence. Do not use another worker's private notes as supporting evidence or infer complete scope from a generic summary. Exact new-role terminal schemas and input tokens remain H05 prerequisites.
 
 ## 2. Independent acceptance during an active review
 
-Create an immutable contextual-answer artifact backed by the validated payload. Its producer receipt authenticates the completed exchange that requested publication; it must not wait for its own success ACK or the producer's whole canonical assignment. Required transcript mode needs a real immutable turn/prefix seal, not a forged full-attempt completion.
+Create an immutable contextual-answer artifact from the validated payload. Its producer receipt must authenticate the completed exchange that requested publication; acceptance must not depend on that operation's own acknowledgment. Required transcript mode needs a genuine versioned prefix/turn contract, not a forged full-attempt completion. **H03 must close before this nonterminal publication path is enabled.**
 
-If required receipt material is absent, keep ACCEPTANCE_PENDING with explicit blockers. Once the receipt owner verifies all prerequisites, P4-F01's short availability transaction marks the artifact AVAILABLE and emits the review sequence event. Do not expose pending content through the request-status projection.
+Absent required receipts, keep ACCEPTANCE_PENDING with explicit blockers. Once the receipt owner verifies all prerequisites, P4-F01's short availability transaction marks the artifact AVAILABLE and emits its review sequence event. Do not expose pending content through request status.
 
-The same transaction records the exact request/revision-to-answer association and a durable wake/re-evaluation intent for compatible consumers. If these owners share the project database, commit them together through caller-owned primitives. If task scheduling is deferred, the intent is unique and restart-reconcilable. Never rely on an in-memory callback alone.
+The same project transaction associates the exact request/revision with the accepted answer and records a unique, recoverable wake/re-evaluation intent for compatible consumers. This is not permission to make a settling consumer runnable. If scheduling is deferred, reconcile the durable intent; do not rely on an in-memory callback.
 
 ## 3. Determine which consumers can continue
 
-For each live consumer, compare required request/facet revision, source/assumption/policy compatibility and accepted outcome. An answer to an old request can remain historical without satisfying a newer consumer. Consult exact recorded associations, not name similarity.
+Compare the consumer's exact request/facet revisions, source/assumption/policy compatibility and accepted outcome. Historical answers may remain useful history without satisfying newer inputs. Use explicit associations, not name similarity.
 
-The default continuation predicate is 'at least one new relevant disposition is available to process'. A consumer may explicitly register a bounded ALL or ANY set of request/facet references; implement these as data, not an arbitrary expression interpreter. Contradictions and explicit unresolved/scope outcomes can enable a next action even when no positive answer was established.
+The default predicate is at least one new relevant disposition available to process. A bounded ALL or ANY request set remains data, not an arbitrary expression interpreter. Contradiction or an explicit scope/uncertainty outcome can enable a next action without proving a vulnerability.
 
-Availability does not promote a candidate or assert that all prerequisites are true. The resumed analyst incorporates the answer and may refute its old hypothesis, request narrower work, or yield again. Ordinary freshness notices remain optional and are not automatic wake triggers for unrelated completed work.
+Availability never promotes a candidate by itself. The resumed analyst may reject its hypothesis, revise its question or yield again. Ordinary optional freshness notices do not wake unrelated or terminal work.
 
-## 4. Serialize yield against answer availability
+## 4. Prepare yield without exposing a successor
 
-The caller saves progress through P1-F04 and explicitly invokes yield_work. Within a short task transaction validate the exact checkpoint ID/hash, current lease/input generation and registered blocking requests. Re-evaluate answer dispositions before selecting the new task state.
+The current harness claim path selects PENDING and terminalizes active agents before reclaim. Therefore the earlier `transition_for_continuation(PENDING)` and direct RUNNING-to-WAITING prescription before receipt settlement are withdrawn.
+
+Save the checkpoint through P1-F04, then use the single orchestration-owned preparation path:
 
 ```text
 with task_transaction():
-    require_owned_active_attempt_and_checkpoint()
-    requests = load_registered_blocking_requests()
-    if enabling_disposition_already_available(requests):
-        transition_for_continuation(PENDING)  # or return explicit CONTINUE
-    else:
-        transition(RUNNING, WAITING_DEPENDENCY)
-    persist_wait_predicate_and_checkpoint_binding()
-    record_exact_yield_receipt()
+    require exact RUNNING task/agent/attempt/control/lease and input revision
+    verify checkpoint ID/hash and registered request revisions
+    recover an identical already-prepared yield, or persist one new intent
+    persist wait generation/predicate and prepared-operation receipt
+    leave task RUNNING, with the original lease and attempt identity
 ```
 
-The chosen CONTINUE versus yield-to-PENDING outcome must be explicit; do not put a task to sleep after the event that would wake it has already occurred. The answer-availability handler also checks current waiting state/generation under the same task authority. Thus either yield sees the answer or answer processing sees the waiter.
+After preparation, the runner stops ordinary inference and new model-initiated effects. It requires no model call to consume a yield ACK. Host finalization retains exact predecessor authority. Keep the task non-claimable until the [settlement barrier](../../../contracts/YIELD_SETTLEMENT.md) is satisfied; merely preparing a terminal tool response is insufficient.
 
-Release physical execution capacity only through P6-F02's exact-attempt settlement. Do not release the slot before a durable wait/continuation outcome exists, and do not keep it occupied merely to poll for an answer.
+An answer available before or during preparation is not lost: its association is durable and will be checked again at final publication. Recording an answer does not change the consumer state while the predecessor is still settling.
 
-## 5. Idempotent wake application
+## 5. Publish waiting/runnable state after settlement
 
-A wake intent includes consumer logical task, relevant input/wait generation and exact available answer/request disposition. The task owner rechecks that work is still WAITING_DEPENDENCY, not terminal, and the predicate is satisfied by a new unprocessed disposition. Transition to PENDING once and persist the continuation input delta.
+Only the finalization/orchestration owner performs this transaction:
 
-Duplicate availability events or intent retries are no-ops after the recorded transition. A late intent for an older wait generation cannot wake a newer incompatible wait, create a second task or claim two concurrent leases. A full pool leaves PENDING queued; it does not oversubscribe.
+```text
+with task_transaction():
+    require exact prepared yield and original task ownership
+    require predecessor terminal, runtime receipt valid,
+            and required terminal transcript receipt sealed/verified
+    recheck cancellation, input/checkpoint identity and wait generation
+    re-evaluate current accepted dispositions for the exact wait predicate
+    publish PENDING if a disposition enables progress, else WAITING_DEPENDENCY
+    atomically bind checkpoint/deltas, clear old lease and seal yield publication
+```
 
-A consumer may finish or cancel while its producer is running. Its later answer can remain a valid producer artifact, but cannot reopen the terminal consumer. Shared remaining consumers are evaluated independently.
+A voluntary useful yield without dependencies publishes PENDING after the same barrier. A cancelled/retired consumer never gets requeued. Unexpected changed ownership or input is a reconciliation conflict, not authority to rebind the old checkpoint. See YS-R08 for already-committed cancellation behavior.
+
+A wake arriving after WAITING publication uses the same task owner, validates the settled predecessor and current wait generation, and publishes one PENDING transition with its explicit answer delta. An answer arriving earlier leaves a durable intent and cannot bypass the finalizer. These two orderings close the answer/wait race without making the old execution reclaimable.
+
+Duplicate answer/wake/yield receipts are idempotent. A full pool leaves a legitimately PENDING continuation queued. Request publication never grants another concurrent lease or transfers source-read credit.
 
 ## 6. Construct the resumed context
 
-At claim, keep the logical task/root identity and create a fresh attempt/lease. Bind its current input revision to the saved checkpoint plus explicit new answer refs and dispositions, outstanding requests and changed assumptions. Use compact recorded summaries, not whole transcripts or all prior source pages.
+At claim, preserve the logical task/root identity and create a new attempt and lease. Bind the new input revision to the exact compatible checkpoint, accepted answer deltas/dispositions, outstanding requests and changed assumptions. Keep prior hypotheses and counterevidence distinguishable. Use compact recorded context rather than the whole transcript.
 
-Label the original hypothesis and contradicting answer rather than silently rewriting history as if the analyst always knew the answer. The new attempt starts with empty source-delivery credit and must reopen material evidence where required. Author and receipt identities stay attached to their actual producer.
+The new attempt's source-delivery intervals start empty. It must reopen material source when its result contract requires it. A cursor or summary is not proof that the new attempt already inspected those bytes. Dossier construction and actual provider submission are additionally gated by H04's final-request context algorithm.
 
-## 7. Failure and recovery matrix
+## 7. Failure and recovery
 
-Producer crash before answer commit: no available answer; router may recover or reassign required work. Crash after valid answer availability: answer survives independently of producer completion. Missing turn transcript: ACCEPTANCE_PENDING stays visible as a blocker; no fake wake. Consumer crash after durable wait: reconciliation restores waiting state and processes later intents. Crash after wake state change: the existing PENDING task is reused, not cloned.
+A producer crash before accepted answer availability leaves no usable answer; the router may recover or reassign required work. An independently accepted answer survives later producer failure, subject to its own valid prefix receipt. A missing prefix receipt remains ACCEPTANCE_PENDING rather than generating a fake wake.
 
-Invalidated answer before consumer claim: re-evaluate its current availability and material compatibility. Do not put stale content into a new bound input silently. Repeated inconclusive answers count toward bounded continuation/request policy, not automatic success.
+A consumer crash after yield preparation must resume exact host settlement; generic lease expiry cannot immediately requeue it. Crash after transcript seal reconciles the existing seal. Crash after task publication recovers its immutable receipt and existing continuation rather than cloning work. Invalid mandatory receipts block successful yield publication.
 
-## 8. End-to-end tests
+Consumer completion/cancellation removes only that consumer's eligibility. Other consumers may still use the answer. Invalidation before claim or a mismatched input revision requires current re-evaluation; repeated inconclusive answers use finite request/continuation limits, not automatic success.
 
-Build the primary trace: A reviews a sink, requests B's component with context, checkpoints and yields; B publishes a valid answer before finishing canonical coverage; A becomes PENDING and resumes while B's file remains incomplete. Assert source provenance, task states, slot counts and candidate non-promotion.
+## 8. End-to-end and race tests
 
-Run with all configured model slots occupied by waiting parents; after explicit yields, helpers must be admitted. Use barriers to publish an answer before yield validation, between yield preparation/commit, and after WAITING commit. Every order must result in either immediate continuation or one wake, never a permanently lost waiter.
+Preserve the primary trace: A requests B's contextual review, saves progress, prepares yield, finishes receipt settlement, then waits; B publishes an independently accepted answer while its canonical file remains unfinished; A becomes PENDING and resumes. Assert all source, input, producer and capacity identities and absence of premature candidate promotion.
 
-Publish one contradiction among several requests and verify default ANY-style resumption; separately test ALL. Replay answer and wake transactions, cancel a consumer, expire a producer, and restart after each durable boundary. Assert one logical continuation, no duplicate lease, no inherited read credit and no terminal-work reopening.
+Add a barrier inside A's transcript finalization and call the real ordinary and exact-task claim paths from another worker. Both must fail to claim A, and `_terminalize_active_agents` must not terminate A as a reclaim side effect. Release the barrier and verify one settled waiting/runnable publication.
 
-## 9. Delivery slices
+Publish an answer before preparation, between preparation and seal, concurrent with final publication and after WAITING. Every order leads to post-settlement continuation or one wake. Test stale wait generations, cancellation during settlement, lost ACK, duplicate intents, invalid receipts and late predecessor callbacks. Reuse YS-T01–YS-T18 rather than inconsistent local variants.
 
-Implement typed answer preparation and pending/available artifact integration; add compatible request-answer associations; add durable wake intents; implement transactional yield recheck; add continuation dossiers and all race tests. Do not expose mid-review answer publication until real turn-level receipts work. No model polling, raw transcript answers, forced positive conclusions or separate persistent-agent framework belongs here.
+Test W=1 and full-pool scripted dependencies: host-only finalization must require no spare model slot; only safely released slots may run helpers. Checkpoint-without-yield must keep running. Test ALL and ANY predicates, a contradicting disposition, and no inferred full-coverage credit.
+
+## 9. Delivery sequence and exit
+
+Close H03/H05/H06 contracts; implement answer preparation and pending/available association; implement durable wake intents; implement yield preparation plus finalizer publication; wire exact continuation dossiers; run claim/finalization/answer race fixtures. This feature is not complete merely because the happy-path answer handler changes WAITING to PENDING. No model polling, unfinished private-note handoffs, early requeue or separate persistent-agent framework is permitted.

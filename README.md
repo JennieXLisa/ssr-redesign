@@ -1,8 +1,14 @@
 # SSR collaborative review redesign
 
-Version: 2.1 · Updated: 2026-09-09
+Version: 2.2 · Updated: 2026-09-09
 
 **Design documentation only. Harness/controller implementation, application tests, live installation and deployment are not established by this repository.**
+
+## Implementation hold: contract hardening
+
+**The package is not implementation-ready. Read [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md) before starting a feature.** The Codex review against harness `09891721b9d3509a3d618c7a25d3a3f184b0e225` identified a critical yield/settlement race and incomplete synthesis, receipt, context, SDK, state-machine and indexing contracts.
+
+The first corrective amendment specifies [settlement-before-continuation](contracts/YIELD_SETTLEMENT.md) and updates the conflicting plans. It does not claim those runtime tests passed or the other gates closed. Earlier “DRAFT COMPLETE” labels mean that documents were authored, not that their contracts were proved implementable. Existing manifest hashes and validation reports are historical until H10 regenerates and verifies the final tree.
 
 ## Start here: the detailed build plans
 
@@ -10,7 +16,7 @@ Version: 2.1 · Updated: 2026-09-09
 
 **[P1-F02 — detailed navigation and retrieval plan](01-operating-model-autonomy-tools/features/P1-F02/IMPLEMENTATION_PLAN.md)** is the direct replacement for relying on its former five-step overview. It covers selector normalization, original-byte paging, cursor provisioning/validation, positioned search and safe resumption, exact metadata/artifact queries, availability/interest transactions and request-bound notice recovery.
 
-The v2 feature summaries were too broad to serve as implementation handoffs. The dedicated plans correct that omission. They were written and committed feature by feature, rather than claiming the phase-level checklists already supplied the necessary detail.
+The v2 feature summaries were too broad to serve as implementation handoffs. The dedicated plans add procedural detail, but the subsequent review found the blocking defects tracked in H0. They were written and committed feature by feature, rather than claiming the phase-level checklists already supplied the necessary detail.
 
 Read [BASELINE.md](BASELINE.md) to map the actual implementation owners, then [DELIVERY.md](DELIVERY.md) for the dependency-ordered R0–R7 slices. For each feature, read its specification and detailed plan together from the index. Shared contracts define reusable fields once; they do not replace feature-specific implementation procedures. [TRACEABILITY.json](TRACEABILITY.json) preserves the prior requirement/test inventory and should be extended with actual code/test outcomes during development.
 

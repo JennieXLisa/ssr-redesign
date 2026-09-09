@@ -1,74 +1,78 @@
 # P6-F02 — Execution lifecycle and yield: implementation plan
 
-Updated: 2026-09-09. Documentation only. Read the [feature](../P6-F02-execution-lifecycle-and-yield.md), [STATE.md](../../../contracts/STATE.md), P1-F04 checkpoints and P3-F03 answer wakeups. Logical work is durable; model executions are replaceable bounded attempts.
+Updated: 2026-09-09. Documentation only. **Implementation blocked by [H0 contract hardening](../../../CONTRACT_HARDENING.md).** Read the [feature](../P6-F02-execution-lifecycle-and-yield.md), [STATE.md](../../../contracts/STATE.md), [YIELD_SETTLEMENT.md](../../../contracts/YIELD_SETTLEMENT.md), P1-F04 checkpoints and P3-F03 answer wakeups. This amendment removes the previous permission to claim a yielded successor before mandatory predecessor settlement.
 
-## 1. Central transition owner
+## 1. One transition authority, three distinct milestones
 
-Locate TaskService/coordinator claim/lease transitions, worker_guards, worker_finalization, worker_transcripts and worker_context_recovery. Add collaborative WAITING_DEPENDENCY through append-only schema/contract updates. Do not implement state changes directly in the tool handler, UI or scheduler helper.
+At harness `0989172`, ReviewOrchestrator owns task claim and delegates connection-scoped orchestration operations; its claim path terminalizes active agents for a PENDING task. Keep task/lease mutation in this authority. The tool broker and controller cannot implement an alternative state machine.
 
-Retain one active lease per task. Each execution has its own agent_run_id, attempt number, lease/control generation and reservation IDs. Root/logical work identity persists across attempts, but provider conversation and source-delivery intervals do not become portable by copying an object.
+Distinguish durable yield preparation, terminal attempt settlement, and continuation publication. The first does not imply the other two. Select the keep-RUNNING approach: YIELD_PREPARED/SETTLING are yield-intent progress, not new public task states. Introduce WAITING_DEPENDENCY only through H06's full schema/trigger/SQL/recovery/query migration.
 
-Mode-select transitions: legacy attempts retain old state interpretation. Collaborative RUNNING may become PENDING for useful continuation or WAITING_DEPENDENCY for registered unresolved requirements. WAITING_DEPENDENCY becomes PENDING only on a qualifying new disposition or explicit authorized recovery, not a polling model call.
+Every attempt retains its actual agent_run_id, attempt number, lease/control identity and reservations. Logical work/root identity can persist, but execution identity, opaque provider continuation and source-delivery credit do not transfer to a new attempt.
 
-## 2. Validate explicit yield
+## 2. Validate and prepare an explicit yield
 
-`yield_work` supplies exact checkpoint_id, reason and request_ids. Resolve the checkpoint for the same work/review/input revision and verify its stored digest. Validate that each blocking request is actually registered for this consumer and current revision; prose saying 'waiting' is insufficient.
+Resolve yield_work's checkpoint/reason/request references under the current work and immutable input revision. Verify stored checkpoint digest, ownership and requested dependency revisions. A prose statement that the agent is waiting is not a registered predicate.
 
-The provider response requesting yield must already be a completed accepted exchange. Do not abandon an unknown in-flight provider request and immediately release its reservation. A normal tool-triggered yield happens at the ordinary safe boundary after current tool effects are settled or represented by explicit durable pending operations.
-
-## 3. Atomic task transition
+The requesting provider response must be complete and accepted. Earlier tool effects must have known or explicitly reconciled outcomes; do not abandon an in-flight mutation and release its capacity. In one short orchestration transaction:
 
 ```text
-with task_transaction():
-    require_current_lease_control_and_input()
-    checkpoint = verify_exact_checkpoint_binding()
-    requests = load_current_registered_requirements()
-    enabling = find_new_available_dispositions(requests)
-    if reason == WAITING_FOR_CONTEXT and not enabling:
-        new_state = WAITING_DEPENDENCY
-    else:
-        new_state = PENDING
-    record_checkpoint_wait_predicate_and_continuation_reason()
-    revoke_old_attempt_write_authority_and_transition(new_state)
-    record_exact_yield_operation_receipt()
+require task RUNNING and exact active agent/attempt/control/lease/input
+verify checkpoint and consumer request revisions
+recover same operation if already prepared
+otherwise persist one yield intent, wait generation and checkpoint/predicate binding
+record the prepared operation receipt
+leave task RUNNING and retain its lease
 ```
 
-Re-evaluate answers inside the transaction to close the answer-before-wait race. An enabling answer can produce explicit CONTINUE instead if no physical yield is needed, but the returned outcome must be recorded and tested; it cannot silently put the task to sleep.
+Normal progress checkpointing has no yield effect. Duplicate preparation cannot allocate another wait generation or reset no-progress/budget counters. Do not publish PENDING, WAITING_DEPENDENCY, or another attempt's input from this tool handler.
 
-Normal yield increments continuation accounting, not failure-retry count. Every actual new attempt still gets a new attempt identity and charges real resources. An old checkpoint reference cannot reset the work's cumulative budget or no-progress history.
+## 3. Stop inference; settle the original execution
 
-## 4. End the attempt without another model exchange
+The prepared outcome stops the ordinary agent turn loop. Do not send another model request solely to consume its acknowledgment. Ordinary model write authority ends, but the captured original-attempt host finalization authority remains valid for reconciliation.
 
-After accepting yield, return a host-control outcome to the runner and stop ordinary inference for that attempt. Do not make an extra model call solely to consume the yield ACK. The worker settles its exact usage, operation/result events, runtime receipt and required transcript state through existing finalization.
+Finish actual tool/event records, terminal agent outcome, usage/reservations, runtime receipt and required terminal transcript receipt through their existing owners. Keep the original task lease and heartbeat/finalization supervision until publication or explicit controlled failure. Do not hold an ssr.db transaction open while writing/sealing transcript.db.
 
-Release physical model/provider reservations according to actual safe settlement. Task PENDING does not imply the old worker's physical capacity has already been released. The pool refills only its actually available slot; another independently available slot may claim the new attempt through ordinary limits.
+A normal yielded execution needs an exact versioned terminal/runtime representation without declaring the logical task complete. Defining and testing that representation is a gate, not permission to append arbitrary new event fields to the old receipt validator. A per-turn prefix seal is not a substitute for mandatory predecessor terminal settlement in this yield protocol.
 
-An older finalizer can coexist with a successor task lease. It operates on captured original attempt/reservation identities, never the current task row's attempt number. Do not overwrite a successor's state, lease, usage or checkpoint when recording a late predecessor failure.
+## 4. Publish continuation after the settlement barrier
 
-## 5. Claim a continuation
+Implement one orchestration-owned guarded function following YS-R08. It requires the exact intent, predecessor terminal outcome, valid runtime receipt, required verified transcript seal, resolved operation outcomes and valid input/checkpoint/wait generation. If already published, return the original receipt.
 
-The claim owner validates current task state, work generation, prerequisite fingerprint, policy and budgets. It issues a fresh lease and bound input token. Build the dossier from current assignment, the exact compatible checkpoint, accepted answer deltas, outstanding requests and relevant interests. Mark inherited hypotheses as prior work and preserve counterevidence.
+Re-evaluate current accepted answer dispositions inside the final transaction. Publish PENDING for useful voluntary continuation or an enabled wait predicate; otherwise publish WAITING_DEPENDENCY. Bind the checkpoint and explicit input deltas, clear the old lease, record the continuation generation and event, and seal the publication receipt atomically. A cancelled or retired work item never becomes runnable.
 
-Initialize source-read intervals empty. Saved source/search cursors remain locators requiring fresh authorization; opaque provider state from another attempt is not reused as if it were a conversation continuation. Any required earlier source must be reread by the new attempt.
+Physical capacity and accounting use original reservation identities. Unknown usage stays conservative; PENDING is not an accounting refund. The task cannot be claimed before mandatory predecessor settlement even if a different model slot happens to be idle. Completion and resource queries must expose settling/blocker state rather than counting it as successful waiting.
 
-A normal checkpoint without yield never creates PENDING or relinquishes the slot. A freshness notice alone never wakes terminal/waiting work. Context request registration alone never yields it.
+## 5. Wake and claim
 
-## 6. Cancellation and recovery
+An answer arriving during RUNNING/prepared settlement only records its wake information. The finalizer will check it. An answer after WAITING publication may trigger one guarded WAITING-to-PENDING transition after verifying the settled predecessor and current wait generation. Duplicate/stale events cannot create a second continuation.
 
-Use existing authenticated control generation and targeted cancellation identity. Recheck before new claims/provider dispatch and before domain writes. Cancellation cannot be inferred solely from a frontend connection closing. A late accepted original operation can be settled by host recovery, but expired/cancelled agents cannot initiate new effects.
+Every ordinary, exact-task and recovery admission path must exclude unresolved yield preparation/settlement. Generic `_terminalize_active_agents` is not a mechanism for making an intentional prepared yield claimable. Test the actual current claim path, not just a mock queue predicate.
 
-On crash, reconcile semantic commits, operation outcomes, provider delivery/usage uncertainty, pending receipts, lease expiry and reservations before deciding to requeue. Silence or slow output is not independent proof that a writer is dead. Existing orphan-recovery evidence and coordinator authority remain required.
+Once PENDING is legitimately published, normal admission checks resource, policy and input readiness, and issues a fresh attempt/lease/input token. Build context from the exact checkpoint, authorized accepted deltas, outstanding requests and work-scoped interests under the 170k context policy. Initialize source-delivery intervals empty; reopening material source remains explicit.
 
-A semantically committed investigation result should recover its finalization rather than rerun inference blindly. An attempt with no committed result may retry under its actual failure policy. Waiting is not provider failure; fatal authentication/configuration errors are not normal dependency waits.
+## 6. Cancellation, lease expiry, and recovery
 
-## 7. Race fixtures
+Retain authenticated targeted cancellation and control-generation checks. A disconnected frontend is not cancellation. If cancellation wins during settlement, host recovery finalizes the old execution/history but cannot requeue the cancelled work. Guarded updates may not overwrite a successor or independently committed terminal task state.
 
-Fill W scripted slots with analysts waiting for queued helper tasks. After explicit durable yields, W physical slots become reusable and helpers run. Verify no failure-retry charge and real usage settlement. Use W=1 to expose hidden self-deadlocks.
+Expired/interrupted-task recovery first inspects yield intents. Resume the exact finalization if its proofs allow it; do not infer successful settlement from silence, elapsed time, a checkpoint or task status. No new model attempt is required just to import an already sealed transcript receipt. Permanently invalid receipt/writer outcomes require the specified failure/recovery table; until H06 closes, the feature is not enableable.
 
-Publish an answer immediately before and after yield commit; the consumer remains runnable or receives exactly one wake. Replay yield and wake receipts and assert one task/lease. Save a checkpoint but do not yield: attempt continues. Supply a foreign checkpoint/request revision and assert atomic rejection.
+Crash after preparation, transcript seal, project receipt reconciliation and continuation publication must each have a deterministic replay path. Recover accepted domain work rather than rerunning inference. Any late callback is fenced to its original attempt/reservations and cannot alter the successor's checkpoint, lease, counters or current inputs.
 
-Delay predecessor finalization, claim a successor, then execute old success/failure/transcript settlement. Snapshot all successor fields before/after; they must remain unchanged. Cancel between prepare/commit and before provider dispatch. Simulate unknown live writer state and prove no unsafe force reclaim. Test legacy mode transitions separately.
+Normal continuation counts once and is separate from operational retry credit. Neither continuation nor recovery resets cumulative spend. Existing investigation predecessor/successor regression tests remain required, but their legacy early-progress behavior cannot justify reintroducing this yield race.
 
-## 8. Delivery sequence and exit
+## 7. Race and capacity fixtures
 
-Characterize current state/receipt transitions; add collaborative state schemas and public projections; implement yield transaction; wire runner stop/finalization outcome; integrate continuation dossier and wake claim; run all race/cancellation fixtures. No idle persistent worker per inquiry, thread-global task identity, portable hidden reasoning or retry-budget reset belongs here. Completion evidence is a state-transition trace with exact attempt/resource identities, not just final task statuses.
+Run YS-T01–YS-T18 from the normative contract. In particular, block finalization after durable preparation, call both real claim variants from worker B, and prove no new lease and no superseding terminal event. Then complete settlement and verify one new task-state publication.
+
+Exercise all answer-before/after-prepare/seal/publication orderings, cancellation between every durable boundary, duplicate operation and wake replay, wrong checkpoint/revision, missing required receipt, old finalizer after successor claim, and lease expiry during settlement. Snapshot successor fields before/after every late callback.
+
+Fill W=1 and W=100 virtual slots with parents needing helpers. Host finalization must finish without acquiring an additional model slot. Refill only after original executions cannot consume their reservations; waiting parents then occupy no model slots. Failed settlement must be visible, not hidden by preemption or fabricated success.
+
+These are specified scenarios, not results run by this documentation amendment.
+
+## 8. Implementation order and exit
+
+Map current orchestration/receipt owners; freeze H06 state migration and yielded-terminal contracts; add durable intent preparation; wire terminal runner control; reuse exact finalization; add guarded continuation publication and settling-aware claim/recovery checks; integrate wakeups and context-budgeted continuation; execute all adversarial fixtures.
+
+No second scheduler, notification agent, task-state mutation inside tool handlers, thread-global identity or arbitrary replay of old leases is allowed. The exit evidence is a real trace proving that predecessor settlement precedes successor claim, with the corresponding transcript/runtime/resource identities. Document correction alone does not close that gate.
