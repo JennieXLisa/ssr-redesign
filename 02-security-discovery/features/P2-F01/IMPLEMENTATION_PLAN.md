@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Design only; no scanner or target was run. Read the [feature](../P2-F01-security-operation-index.md), [operation catalogue](../../OPERATION_CATALOG.md), [baseline](../../../BASELINE.md), and [state contract](../../../contracts/STATE.md). Operation observations are navigable source facts with modeled semantics, not findings.
 
+## Contract-hardening integration — Versioned callsite IR before operation modeling
+
+Implement the optional callsite-ir-v1 adapter capability and strict CallsiteBatch schema before enabling operation-role extraction. At0989172 LanguageAdapter only provides generic symbols/relationships. Replace adapter.callsite_records with the typed capability wrapper: inject snapshot/file/hash, map existing symbol IDs, validate original ranges and required argument completeness, then persist one explicit IR generation/batch.
+
+Use the inert Python pilot as the first contract fixture: subprocess aliases/from-import, local/parameter shadowing, dynamic shell flags, ** expansion, multiple calls, module-level null owner and UTF-8 offsets. An unsupported scope/language returns unknown/unsupported—not a false EXACT binding or clean operation scan. Only afterward derive registry observations from supported binding/role fields; other language families remain capability gaps until their own adapter fixtures pass.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Extend the existing inventory pipeline
 
 Locate deterministic language adapters, normalized symbols/relationships, inventory diagnostics and existing security-tag persistence. Insert a derived operation-observation pass after a file's immutable inventory is complete. The pass consumes the same adapter representation and snapshot bytes; do not parse the repository again with a model or replace existing symbol IDs.
@@ -23,11 +31,12 @@ Use the adapter's lexical/import/scope information and recorded resolver decisio
 Do not evaluate target imports, decorators, plugins or configuration code to infer types. Dynamic dispatch, macro expansion or unsupported alias forms retain a precise limitation and source callsite. Text-name matches can be low-assurance discovery observations but must be labeled lexical, not resolved API calls.
 
 ```text
-for callsite in adapter.callsite_records(file_inventory):
-    binding = resolver.recorded_binding(callsite)
+batch = host_callsite_capability.extract_verified(file_inventory)
+for callsite in batch.calls:
+    binding = callsite.binding
     candidates = registry.match(language, binding, callsite.structural_kind)
     for model in compatible_candidates(candidates):
-        roles = adapter.extract_roles(callsite, model)
+        roles = model.select_typed_argument_roles(callsite.arguments)
         emit_observation(binding, roles, exact_source_anchor, limitations)
 ```
 
