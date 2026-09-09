@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P1-F03`
 
+**Contract-hardening revision:** apply the concrete corrections in [P1-F07/IMPLEMENTATION_PLAN.md](P1-F07/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 The response delivered to the model identifies the actual problem and a valid next action. Rich host validation must not collapse to an opaque “invalid arguments” at the provider boundary.

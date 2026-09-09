@@ -2,9 +2,17 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P1-F07-tool-results-and-validation-errors.md) and [common envelope](../../../contracts/TOOLS.md). The objective is actionable information in the actual provider-bound response, not merely richer internal exceptions.
 
+## Contract-hardening integration — Frozen error shape and proof-aware recovery
+
+Use the closed Issue, IssueDetails and Error shapes in hardening-v1.schema.json, with exact repair_action and retry_kind enums. Details are typed safe expected/observed metadata; never forward an exception dict or source fragment. Normalize internal PREFIX_*/MANIFEST_* errors to the public INTEGRITY_FAILURE/RECEIPT_PENDING/STALE_INPUT codes while retaining actionable safe messages and exact field pointers.
+
+Before effect validation, reject malformed/truncated arguments; after an effect commits, return COMMITTED with its original receipt even if later transport delivery is unknown. Distinguish yield preparation committed from continuation published and staged synthesis accepted from full file completed. Tests must inspect the final provider-facing projection, not just host logs.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Own diagnostics at the existing boundary
 
-Map `ToolBrokerError`, `_validated_denial_context`, `_bounded_tool_error_value`, argument/evidence/link/falsification diagnostic constructors, `ToolExecution`, runner exception classification and SDK denial projections. In the inspected refactor the low-level diagnostic owner is `ssr.tooling.diagnostics`; do not create another error formatter in every new tool.
+Map `ToolBrokerError`, `_validated_denial_context`, `_bounded_tool_error_value`, argument/evidence/link/falsification diagnostic constructors, `ToolExecution`, runner exception classification and SDK denial projections. In the inspected refactor the low-level diagnostic owner is `ssr.tools.diagnostics`; do not create another error formatter in every new tool.
 
 Keep legacy exception identities and wire forms for legacy attempts. Add a collaborative projection from typed internal issues to the common envelope. Domain validators remain owners of semantic checks; the common layer owns safe representation, ordering, limits and recovery classification. Avoid a catch-all `except Exception: return empty_result`.
 
