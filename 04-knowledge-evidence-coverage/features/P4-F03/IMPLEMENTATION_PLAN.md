@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P4-F03-knowledge-reuse-and-corrections.md), [STATE.md](../../../contracts/STATE.md), P2-F03 summaries and P5-F03 reassessment.
 
+## Contract-hardening integration — Material revision and publication-proof propagation
+
+Corrections create immutable artifact revisions with exact prior/facet relationships and prefix provenance. Optional supplementary analysis can be advertised, but a material invalidation updates the current validity/input generation through its owning transaction. Never overwrite the old artifact to make an input token appear current.
+
+The next request must actually observe the mandatory delta before a new submission can use it. A staged synthesis manifest bound to an invalidated child cannot seal; create an explicitly new session and revalidate any adopted decisions. Test prefix corruption, withdrawal/reavailability across H, old answer against new request revision and no false source-credit inheritance.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Preserve claim type and scope
 
 Extend existing structured knowledge/results with exact subject/facet identity, source/evidence refs, assumptions, applicability conditions and limitations. FACT means a bounded source observation asserted by its producer, not a host-certified theorem. HYPOTHESIS and QUESTION remain separate; schema acceptance cannot promote them to proved findings.
