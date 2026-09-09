@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P5-F03-counterevidence-reassessment-and-export.md), [STATE.md](../../../contracts/STATE.md), P4-F03 material dependencies and P5-F02 current-finding gate.
 
+## Contract-hardening integration — Reassessment without reopening completed historical work
+
+A completed/refuted/inconclusive argument receives a successor candidate revision/task on genuine new material or explicit operator request. Do not reopen a COMPLETED task or erase its historical disposition. Current-finding queries and exports use the same validity-generation predicate.
+
+Explicit INCONCLUSIVE and unsupported required scope contribute to COMPLETE_WITH_LIMITATIONS only when all other mandatory obligations and receipts settle. Operationally failed canonical work stays blocked/failed rather than being relabeled a valid analytical limitation. Test a challenge racing with export, old verdict after successor revision, exhausted reassessment quota and immutable historical report identity.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Typed challenge producer
 
 Extend accepted review/answer/lead result variants with an explicit challenged candidate-family/revision, facet identity, source-backed observation, evidence refs and applicability explanation. Do not scan arbitrary prose for words such as 'wrong' and automatically invalidate findings.
