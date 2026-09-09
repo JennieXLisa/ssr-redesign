@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P1-F09-grouped-read-only-retrieval.md), [TOOLS.md](../../../contracts/TOOLS.md) and [CONFIGURATION.md](../../../contracts/CONFIGURATION.md). Grouping is a transport/execution convenience, not a second tool implementation or a transaction across unrelated reads.
 
+## Contract-hardening integration — Aggregate context and receipt accounting
+
+Reserve one combined output/context allowance across the final formatted batch, including error envelopes and notices. Every returned subresult retains its identity and actual delivered range; a subresult omitted by the final budget stays explicitly unreturned. Never multiply I_max or tools.max_input_bytes by batch size.
+
+Only the current final request/response observation may grant delivery credit. Batch reading source and reporting a lead in the same model response is not a proof shortcut; state-changing tools remain outside read_batch. Test at170k boundary with one failing read and a pending notice, cancelled undispatched items, and a request changed after the tokenizer count.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Broker interface and whitelist
 
 Expose `read_batch` with `items:[{key,tool,arguments}]`. Keys are unique bounded caller labels used only to associate responses. Validate the batch count, key types/uniqueness and permitted tool names before dispatch. Reject nested read_batch and any write/control operation: checkpoint, report_lead, contextual request/publication, yield, terminal submission and operator recovery are excluded.
