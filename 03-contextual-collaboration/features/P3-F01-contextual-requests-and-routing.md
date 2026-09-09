@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P1-F02`, `P1-F03`, `P1-F08`, `P4-F01`
 
+**Contract-hardening revision:** apply the concrete corrections in [P3-F01/IMPLEMENTATION_PLAN.md](P3-F01/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 An analyst asks a precise missing question with the context of its investigation; the harness reuses, promotes or assigns useful work rather than blindly spawning another reviewer.

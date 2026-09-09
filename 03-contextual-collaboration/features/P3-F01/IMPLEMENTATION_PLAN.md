@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P3-F01-contextual-requests-and-routing.md), [TOOLS.md](../../../contracts/TOOLS.md), [STATE.md](../../../contracts/STATE.md), and P3-F04 for blocking-edge checks.
 
+## Contract-hardening integration — Exact routing and consumer quota transactions
+
+Resolve a request to its immutable question/facet revision and subject/assumption/input digests before equivalence lookup. Join only exact compatible work or accepted answers; a similar filename/name is not equivalence. Reserve the live consumer count64 and root request total256 in the same transaction that registers the association.
+
+Cycle/depth checks operate on the resulting graph with the actual producer task and depth8 limit under the same writer. An edge that would exceed a cap is not implemented by spawning a duplicate producer. A request becoming ANSWER_AVAILABLE is backed by a ContextAnswer artifact and RuntimePrefix proof, never a producer's unfinished private notes. Test last-consumer-slot races, opposite concurrent edges and answer revision changes between lookup and association.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Normalize the question and its context
 
 `request_context_review` accepts question, explicit subjects/locators, assumptions, requested facets, evidence/source references and blocking intent. Bind caller task/inquiry, review, snapshot, input revision and actual producer operation from execution. Validate bounded source-free prose and P1-F03 references. A question must identify a missing fact, but need not establish a vulnerability.
