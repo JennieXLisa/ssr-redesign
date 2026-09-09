@@ -1,7 +1,8 @@
-# Phase 2 feature documents
+# Phase 2 feature index
 
-Status: feature breakdown not discussed.
+- [P2-F01: Security-operation catalogue and indexed observations](P2-F01-security-operation-index.md)
+- [P2-F02: Entrypoints, prioritization, and bounded inquiry creation](P2-F02-prioritized-discovery.md)
+- [P2-F03: Conditional summaries and cross-boundary reasoning](P2-F03-conditional-summaries-and-flow.md)
+- [P2-F04: Host-first queries and trusted analyzer integration](P2-F04-trusted-analyzers.md)
 
-This tracked placeholder preserves the agreed folder structure without inventing
-features. After discussion and approval, add one detailed Markdown document per
-feature. See the [phase scope](../SPECIFICATION.md).
+Each feature guide includes specification, implementation steps, failure cases and acceptance tests. Shared contracts are defined once under `contracts/`.

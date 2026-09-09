@@ -1,61 +1,79 @@
 # P1-F05 — Submission and return to analysis
 
-Version: 0.1  
-Behavior: AGREED AT PHASE LEVEL  
-Detailed specification: PENDING FEATURE DISCUSSION  
-Implementation plan: PENDING FEATURE DISCUSSION  
-Implementation readiness: NOT READY
+Version: 1.0 · Authored: 2026-09-09  
+Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
+Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
+Dependencies: `P1-F03`, `P1-F04`, `P1-F07`, `P1-F08`
 
-This file saves the agreements already reached. It is not an instruction to invent
-missing schemas, mechanisms, budgets or implementation steps. A numbered file is
-not evidence that its detailed design has been approved.
+## Purpose and concrete outcome
 
-## 1. Agreed behavior
+An analyst can attempt a result, learn what is missing, and return to research instead of being trapped in a shrinking terminal JSON repair loop.
 
-**P1-F05-B1.** Analytical agents choose when to submit. A repairable rejection must not permanently lock them into terminal-payload repair.
+## Existing implementation and ownership
 
-**P1-F05-B2.** A formatting/contract problem can be corrected directly; an analytical gap may lead back to source navigation, hypothesis revision, or a contextual request.
+Reuse agent loop, agent_policy repair classification, typed submit tools, existing final validators and source-read preconditions. Preserve old terminal-repair paths only for legacy mode.
 
-**P1-F05-B3.** Further analysis does not reset resource limits or authorize edits to accepted history.
+Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 
-**P1-F05-B4.** Authorization, integrity and unrecoverable execution failures are not invitations to continue research under an invalid attempt.
+## Detailed requirements
 
-## 2. Existing implementation and reuse
+**P1-F05-R01.** Until a result is accepted, a repairable rejection returns to normal authorized analytical tool availability. It does not implicitly terminate the agent or grant new resources.
 
-Map the actual refactored owners before implementation. Use the
-[reference baseline](../../SOURCES.md) and relevant existing source as navigation;
-do not assume a new framework, service or store is required. No complete mapping
-for this feature is asserted in this save.
+**P1-F05-R02.** Classify formatting/schema errors as FIX_INPUT, semantic missing facts as MORE_ANALYSIS, stale bound material as REFRESH_INPUTS, transient persistence as host RETRY_SAME_OPERATION, and authority/integrity failure as stop or HOST_RECOVERY.
 
-## 3. Questions to discuss before detailed drafting
+**P1-F05-R03.** Validated semantic acceptance is immutable. Later corrections are new artifact/revision actions; an agent cannot rewrite a previously committed result by submitting again with changed prose.
 
-1. Runner transitions and tool-availability changes for each class of rejection.
+**P1-F05-R04.** Repeated invalid submissions count toward the configured tool/attempt/no-progress policy but do not convert into supported findings. Progress is validated new evidence, answered questions or a changed checked argument, not word count.
 
-2. How bounded retry/repair counters interact with renewed ordinary analysis without creating an infinite repair loop.
+**P1-F05-R05.** Input refresh is an explicit recorded host delta to the work revision. The agent receives what changed and recomputes its affected argument. Do not normalize a stale result against new inputs silently.
 
-3. Role-specific bootstrap/terminal requirements that remain necessary versus restrictions deliberately being changed.
+**P1-F05-R06.** Finalize only after semantic commit and required runtime/transcript settlement, preserving predecessor/successor isolation. Distinct failure classes remain visible through the SDK.
 
-4. Exact tests showing the model can use the required tools after rejection and cannot mutate an accepted result.
+## Inputs, outputs, and state
 
-## 4. Interfaces, state and implementation steps
+Use the common result envelope and existing role-specific semantic errors. An error may include required source_refs or missing facet names but cannot prefill a correctness conclusion. Return the actual remaining budget and allowed next operations, not a fabricated fresh allowance.
 
-Not yet specified. After the discussion, record exact inputs/outputs, validation,
-required persistence and transaction ownership, dependencies, ordered changes,
-and permitted developer discretion. Do not push all detail to Phase 7, but do not
-fill this section with unapproved defaults now.
+The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contract](../../contracts/STATE.md), and [configuration contract](../../contracts/CONFIGURATION.md) define reusable fields. This feature owns the behavior below; it does not create a competing lifecycle or database.
 
-## 5. Tests and completion
+## Ordered implementation
 
-Feature-level acceptance fixtures and regression mapping are pending discussion.
-No tests are claimed to have run. Before implementation readiness, document
-normal and negative outcomes, applicable race/retry cases, and how existing
-contracts are preserved or deliberately changed.
+### Step 1: Separate rejection from terminal failure
 
-## 6. Dependencies and scope
+Change runner policy classification in collaborative mode. Keep one provider conversation and ordinary tools for repairs, preserving opaque provider continuation only within that attempt.
 
-P1-F07 provides actionable failure classifications; P1-F04 preserves progress; Phase 3 supplies contextual requests and Phase 6 owns resource policy.
+### Step 2: Make repairs actionable
 
-See the [phase specification](../SPECIFICATION.md) and
-[decision register](../../DECISION_REGISTER.md). The future implementation must
-remain inside the agreed feature scope rather than implement later phases by
-accident.
+Map internal validation paths to model fields through P1-F03; aggregate independent issues through P1-F07. If additional source checks are needed, normal reads stay available rather than only one hard-coded corrective range.
+
+### Step 3: Implement explicit input deltas
+
+Refresh via a host-owned work service that records previous/new input digests and the actual delta exposed. Preserve completed artifacts and cancel or supersede only work with genuine invalid inputs.
+
+### Step 4: Protect finalization
+
+Run the existing investigation-finalization race regression through success, rejection, post-commit error and late prior-attempt cases. Do not derive old outcome from the current mutable task row.
+
+## Failure, concurrency, and recovery
+
+A persistence failure after commit recovers its receipt, not another model judgment. A safety refusal or exhausted budget stays a distinct outcome. Cancelled tasks cannot use repair mode to continue operating. Updating a conversation does not update accepted historical source-read evidence.
+
+## Acceptance tests
+
+These are tests to implement and execute, not test results from document authoring.
+
+| Test | Fixture or action | Required observable outcome |
+|---|---|---|
+| P1-F05-T01 | Rejected result needs another helper read | Ordinary research resumes under same remaining limits. |
+| P1-F05-T02 | Invalid enum plus missing field | Both safe issues returned. |
+| P1-F05-T03 | Stale candidate revision | Explicit refresh, no automatic rebinding. |
+| P1-F05-T04 | Commit succeeds and finalization errors | No duplicate accepted result or successor mutation. |
+| P1-F05-T05 | Repeated no-progress repairs | Visible bounded stop, no false finding. |
+| P1-F05-T06 | Accepted result resubmitted changed | Rejected or new revision path; original immutable. |
+
+## Do not overengineer or expand scope
+
+No separate repair agent, universal manager approval, automatic successful defaults, or infinite repair loop.
+
+## Definition of done
+
+Implement each requirement through its identified owner; run the tests above and the adjacent existing regressions. Record exact source/distribution identities and actual test collection. Update the requirement-to-test map, public-contract compatibility checks, and package-resource checks where affected. A missing integration or unavailable dependency is a named build/release gate, not a license to silently substitute behavior. No live installation, target execution, provider spend, or deployment is authorized by this document.

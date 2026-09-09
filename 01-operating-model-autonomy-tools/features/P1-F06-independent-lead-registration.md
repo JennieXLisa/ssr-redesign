@@ -1,65 +1,79 @@
 # P1-F06 — Independent lead registration
 
-Version: 0.1  
-Behavior: AGREED AT PHASE LEVEL  
-Detailed specification: PENDING FEATURE DISCUSSION  
-Implementation plan: PENDING FEATURE DISCUSSION  
-Implementation readiness: NOT READY
+Version: 1.0 · Authored: 2026-09-09  
+Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
+Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
+Dependencies: `P1-F03`, `P1-F07`, `P1-F08`, `P4-F01`, `P5-F01`
 
-This file saves the agreements already reached. It is not an instruction to invent
-missing schemas, mechanisms, budgets or implementation steps. A numbered file is
-not evidence that its detailed design has been approved.
+## Purpose and concrete outcome
 
-## 1. Agreed behavior
+A reviewer can report a separate source-grounded suspicion and continue its assignment. The harness durably owns the lead and follow-up immediately, even if the original reviewer later fails.
 
-**P1-F06-B1.** An agent can flag an additional source-grounded suspected issue outside its assignment or a predefined catalogue and propose follow-up work.
+## Existing implementation and ownership
 
-**P1-F06-B2.** Registration is an immediate, nonterminal tool action. The harness durably records a self-contained lead, with observations, references, uncertainty and the question requiring analysis.
+Reuse CandidateService seed creation, evidence preparation, candidate provenance and canonical investigation scheduling. Add an authorized nonterminal producer path rather than publishing private symbol proposals accidentally.
 
-**P1-F06-B3.** After successful registration the harness owns follow-up. The proposer continues its assignment and is not required to wait, poll, obtain the investigation result or manage another worker.
+Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 
-**P1-F06-B4.** The harness creates or associates independent follow-up work without waiting for the original assignment or file synthesis. If the pool is full, record and queue; do not interrupt healthy workers or exceed capacity.
+## Detailed requirements
 
-**P1-F06-B5.** An accepted lead survives failure of the original attempt. Registration needs its own accepted record/provenance and must not depend on the proposer’s later terminal receipts.
+**P1-F06-R01.** Registration accepts a specific hypothesis/question, observed facts, exact permitted subject/source/evidence refs and unknowns. A complete exploit path or known CWE is not required; unknown categories do not silently reject valid work.
 
-**P1-F06-B6.** A registered suspicion is not a confirmed finding. Reporting a separate lead differs from requesting an answer needed by the current analysis.
+**P1-F06-R02.** In one ssr.db transaction record the SEEDED candidate, registration receipt and a ready-or-blocked independent investigation task or durable scheduling intent. A success acknowledgment means the durable handoff exists, not that an investigator ran.
 
-## 2. Existing implementation and reuse
+**P1-F06-R03.** No dependency on the proposer’s terminal result or file synthesis may gate the new lead. Validate its own producer turn and relevant source receipts independently; required transcript gaps are explicit acceptance blockers for that turn, not a whole-file barrier.
 
-Map the actual refactored owners before implementation. Use the
-[reference baseline](../../SOURCES.md) and relevant existing source as navigation;
-do not assume a new framework, service or store is required. No complete mapping
-for this feature is asserted in this save.
+**P1-F06-R04.** Return CREATED, ASSOCIATED_EXISTING or RECORDED_WAITING with exact allowed IDs and reason. A full pool queues; lack of runtime capacity never erases accepted registration or preempts a healthy worker.
 
-## 3. Questions to discuss before detailed drafting
+**P1-F06-R05.** The proposing agent has no duty to poll, wait for or manage investigation. A separate contextual request is used when its original work actually needs an answer.
 
-1. How to represent the record using existing lead/candidate infrastructure without inventing a duplicate store.
+**P1-F06-R06.** Exact retry identity and exact originating proposal lineage can reuse a lead. Same file, sink, vulnerability category or similar prose can only suggest a duplicate relation; preserve distinct claims unless their complete equivalence is established.
 
-2. Exact minimum payload, accepted registration record, acknowledgment, provenance and cross-file source references.
+## Inputs, outputs, and state
 
-3. Atomicity of registration and durable follow-up obligation, plus recovery when acknowledgment is interrupted.
+Input is report_lead in TOOLS.md. The durable record is the existing candidate with an explicit registration origin and associated task, not a new leads database. Candidate priority is provisional scheduling metadata; severity remains unset. Explicit source refs are converted to canonical evidence through P1-F03 before acceptance.
 
-4. Routing/joining of compatible work, task types, candidate maturity and queue priority belong with Phases 3–6, not implicit defaults here.
+The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contract](../../contracts/STATE.md), and [configuration contract](../../contracts/CONFIGURATION.md) define reusable fields. This feature owns the behavior below; it does not create a competing lifecycle or database.
 
-## 4. Interfaces, state and implementation steps
+## Ordered implementation
 
-Not yet specified. After the discussion, record exact inputs/outputs, validation,
-required persistence and transaction ownership, dependencies, ordered changes,
-and permitted developer discretion. Do not push all detail to Phase 7, but do not
-fill this section with unapproved defaults now.
+### Step 1: Add role capability and normal tool dispatch
 
-## 5. Tests and completion
+Expose report_lead to analytical roles, including synthesis and falsification for genuinely separate concerns. Do not let the tool complete the original task or force a provider conversation restart.
 
-Feature-level acceptance fixtures and regression mapping are pending discussion.
-No tests are claimed to have run. Before implementation readiness, document
-normal and negative outcomes, applicable race/retry cases, and how existing
-contracts are preserved or deliberately changed.
+### Step 2: Validate one self-contained handoff
 
-## 6. Dependencies and scope
+Prepare evidence/prose and check current authority outside the short commit. Require the requested check to explain the uncertainty, not an exploit recipe or fabricated proof.
 
-P1-F03 references, P1-F07 result meanings, P1-F08 retry recovery, Phase 3 routing, Phase 4 publication/persistence, Phase 5 adjudication and Phase 6 scheduling.
+### Step 3: Commit seed and work consistently
 
-See the [phase specification](../SPECIFICATION.md) and
-[decision register](../../DECISION_REGISTER.md). The future implementation must
-remain inside the agreed feature scope rather than implement later phases by
-accident.
+Use the canonical candidate and task owners under one transaction or transactional scheduling intent. The coordinator must reconcile intents before claiming closure. Preserve original contributor identity if the parent later publishes related proposals.
+
+### Step 4: Connect follow-up visibility
+
+Expose registration/queue outcomes in query projections. Independent investigator can retrieve the accepted handoff and reopen source without accessing the proposer’s private transcript.
+
+## Failure, concurrency, and recovery
+
+A queued lead survives creator cancellation. Cancellation of the entire review separately prevents new work from running. Host retry after acknowledgment loss returns the original candidate/task. Unknown outcome is reconciled before a second effect; an exact duplicate operation is not a new investigative hypothesis.
+
+## Acceptance tests
+
+These are tests to implement and execute, not test results from document authoring.
+
+| Test | Fixture or action | Required observable outcome |
+|---|---|---|
+| P1-F06-T01 | Lead reported while parent still running | Durable candidate/task exists and parent remains RUNNING. |
+| P1-F06-T02 | All slots occupied | Task queues without exceeding W or interrupting peers. |
+| P1-F06-T03 | Parent fails after success response | Lead survives and can run. |
+| P1-F06-T04 | Replay identical registration | Same effect IDs. |
+| P1-F06-T05 | Same sink but distinct trust assumptions | Separate leads or explicit duplicate suggestion, no silent merge. |
+| P1-F06-T06 | Reviewer never reads follow-up | No responsibility or completion penalty imposed on proposer. |
+
+## Do not overengineer or expand scope
+
+No automatic full candidate approval, parallel shadow candidate lifecycle, semantic-dedup model call on every lead, or target execution.
+
+## Definition of done
+
+Implement each requirement through its identified owner; run the tests above and the adjacent existing regressions. Record exact source/distribution identities and actual test collection. Update the requirement-to-test map, public-contract compatibility checks, and package-resource checks where affected. A missing integration or unavailable dependency is a named build/release gate, not a license to silently substitute behavior. No live installation, target execution, provider spend, or deployment is authorized by this document.

@@ -1,16 +1,16 @@
-# SSR collaborative review — decision register
+# SSR redesign decision register
 
-Version: 1.8  
-Recorded: 2026-09-08  
-Updated: 2026-09-09  
-Basis: user-approved direction and constraints in the design conversation.
+Version: 2.0 · Updated: 2026-09-09.
 
-This register distinguishes agreed direction from implementation detail that has
-not been settled. It does not claim that proposed features exist in code.
+## Current authority
 
-## Agreed direction
+The latest user instruction authorizes completing all remaining documentation without further consultation. **D-016:** finish the eight-phase specification and implementation plans under delegated engineering judgment. This supersedes the earlier per-decision pause requirement for documentation authoring only. It does not authorize implementation, live operations or invent individual user approvals.
 
-| ID | Decision or constraint | Owning phase |
+Previously approved behavior remains preserved below and in `history/before-delegated-completion/`. Older row wording that says a detail remains open describes its status at that approval; the selected final detail now lives in [ENGINEERING_DECISIONS.md](ENGINEERING_DECISIONS.md) and [contracts](contracts/TOOLS.md). Those selections are labeled delegated, not retroactive approvals.
+
+## Original agreement record — retained verbatim
+
+| Decision | Owner or scope | Original wording |
 |---|---|---|
 | D-001 | Use the eight documentation phases recorded in PHASES.md. These are not sequential runtime stages. | Roadmap |
 | D-002 | Discuss and agree each phase, then write and review its own detailed specification and implementation plan. Do not author all phases blindly. | All |
@@ -27,18 +27,6 @@ not been settled. It does not claim that proposed features exist in code.
 | D-013 | The controller remains a public-SDK consumer of harness-owned review authority. Do not introduce competing state or acceptance rules as an integration shortcut. | 7 |
 | D-014 | State which requirements and plans are agreed, proposed, blocked, implemented, or tested. Do not conflate those statuses. | All |
 | D-015 | Save each feature’s approved progress to the designated GitHub repository or local files after approval, and report the actual saved location. Partial approval must not be labeled a finished feature. | All |
-
-The pool of approximately 100 workers is the user's example of intended scale.
-It is not a fixed default, a minimum, an entitlement to provider capacity, or a
-measured result.
-
-## Phase 1 agreements added after the first roadmap save
-
-The following records summarize explicit agreements in the conversation. They do
-not assert that final schemas, module paths, or rollout behavior were approved.
-
-| Decision | Owner | Agreed behavior or direction |
-|---|---|---|
 | P1-D01 | P1-F01 | Background reviewers, focused analysts, investigators, and falsifiers receive project-wide read-only research access within the authorized immutable snapshot. Assignment and publication authority remain separate. |
 | P1-D02 | P1-F01 | File synthesis also receives source and index access for reconciliation and cross-symbol interactions, not a routine repeat of all completed review work. |
 | P1-D03 | P1-F02 | Use the existing symbol/relationship index and IDs as the navigation foundation. Names/paths resolve through that index; source search complements gaps. Index-first is guidance, not a required sequence. |
@@ -76,81 +64,61 @@ not assert that final schemas, module paths, or rollout behavior were approved.
 | P1-D35 | P1-F02 | Report result availability separately from relevant work status, including unscheduled, queued, running, failed, pending acceptance, and usable prior analysis with supplementary work. Task completion alone is not result acceptance. |
 | P1-D36 | P1-F02 / Phase 4 | Reuse owning accepted-result readers and visibility/provenance gates; source research access does not expose private child content. Summary consumption grants no source-read credit. Phase 4 still decides artifact publication and sharing. |
 | P1-D37 | P1-F02 / Phase 3 | Analysis discovery/retrieval must not automatically wait, register leads, create tasks, or form blocking contextual dependencies. The earlier blanket no-subscription wording is amended by P1-D39–P1-D42 to allow lightweight subject-specific freshness interests. |
-| P1-D38 | P1-F02 | The consistency of paging dynamically changing analysis lists must be explicit; source-cursor approval does not select a result-list pagination algorithm. Exact schema, ordering and consistency implementation remain open. |
+| P1-D38 | P1-F02 | Analysis-list paging has a distinct consistency contract. P1-D58-P1-D62 now select original-H bounds, stable-position continuation and independent refresh/notices; source-cursor approval alone did not select it. Exact query tuple/direction, wire and storage mapping remain open. |
 | P1-D39 | P1-F02 | An authorized analysis lookup automatically registers interest in its subject/query for the ongoing task or inquiry, without a separate subscribe call. The interest does not belong to a reusable worker slot or broadcast every project update. |
 | P1-D40 | P1-F02 / Phase 4 | Advertise relevant newly consumable analysis at the next ordinary tool-response/model-turn boundary, even after another tool call. Use current visibility and exact subject associations; do not expose private results, interrupt in-flight responses, or create a notice-only model call/task. |
 | P1-D41 | P1-F02 | The agent may retrieve an advertised result by exact ID, refresh the listing, defer reading, or ignore the notice. Do not auto-load bodies, substitute a selected result, or reset the current listing. Notice receipt grants no result-consumption or source-read credit. |
-| P1-D42 | P1-F02 / P1-F04 / P1-F08 | Keep notices bounded/coalesced and avoid repeating unchanged advertised updates each turn. Distinguish advertised from retrieved information and preserve work isolation. Durable interest ownership is refined by P1-D43–P1-D47. Exact schema/markers, delivery/replay, limits and pagination mechanics remain open; optional refresh never bypasses stale-input checks. |
+| P1-D42 | P1-F02 / P1-F04 / P1-F08 | Keep notices bounded/coalesced and avoid repeating unchanged advertised updates each turn. Distinguish advertised from retrieved information and preserve work isolation. Durable interest ownership is refined by P1-D43–P1-D47. P1-D48-P1-D52 now select notification availability sequencing and initial registration ordering. P1-D53-P1-D57 select acknowledgment/replay and P1-D58-P1-D62 select H-bounded list continuation; exact storage, limits and query/wire mapping remain open. Optional refresh never bypasses stale-input checks. |
 | P1-D43 | P1-F02 / P1-F04 | Persist a small host-owned source-free interest per ongoing task/inquiry as part of completing a successful authorized analysis lookup. Do not rely solely on worker memory or the next model checkpoint; a replacement attempt continuing the same work restores it. |
 | P1-D44 | P1-F02 | Reuse one equivalent interest keyed logically by review, ongoing work, existing subject and normalized query filters. Use an existing durable task identity where suitable; do not invent an inquiry subsystem or merge interests by worker slot/name similarity. Exact normalization and storage fields remain open. |
 | P1-D45 | P1-F02 / P1-F04 / Phase 3 | Waiting and retryable attempt interruption preserve interest for normal same-work resumption. Stop advertising on logical-work completion/cancellation, not merely one attempt ending. Unrelated work inherits nothing; restored interests still require current authority/visibility and transfer no read credit. |
-| P1-D46 | P1-F02 / P1-F07 / P1-F08 | Lookup contents and initial observed availability must agree: a racing relevant publication is represented by the lookup or remains eligible for notice. Distinguish observed, advertised, retrieved and source-read information; fetching a later result does not mark earlier results read. Exact markers, registration failure and delivery/replay protocols remain open. |
+| P1-D46 | P1-F02 / P1-F07 / P1-F08 | Lookup contents and initial observed availability must agree: a racing relevant publication is represented by the lookup or remains eligible for notice. Distinguish observed, advertised, retrieved and source-read information; fetching a later result does not mark earlier results read. P1-D48-P1-D52 select the notification marker and initial read/write registration sequence; exact storage and failed-registration/delivery replay details remain open. |
 | P1-D47 | P1-F02 | Prefer a compatible existing durable-state extension, otherwise a small source-free persistence structure under existing owners. Do not copy source/results/conversations/publication history per interest, create a messaging service or notification workers, or hold transactions across model turns. No table/migration/retention scheme is selected by this approval. |
+| P1-D48 | P1-F02 / Phase 4 | Use an ordered committed availability sequence within each review, referencing existing results and subjects. Reuse compatible publication/events; timestamps, arbitrary result IDs and provisional creation order are not substitutes. Gaps are harmless; a later-visible transition must not appear behind an already exposed position H. Exact storage/allocation remain open. |
+| P1-D49 | P1-F02 / Phase 4 | Record actual usability under the owning acceptance/receipt rules, independently of whether any interests exist. A private result created earlier but made usable after H receives a later availability transition. Preserve publication policy and cross-database boundaries; retrying the same accepted transition must not produce a duplicate new-result event. |
+| P1-D50 | P1-F02 | Read the committed availability position H and bounded authorized listing in one short consistent read view; close it, then durably register a new interest at the original H or reuse an equivalent interest in a separate short write. Do not read a newer marker into registration, hold a transaction across model turns, or claim lookup success before registration is established. |
+| P1-D51 | P1-F02 / P1-F08 | A publication during the lookup or between read completion and interest registration remains eligible after the original H even with no listener at publication time. Equivalent lookup/retry must preserve existing pending progress; an observation boundary is not proof that every earlier result was returned, advertised or read. Exact failure/replay receipts remain open. |
+| P1-D52 | P1-F02 / P1-F07 / P1-F08 | Detect later changes using bounded indexed subject/filter queries and recheck current visibility. Detection/composition is not notice acknowledgment or consumption. P1-D53-P1-D57 separately specify notice delivery and P1-D58-P1-D62 now specify H-bounded list continuation. Exact schema/allocation and acceptance-owner mapping remain open; do not add a notification service or per-worker publication-history copy. |
+| P1-D53 | P1-F02 / P1-F08 | Mark a notice advertised after the ordinary request containing it produces a valid, durably recorded associated response. No explicit model acknowledgment tool or terminal submission is required. Preparation/sending alone is insufficient; advertisement is not comprehension, retrieval or source-read credit. |
+| P1-D54 | P1-F02 / P1-F09 | Bind the exact final included notice set and represented changes to logical work, attempt and request after context budgeting. Do not acknowledge omitted notices, later publications or a newer sequence merely because the response arrived later. |
+| P1-D55 | P1-F02 / P1-F08 | Recover interrupted acknowledgment from the recorded response and inclusion association; settle idempotently without new inference. If response evidence is inconclusive, permit safe repeat at a normal interaction under current limits rather than silently losing the update. No exactly-once remote-presentation claim. |
+| P1-D56 | P1-F02 / P1-F04 / P1-F08 | Recheck authority/visibility before presentation or replay; optional notices do not resume or reopen work. A prior attempt's late response can settle only its exact permitted association, never overwrite successor progress or confer source-read credit. |
+| P1-D57 | P1-F02 / P1-F08 | Reuse durable request/turn/runtime records with a minimal source-free notice-inclusion association and outcome bookkeeping. Optional full transcript capture must not be required. Exact record schema, dispatch/write ordering, provider-outcome mapping and coalesced acknowledgment representation remain open; no new messaging service. |
+| P1-D58 | P1-F02 | Continue an analysis listing within its initial committed availability position H, original query and stable availability-based order with an existing result ID as tie-breaker. Continue after the recorded position, not by a numeric row offset or mutable ranking; later arrivals do not enter or rearrange that traversal. |
+| P1-D59 | P1-F02 | Later results remain available through the approved notices, immediate exact-ID retrieval, or an explicit fresh lookup with a new H. These actions do not reset an older cursor, require finishing its pages, or erase pending interest/notice progress. |
+| P1-D60 | P1-F02 / Phase 4 | Recheck current authority, visibility, acceptance and status filters on every page/detail fetch. H is not a historical permission snapshot; superseded entries must not be mislabeled current and may disappear under filters. Exhaustion means no further currently eligible results within the bounded query, not no newer analysis. |
+| P1-D61 | P1-F02 / P1-F08 / P1-F09 | Bind a typed analysis-list continuation to review/snapshot, subject, filters, H, stable position and contract identity. Source/list cursors are not interchangeable; queries retain independent progress. Listing/refresh never acknowledges notices or grants consumption/source-read credit. |
+| P1-D62 | P1-F02 / Phase 4 | Reuse the existing query/availability/cursor owners with short reads per page, not transactions across turns, per-agent result-set copies or a new service. Exact direction/ordering tuple, re-availability and association mapping, schema, cursor encoding/bounds/expiry and release enablement remain open. |
+| P1-D63 | P1-F02 | Extend the existing `relationship_query` for bounded direct connections by known symbol ID, recorded kinds and incoming/outgoing/both direction. One-hop output bounds responses, not the analyst's investigative route. No second graph store or automatic full-graph/source traversal. |
+| P1-D64 | P1-F02 | Preserve edge identity, actual source/target orientation, originating callsite, recorded resolution state/basis, actual resolver alternatives and provenance. Distinguish extractor observations, resolver decisions and permitted analyst claims; a target ID is not proof of a security path. |
+| P1-D65 | P1-F02 | Incoming calls require a recorded resolved target matching the selected symbol; shared spelling is not a binding. Preserve authorized unresolved outgoing origins. Empty incoming output means no matching resolved records in the queried scope and limits, not no callers or unreachability. |
+| P1-D66 | P1-F02 | Preserve distinct callsites between the same endpoints using existing relationship/occurrence identities and locations. Bounded grouping must not erase evidence locations or omitted occurrences; self-calls retain their actual identity and orientation. |
+| P1-D67 | P1-F02 / P1-F01 / Phase 4 | Apply current execution, snapshot, research and record visibility rules. Readable origins do not authorize protected target metadata or private analyst content; unresolved authorized origins must not vanish merely for lacking a resolved target. Exact safe projection remains open. |
+| P1-D68 | P1-F02 | Query through existing relationship/provenance owners and verified resolver associations; canonical relationships are not the same as coverage scheduling dependencies. No graph mutation, implicit binding, candidate change, new task/dependency or source-read credit follows from the query. Final fields, occurrence/self-edge presentation, ordering/paging, missing-status representation and refactored integration remain open. |
+| P1-D69 | P1-F02 | Use one existing-manifest-backed catalogue capability for directory browsing and filtered file discovery in the attempt's bound snapshot. No live-target/host filesystem browser, second inventory, or full per-worker manifest copy. |
+| P1-D70 | P1-F02 | Browse visible immediate children by default with an explicit request-local directory selection. File finding may include descendants when requested. Initial exact filename/relative-path matching supports directory, recorded-language and classification narrowing without fuzzy fallback or dropped filters; duplicate names return distinguishable records. |
+| P1-D71 | P1-F02 / P1-F03 | Return existing file references and recorded relative path, size, classification and available language/inventory metadata. Later symbol/source/analysis operations use their owning paths and checks. Discovery does not auto-read content, create tasks/leads or register freshness interests, and grants no source-read/coverage credit. |
+| P1-D72 | P1-F02 / P1-F01 | Derive directory entries from visible manifest paths, using component-aware boundaries and deduplication before bounded deterministic pagination. Do not reveal protected metadata through groups/counts or add a persistent directory-identity system. No shared mutable current directory. |
+| P1-D73 | P1-F02 / P1-F01 / P1-F07 | Keep discoverability, source readability and inventory availability distinct. Permitted context-only or parse/unsupported files remain discoverable with recorded limitations; metadata cannot authorize unavailable content. Empty results describe the visible snapshot catalogue, not the live folder or security/coverage completeness. |
+| P1-D74 | P1-F02 | Reuse catalogue/query/visibility/reference owners, inspect existing indexes, and provide bounded query-specific continuations with current execution checks. Exact tool name/schema, root/normalization/filter combinations, order, paging encoding/bounds and refactored mapping remain open. No new source store, classifier, lookup worker or implicit analysis-subscription policy is approved. |
+| P1-D75 | P1-F02 | Extend existing `source_search` with default literal/case-sensitive matching and explicit regex/case-insensitive selection. No silent regex/fuzzy/semantic fallback; a textual hit is not a binding or vulnerability conclusion. |
+| P1-D76 | P1-F02 | Use a restricted non-backtracking regex implementation with bounded compilation/input/output and useful unsupported-pattern errors. Exact engine/dependency/dialect and resource limits remain open; RE2 was an example, not an installation approval. No fallback to an unrestricted engine or general shell tool. |
+| P1-D77 | P1-F02 / P1-F01 | Resolve explicit file-ID, directory/filter and whole-authorized-snapshot search selections through the existing manifest and research policy. Preserve restrictions without manually enumerating all files or searching the live target/host filesystem. Exact selector combinations remain open. |
+| P1-D78 | P1-F02 / P1-F03 | Return existing file references, precise match ranges and separately bounded match-centered preview ranges in original bytes, with unambiguous containing symbols where available. Mark omitted/oversized content; presentation markers are not evidence bytes. Complete per-file/cross-line matching is subsequently specified by P1-D80-P1-D83; occurrence enumeration is subsequently refined by P1-D84-P1-D89; exact preview representation remains open. |
+| P1-D79 | P1-F02 / P1-F07 / P1-F09 | Distinguish completed no-match search, filled result page, interrupted scan and omitted/unsearchable content. Report actual examined scope and limitations; only delivered preview source counts as seen by the attempt. No implicit coverage, candidate/task/interest creation, new source store or inference. Search continuation remains open. |
+| P1-D80 | P1-F02 | Use each verified file's supported text as a matching input, not separate display lines or output pages. Explicitly requested cross-line occurrences may exist within one file, never across files. |
+| P1-D81 | P1-F02 | Preserve exact literal content, including an explicitly supplied newline; do not grant whitespace tolerance to a literal that lacks it. Regex crosses lines only under its explicitly supported syntax/flags. Exact dialect, newline/anchor and encoding details remain open. |
+| P1-D82 | P1-F02 / P1-F03 / P1-F09 | Keep complete match ranges distinct from bounded previews. Output clipping cannot hide a cross-boundary occurrence, shorten the match or select the next search position. Complete search occurrences must be invariant to presentation-page size; actual delivered-source accounting remains unchanged. |
+| P1-D83 | P1-F02 | Start with the existing verified reader and bounded matcher one file at a time. Do not introduce a custom streaming engine, search-job subsystem or second index. A later chunked optimization must prove equivalent semantics; unsupported input sizes need explicit limitations, not silent line-by-line no-match fallback. Occurrence/progress behavior is subsequently refined by P1-D84-P1-D89; exact cursor and resource contracts remain open. |
+| P1-D84 | P1-F02 | Return one result for each enumerated textual occurrence with its own exact range, including multiple occurrences on one line. Overlapping/identical previews do not merge distinct hits; no durable evidence or candidate is created solely to identify a match. |
+| P1-D85 | P1-F02 | Use deterministic existing canonical relative-file-path order, then original match start-byte and end-byte positions. No relevance/worker-completion ordering, path-case rewriting or source normalization. The exact path comparator and regex alternative-selection semantics still need their final contracts. |
+| P1-D86 | P1-F02 | Initially enumerate non-overlapping occurrences, continuing at/after the complete non-empty match end. Identify this policy; do not add an overlap mode implicitly. Literal `ana` in `banana` returns [1, 4), not overlapping [3, 6). |
+| P1-D87 | P1-F02 / P1-F08 / P1-F09 | Progress follows complete returned matches, not clipped previews. Never advance the advertised continuation past a hit omitted by the response bound; keep it available or return an explicit representability limitation. Lookahead is not delivery. Exact cursor and interrupted-response protocol remain open. |
+| P1-D88 | P1-F02 | Preserve original-file matching context on continuation. Verify the chosen matcher's positioned search, supported anchors/boundaries and byte-to-text coordinate mapping. Do not create false file starts by slicing off prefixes or introduce a custom streaming engine as an incidental fix. |
+| P1-D89 | P1-F02 / P1-F07 | A produced zero-length match yields an actionable unsupported-occurrence failure for the initial contract. Do not loop, silently skip, invent character advancement or report exhaustive success. Previously delivered ordinary hits remain valid navigation results but the search is incomplete; exact error envelopes remain open. |
 
-## P1-F01 implementation choices still open
+## Completion record
 
-| Question | Kind | Where it is tracked |
-|---|---|---|
-| Actual owners and signatures after the modular refactor | Code verification | P1-F01 implementation steps and open decisions |
-| Mapping all existing role/task identifiers, including legacy/link roles, to the named analytical responsibilities | Code verification; ask about any unmapped behavior | P1-F01 open decisions |
-| Review/attempt contract compatibility and how new permissions are enabled without reinterpreting prior execution receipts | Design decision | P1-F01 and Phase 7 |
-| Cross-file evidence use in terminal review results versus canonical coverage ownership | Cross-feature dependency | P1-F03 and Phase 4 |
+All eight phase specifications/plans and all 34 feature guides are now authored. P1-F02's search continuation and remaining tool/schema/notice details are resolved in the current contract, with the original 101 requirements and 144 acceptance scenarios retained as historical approval evidence. Later-phase routing, publication, adoption, readiness, fairness, resource defaults, SDK surfaces, storage and delivery choices are explicit delegated selections.
 
-Saving this document does not select defaults for these questions. The new-lead
-registration decision is distinct from general mid-review answer publication,
-which remains open in O-005/O-007.
-
-## P1-F02 checkpoint
-
-The [feature document](01-operating-model-autonomy-tools/features/P1-F02-indexed-navigation-and-retrieval.md)
-is v0.8. It retains all source-read, authenticated-cursor, indexed-lookup,
-exact-analysis-retrieval and automatic-notice agreements. P1-D43–P1-D47 now add
-durable work-scoped interests, successful-lookup registration, equivalent-query
-reuse, same-work restoration and logical-work lifecycle handling. No implicit
-review task, blocking dependency or auto-resumption follows from a lookup/notice.
-
-The observed listing and its initial availability position must not lose a racing
-publication. This is an approved invariant, not an approved publication sequence,
-transaction protocol, or dynamic-list paging algorithm. Interest state is durable;
-its exact schema, filters/owner mapping, marker, delivery acknowledgment and
-physical retention remain open. Publication-bounded/keyset listing was proposed
-but not separately selected. Final wire contracts, cursor provisioning details,
-remaining navigation interfaces and refactored integration also remain open.
-The detailed direct-relationship proposal is not an approved requirement.
-
-R44-R48, steps I1-I6 and scenarios T62-T69 record this approval. They are written
-guidance and specified tests, not implemented behavior or executed application
-tests. P1-F02 remains partial and not ready for implementation. Earlier approvals
-are preserved; publication of this amendment does not change that status.
-
-## Explicitly unresolved — do not promote to requirements
-
-| ID | Open choice | Owning phase |
-|---|---|---|
-| O-001 | Partially resolved by P1-D01–P1-D47 above: access, synthesis, return to research and tool directions are agreed. Exact feature contracts and role-to-code mapping remain open. | 1 |
-| O-002 | Whether any dedicated orientation analyst is needed. The earlier suggestion was not approved. | 2, informed by 1 |
-| O-003 | Detailed operation catalogue, analyzer selection, recognition rules, binding support, and discovery policy. | 2 |
-| O-004 | Contextual request identity, joining/routing, updates to running reviewers, shared answers, and cycle handling. | 3 |
-| O-005 | When answers become shareable: completed sealed unit, completed targeted review, mid-review accepted answer, or another explicit contract. Sealed-unit-only delivery was a suggestion, not an accepted restriction. | 3–4 |
-| O-006 | How focused/contextual work can satisfy canonical coverage, what adoption/revalidation is needed, and how canonical publication changes. Blanket no-credit/mandatory-duplication rules from the older proposal are not automatically retained. | 4 |
-| O-007 | General incremental evidence/answer acceptance, revisions, conflicts, and corrections remain open. The independently accepted new-lead registration behavior is agreed in P1-D06; it must not wait for its proposer’s terminal result. | 4 |
-| O-008 | Exact candidate producer/handoff rules, current-finding validity, and reassessment implementation. | 5 |
-| O-009 | Scheduling allocations, numeric budgets, time quanta, queue order, request fan-out limits, and continuation accounting. Old 50/50 or other proposal defaults are not approved here. | 6 |
-| O-010 | Exact module layout after refactoring, schemas, migrations, versioning, and paired SDK changes. | 7 |
-| O-011 | Implementation order, release increments/modes, full evaluation protocol, and enabling defaults. Older M0–M3 milestones are not automatically adopted. | 8 |
-
-## Rules for maintaining this register
-
-Use a named decision with scope and rationale when recording approval. Link it
-to its owning phase and relevant requirements once those documents exist. Do not
-mark an assistant recommendation accepted without agreement. When reopening an
-accepted decision, preserve its history, explain the conflict, and identify the
-requirements and implementation slices affected.
-
-Statements about current source must be supported by inspection of the actual
-baseline used. Earlier inspected commit references are navigation aids, not
-proof of the current remote branch, local worktree, installed package, or live
-process state. Reconcile the future implementation plan against the delivered
-refactor instead of assuming the old file layout is still current.
-
-See [PHASES.md](PHASES.md) for the approved phase sequence and current checkpoint.
+The design is DRAFT COMPLETE / NOT IMPLEMENTED. Actual module mapping, supported schema horizon, dependency artifact pins and environment-dependent test results must be verified during R0/R7. They are factual execution gates, not unspecified design behavior. See [DELIVERY.md](DELIVERY.md) and [VALIDATION_REPORT.md](VALIDATION_REPORT.md).

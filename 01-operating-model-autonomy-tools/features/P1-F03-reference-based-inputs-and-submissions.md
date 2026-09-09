@@ -1,61 +1,83 @@
-# P1-F03 — Reference-based tool inputs and submissions
+# P1-F03 — Reference-based inputs and submissions
 
-Version: 0.1  
-Behavior: AGREED AT PHASE LEVEL  
-Detailed specification: PENDING FEATURE DISCUSSION  
-Implementation plan: PENDING FEATURE DISCUSSION  
-Implementation readiness: NOT READY
+Version: 1.0 · Authored: 2026-09-09  
+Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
+Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
+Dependencies: `P1-F01`, `P1-F07`, `P1-F08`
 
-This file saves the agreements already reached. It is not an instruction to invent
-missing schemas, mechanisms, budgets or implementation steps. A numbered file is
-not evidence that its detailed design has been approved.
+## Purpose and concrete outcome
 
-## 1. Agreed behavior
+Let agents submit real analysis and selected references without reconstructing hashes, task identity, lease tokens or byte offsets already known to the host. Reduce accidental mismatch without weakening acceptance.
 
-**P1-F03-B1.** The model supplies its analysis, uncertainty and explicitly selected references. The host supplies trusted execution identity and resolves existing index/source/evidence metadata.
+## Existing implementation and ownership
 
-**P1-F03-B2.** Apply this to progress, observations and final submissions. Resolve against the attempt’s bound inputs; detect stale changes rather than silently substituting the latest state.
+BrokerScope supplies execution identity. SourceResolver returns verified SourceSegment values. EvidenceRepository.prepare/insert_prepared/resolve and CandidateService remain the authoritative storage and gate paths; do not create replacement evidence semantics.
 
-**P1-F03-B3.** Existing symbol IDs, a reference to newly read source, and accepted evidence IDs have different meanings. Do not treat a source read as an accepted evidence claim.
+Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 
-**P1-F03-B4.** The host must not guess supporting evidence from prose, invent a missing path/control assessment, merge different claims just because their source spans match, or misattribute reused evidence.
+## Detailed requirements
 
-## 2. Existing implementation and reuse
+**P1-F03-R01.** Host fills review/snapshot/task/agent/attempt identity from the actual execution. The model may select subjects and cite refs but cannot override execution identity or choose a different snapshot.
 
-Map the actual refactored owners before implementation. Use the
-[reference baseline](../../SOURCES.md) and relevant existing source as navigation;
-do not assume a new framework, service or store is required. No complete mapping
-for this feature is asserted in this save.
+**P1-F03-R02.** SourceRef identifies exact verified bytes and is issued from host reads or authoritative indexed anchors. It is a domain-separated authenticated token, not an accepted claim or proof the current model received those bytes.
 
-## 3. Questions to discuss before detailed drafting
+**P1-F03-R03.** For a new claim, resolve SourceRef, verify its hashes/ranges/containment, attach model-authored claim/kind, and prepare canonical evidence. Existing EvidenceRef reuse preserves its original claim, kind and authorship; new interpretations do not overwrite it.
 
-1. Exact reference variants and lifetime, lookup and range-selection operations, and restart behavior.
+**P1-F03-R04.** Keep source-anchor equality separate from claim equality. Exact existing canonical evidence can be referenced and a new usage/contribution recorded; never merge claims because spans, CWE labels or names match.
 
-2. Minimal model-facing payload versus full host-bound internal result; which fields remain required for the analyst.
+**P1-F03-R05.** Final submissions bind their host input_token to the frozen attempt input and explicitly accepted input-delta receipts. Reject a stale candidate/question revision instead of rebinding to latest. Mechanical defaults cannot assert control sufficiency or path completeness.
 
-3. Provenance of existing evidence reuse and new evidence preparation/acceptance, coordinated with Phase 4.
+**P1-F03-R06.** Authenticate/resolve references before constructing an accepted artifact, recheck ownership before commit, and preserve atomic rejection. Distinct source_ref, evidence_id and artifact_id fields are typed and cannot silently coerce one another.
 
-4. Compatibility of terminal schemas, version binding and refactored evidence/submission owners.
+## Inputs, outputs, and state
 
-## 4. Interfaces, state and implementation steps
+SourceRef payload: contract kind SOURCE_REF, key generation, review/snapshot, file identity/hash, start/end bytes, span hash, optional contained symbol and issuing operation. It contains no source body or secret. New evidence use records current producer operation separately from original evidence author. Detailed source_ref token rules reuse the cursor codec with a different domain.
 
-Not yet specified. After the discussion, record exact inputs/outputs, validation,
-required persistence and transaction ownership, dependencies, ordered changes,
-and permitted developer discretion. Do not push all detail to Phase 7, but do not
-fill this section with unapproved defaults now.
+The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contract](../../contracts/STATE.md), and [configuration contract](../../contracts/CONFIGURATION.md) define reusable fields. This feature owns the behavior below; it does not create a competing lifecycle or database.
 
-## 5. Tests and completion
+## Ordered implementation
 
-Feature-level acceptance fixtures and regression mapping are pending discussion.
-No tests are claimed to have run. Before implementation readiness, document
-normal and negative outcomes, applicable race/retry cases, and how existing
-contracts are preserved or deliberately changed.
+### Step 1: Audit role envelopes
 
-## 6. Dependencies and scope
+Enumerate identity fields in every existing result contract and distinguish mechanical identity from semantic subject selection. Freeze legacy parsers; add the smaller envelope only under collaborative-v1.
 
-P1-F01, P1-F02 and P1-F07; Phase 4 owns durable evidence/claim publication. Phase 7 reconciles shared contracts after feature-level decisions.
+### Step 2: Add one normalization adapter
 
-See the [phase specification](../SPECIFICATION.md) and
-[decision register](../../DECISION_REGISTER.md). The future implementation must
-remain inside the agreed feature scope rather than implement later phases by
-accident.
+Resolve typed references and produce the current domain proposal objects. Retain explicit error locations mapping normalized internal fields back to agent input JSON pointers. Do not use prose matching to select evidence.
+
+### Step 3: Preserve producer identity
+
+On exact evidence reuse, validate nonproducer canonical fields and preserve the existing row. Add an artifact/candidate evidence-usage link for the new producer; do not suppress a provenance conflict by changing created_by.
+
+### Step 4: Bind actual source delivery
+
+Use delivery_records for required source inspection. A metadata anchor or received notice alone has no credit; an investigator must reopen material ranges in its own accepted exchange.
+
+### Step 5: Verify all submission roles
+
+Test full normalization → existing validator → atomic commit, including stale inputs, mid-transaction cancellation, partial references and cross-file context without borrowed coverage ownership.
+
+## Failure, concurrency, and recovery
+
+Rotated SourceRefs can be reissued after a fresh authorized read. Durable evidence remains resolvable by original coordinates/hashes after key rotation. A receipt/identity failure is not repaired by guessing an alternative file. No raw source is persisted with the normalized proposal.
+
+## Acceptance tests
+
+These are tests to implement and execute, not test results from document authoring.
+
+| Test | Fixture or action | Required observable outcome |
+|---|---|---|
+| P1-F03-T01 | Valid host ref with new claim | One verified evidence claim and correct author linkage. |
+| P1-F03-T02 | Same span, different interpretation | Distinct claims, no overwrite. |
+| P1-F03-T03 | Existing evidence reused by another agent | Original author preserved plus current usage. |
+| P1-F03-T04 | Notice ID supplied as evidence | Typed error with correct field location. |
+| P1-F03-T05 | Candidate changes while inference runs | Stale-input rejection; no latest rebinding. |
+| P1-F03-T06 | Cross-file source cited from a unit review | Context permitted; no foreign unit completion. |
+
+## Do not overengineer or expand scope
+
+No content-addressed whole-source database, embedding-based evidence lookup, opaque model memory, automatic analytical assertions, or duplicated evidence service.
+
+## Definition of done
+
+Implement each requirement through its identified owner; run the tests above and the adjacent existing regressions. Record exact source/distribution identities and actual test collection. Update the requirement-to-test map, public-contract compatibility checks, and package-resource checks where affected. A missing integration or unavailable dependency is a named build/release gate, not a license to silently substitute behavior. No live installation, target execution, provider spend, or deployment is authorized by this document.

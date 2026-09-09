@@ -1,61 +1,44 @@
-# Phase 1 specification — operating model, agent autonomy, and tools
+# Phase 1 — Operating model, agent autonomy, and tools
 
-Version: 0.7  
-Status: first phase overview draft; behavior agreements recorded; not approved as
-an implementation-complete phase specification.
+Status: DRAFT COMPLETE · Version: 2.0 · 2026-09-09  
+Implementation: NOT PERFORMED · Application validation: NOT RUN.
 
-## Purpose
+## Scope and intended behavior
 
-Give agents room to investigate and collaborate without confusing research access,
-canonical assignment ownership, and host-controlled acceptance. Reuse the existing
-index, source verification, tool broker, execution, and publication infrastructure.
-This is new functional design, not an instruction to alter the separate refactor.
+An analyst starts with its actual assignment and a small context, navigates existing IDs or manifest/name discovery, reads verified source, retrieves exact accepted analysis, and may checkpoint, request context or report independent leads. Submission rejection can return to research. Source visibility, result visibility and mutation ownership remain separate.
 
-## Feature index
+The phase is a documentation boundary, not a mandatory global runtime stage. Its features may be delivered in another dependency order. The modular refactor is a separate behavior-preserving workstream; reconcile it through [BASELINE.md](../BASELINE.md).
 
-| Feature | Detailed document | Status |
-|---|---|---|
-| P1-F01 | [Research access and assignment ownership](features/P1-F01-research-access-and-ownership.md) | Direction agreed; first detailed draft. |
-| P1-F02 | [Indexed navigation and information retrieval](features/P1-F02-indexed-navigation-and-retrieval.md) | Source selection, pagination, authenticated cursors, indexed lookup and two-step analysis retrieval and subject-specific freshness notices agreed/saved; remaining contracts and integration open. |
-| P1-F03 | [Reference-based tool inputs and submissions](features/P1-F03-reference-based-inputs-and-submissions.md) | Behavior saved; implementation details pending. |
-| P1-F04 | [Agent-initiated progress checkpoints](features/P1-F04-progress-checkpoints.md) | Behavior saved; implementation details pending. |
-| P1-F05 | [Submission and return to analysis](features/P1-F05-submission-and-return-to-analysis.md) | Behavior saved; implementation details pending. |
-| P1-F06 | [Independent lead registration](features/P1-F06-independent-lead-registration.md) | Behavior saved; implementation details pending. |
-| P1-F07 | [Actionable tool results and validation errors](features/P1-F07-tool-results-and-validation-errors.md) | Behavior saved; implementation details pending. |
-| P1-F08 | [Reliable tool actions and outcome recovery](features/P1-F08-tool-action-recovery.md) | Behavior saved; implementation details pending. |
-| P1-F09 | [Grouped read-only retrieval](features/P1-F09-grouped-read-only-retrieval.md) | Behavior saved; implementation details pending. |
+## Features and authoritative detail
 
-## Shared meaning
+| Feature | Detailed specification / implementation / acceptance | Completion requirements | New test scenarios |
+|---|---|---:|---:|
+| P1-F01 | [Research access and assignment ownership](features/P1-F01-research-access-and-ownership.md) | 6 | 6 |
+| P1-F02 | [Indexed navigation and information retrieval](features/P1-F02-indexed-navigation-and-retrieval.md) | 6 | 8 |
+| P1-F03 | [Reference-based inputs and submissions](features/P1-F03-reference-based-inputs-and-submissions.md) | 6 | 6 |
+| P1-F04 | [Agent-initiated progress checkpoints](features/P1-F04-progress-checkpoints.md) | 6 | 6 |
+| P1-F05 | [Submission and return to analysis](features/P1-F05-submission-and-return-to-analysis.md) | 6 | 6 |
+| P1-F06 | [Independent lead registration](features/P1-F06-independent-lead-registration.md) | 6 | 6 |
+| P1-F07 | [Actionable tool results and validation errors](features/P1-F07-tool-results-and-validation-errors.md) | 6 | 6 |
+| P1-F08 | [Reliable tool actions and outcome recovery](features/P1-F08-tool-action-recovery.md) | 6 | 6 |
+| P1-F09 | [Grouped read-only retrieval](features/P1-F09-grouped-read-only-retrieval.md) | 6 | 6 |
 
-An assignment defines a deliverable and publication authority. An execution attempt
-identifies the currently authorized worker activity. Research permissions define
-what captured project material the attempt may navigate. These are different
-responsibilities; P1-F01 owns their detailed boundary.
+P1-F01/P1-F02 additionally preserve their original approved requirement and test ledgers. Counts here refer to the current completion guide, not an assertion that application tests exist or pass.
 
-Analytical roles include background reviewers, focused analysts, investigators,
-falsifiers and file synthesizers. Their reading freedom does not erase differences
-in their required results. A synthesizer reads for reconciliation rather than
-routinely repeating every child review.
+## Ownership and shared contracts
 
-The index and existing IDs are the navigation foundation. Hashes establish source
-identity, not interpretive truth. Checkpoints are working progress, not accepted
-findings. A registered separate lead transfers follow-up ownership to the harness;
-it is not a contextual dependency that the proposing agent must wait on.
+The participating owners are: BrokerScope and tooling contracts/diagnostics, SourceResolver and source/metadata handlers, Runner request composition, checkpoints and delivery records, Candidate/result submission owners and receipt finalizers. Keep one rule authority even when several features use it. Use [TOOLS](../contracts/TOOLS.md), [STATE](../contracts/STATE.md), [CONFIGURATION](../contracts/CONFIGURATION.md) and [SDK](../contracts/SDK.md) for shared interfaces; feature documents define the actual behavior and implementation checks. Do not invent incompatible local fields or duplicate persistence to satisfy one feature in isolation.
 
-## Phase boundary
+## Invariants
 
-Phase 1 specifies the tool-facing behaviors in its features. It does not silently
-settle general mid-review answer sharing, coverage credit, semantic lead dedup,
-new task types, finding gates, scheduling priority, numeric limits, or database
-layout. Feature documents track required later-phase dependencies explicitly.
-The independent lead-registration boundary already agreed in P1-F06 must not be
-weakened into waiting for the proposer's final submission.
+Preserve immutable source and exact evidence, source-free ordinary persistence, host-controlled acceptance, real producer/attempt identity and independent falsification. Broader research does not grant broader mutation. Readiness and completion are explicit predicates, not inferred from an empty query, a model claim or another agent's summary. Unknown or unsupported input remains visible.
 
 ## Phase acceptance
 
-The phase is not complete until its nine detailed documents have been discussed,
-reviewed, reconciled and paired with an actionable implementation plan. A feature's
-approved direction is not proof that code exists or that its integration blockers
-are resolved. Documentation and implementation approval remain separate.
+Every feature's required tests and adjacent preserved regressions must pass in the actual selected checkout; cross-feature interactions must pass the integrated traces in [DELIVERY.md](../DELIVERY.md). Validate positive behavior and negative authority/cancellation/retry cases, not only the happy path. Record all failed or unrun checks, actual collection and environment. Document completeness does not certify a running implementation.
 
-See the [implementation plan](IMPLEMENTATION_PLAN.md) and [decision register](../DECISION_REGISTER.md).
+## Out of scope
+
+Do not execute a reviewed target, install its dependencies/tools, expose a generic shell to analytical agents, bypass historical compatibility, run paid experiments, mutate live review databases or deploy from this document. Do not introduce speculative services, manager models or new global barriers. New delegated engineering choices are labeled in [ENGINEERING_DECISIONS.md](../ENGINEERING_DECISIONS.md).
+
+Continue with this phase's [implementation plan](IMPLEMENTATION_PLAN.md).

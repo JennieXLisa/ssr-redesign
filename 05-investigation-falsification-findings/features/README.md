@@ -1,7 +1,7 @@
-# Phase 5 feature documents
+# Phase 5 feature index
 
-Status: feature breakdown not discussed.
+- [P5-F01: Candidate admission and continuous investigation](P5-F01-candidate-investigation.md)
+- [P5-F02: Independent falsification and current findings](P5-F02-falsification-and-current-findings.md)
+- [P5-F03: Counterevidence, reassessment, and historical export](P5-F03-counterevidence-reassessment-and-export.md)
 
-This tracked placeholder preserves the agreed folder structure without inventing
-features. After discussion and approval, add one detailed Markdown document per
-feature. See the [phase scope](../SPECIFICATION.md).
+Each feature guide includes specification, implementation steps, failure cases and acceptance tests. Shared contracts are defined once under `contracts/`.

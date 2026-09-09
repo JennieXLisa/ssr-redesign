@@ -1,0 +1,464 @@
+[
+  {
+    "name": "read_symbol",
+    "valid": true,
+    "value": {
+      "tool": "source_read",
+      "arguments": {
+        "symbol_id": "S42"
+      }
+    }
+  },
+  {
+    "name": "read_file",
+    "valid": true,
+    "value": {
+      "tool": "source_read",
+      "arguments": {
+        "file_id": "F12",
+        "start_line": 1,
+        "end_line": 20
+      }
+    }
+  },
+  {
+    "name": "read_cursor",
+    "valid": true,
+    "value": {
+      "tool": "source_read",
+      "arguments": {
+        "cursor": "c1.payload.tag"
+      }
+    }
+  },
+  {
+    "name": "conflicting_read",
+    "valid": false,
+    "value": {
+      "tool": "source_read",
+      "arguments": {
+        "symbol_id": "S42",
+        "file_id": "F12"
+      }
+    }
+  },
+  {
+    "name": "negative_line",
+    "valid": false,
+    "value": {
+      "tool": "source_read",
+      "arguments": {
+        "file_id": "F12",
+        "start_line": -1,
+        "end_line": 2
+      }
+    }
+  },
+  {
+    "name": "symbol_name",
+    "valid": true,
+    "value": {
+      "tool": "symbol_list",
+      "arguments": {
+        "local_name": "execute",
+        "limit": 25
+      }
+    }
+  },
+  {
+    "name": "conflicting_name",
+    "valid": false,
+    "value": {
+      "tool": "symbol_list",
+      "arguments": {
+        "local_name": "execute",
+        "qualified_name": "Runner.execute"
+      }
+    }
+  },
+  {
+    "name": "browse_root",
+    "valid": true,
+    "value": {
+      "tool": "file_list",
+      "arguments": {
+        "mode": "BROWSE",
+        "directory": ""
+      }
+    }
+  },
+  {
+    "name": "find_file",
+    "valid": true,
+    "value": {
+      "tool": "file_list",
+      "arguments": {
+        "mode": "FIND",
+        "filename": "settings.toml",
+        "directory": "src",
+        "recursive": true
+      }
+    }
+  },
+  {
+    "name": "bad_browse",
+    "valid": false,
+    "value": {
+      "tool": "file_list",
+      "arguments": {
+        "mode": "BROWSE",
+        "directory": "src",
+        "recursive": true
+      }
+    }
+  },
+  {
+    "name": "relationships",
+    "valid": true,
+    "value": {
+      "tool": "relationship_query",
+      "arguments": {
+        "symbol_id": "S42",
+        "kinds": [
+          "CALLS"
+        ],
+        "direction": "BOTH"
+      }
+    }
+  },
+  {
+    "name": "bad_direction",
+    "valid": false,
+    "value": {
+      "tool": "relationship_query",
+      "arguments": {
+        "symbol_id": "S42",
+        "kinds": [
+          "CALLS"
+        ],
+        "direction": "guess"
+      }
+    }
+  },
+  {
+    "name": "search",
+    "valid": true,
+    "value": {
+      "tool": "source_search",
+      "arguments": {
+        "query": "system\\s*\\(",
+        "mode": "REGEX",
+        "flags": {
+          "case_sensitive": true
+        },
+        "selection": {
+          "kind": "SNAPSHOT"
+        }
+      }
+    }
+  },
+  {
+    "name": "literal_newline",
+    "valid": true,
+    "value": {
+      "tool": "source_search",
+      "arguments": {
+        "query": "system\n(",
+        "selection": {
+          "kind": "DIRECTORY",
+          "directory": "src",
+          "recursive": true
+        }
+      }
+    }
+  },
+  {
+    "name": "literal_regex_flag",
+    "valid": false,
+    "value": {
+      "tool": "source_search",
+      "arguments": {
+        "query": "system",
+        "flags": {
+          "dotall": true
+        },
+        "selection": {
+          "kind": "SNAPSHOT"
+        }
+      }
+    }
+  },
+  {
+    "name": "duplicate_files",
+    "valid": false,
+    "value": {
+      "tool": "source_search",
+      "arguments": {
+        "query": "x",
+        "selection": {
+          "kind": "FILES",
+          "file_ids": [
+            "F1",
+            "F1"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "analysis_lookup",
+    "valid": true,
+    "value": {
+      "tool": "document_query",
+      "arguments": {
+        "subject": {
+          "kind": "symbol",
+          "id": "S42"
+        }
+      }
+    }
+  },
+  {
+    "name": "bad_subject",
+    "valid": false,
+    "value": {
+      "tool": "document_query",
+      "arguments": {
+        "subject": {
+          "kind": "arbitrary_sql",
+          "id": "S42"
+        }
+      }
+    }
+  },
+  {
+    "name": "lead",
+    "valid": true,
+    "value": {
+      "tool": "report_lead",
+      "arguments": {
+        "hypothesis": "The selected deletion target may lack ownership checks.",
+        "observations": [
+          "A caller-derived path is passed to the helper."
+        ],
+        "subject_refs": [
+          {
+            "kind": "symbol",
+            "id": "S42"
+          }
+        ],
+        "source_refs": [
+          "src1.fixture"
+        ],
+        "unknowns": [
+          "Upstream restrictions not yet established."
+        ],
+        "requested_check": "Review path construction and ownership controls."
+      }
+    }
+  },
+  {
+    "name": "lead_no_evidence",
+    "valid": false,
+    "value": {
+      "tool": "report_lead",
+      "arguments": {
+        "hypothesis": "Suspected issue",
+        "observations": [
+          "A behavior was noticed"
+        ],
+        "subject_refs": [
+          {
+            "kind": "symbol",
+            "id": "S42"
+          }
+        ],
+        "unknowns": [],
+        "requested_check": "Check the concern."
+      }
+    }
+  },
+  {
+    "name": "context",
+    "valid": true,
+    "value": {
+      "tool": "request_context_review",
+      "arguments": {
+        "question": "Which actor can modify the stored destination?",
+        "subjects": [
+          {
+            "kind": "symbol",
+            "id": "S42"
+          }
+        ],
+        "assumptions": [],
+        "requested_facets": [
+          "writers",
+          "authorization"
+        ],
+        "blocking": true
+      }
+    }
+  },
+  {
+    "name": "answer",
+    "valid": true,
+    "value": {
+      "tool": "publish_context_answer",
+      "arguments": {
+        "request_id": "Q1",
+        "request_revision": 1,
+        "outcome": "INCONCLUSIVE",
+        "analysis": "One source-visible writer is known; import paths remain unresolved.",
+        "unresolved": [
+          "Import write path"
+        ],
+        "scope_checked": [
+          {
+            "kind": "symbol",
+            "id": "S42"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "checkpoint",
+    "valid": true,
+    "value": {
+      "tool": "checkpoint_state",
+      "arguments": {
+        "expected_sequence": 0,
+        "state": {
+          "facts": [],
+          "hypotheses": [
+            "Ownership is not yet established."
+          ],
+          "unknowns": [
+            "Caller restrictions"
+          ],
+          "next_action": {
+            "kind": "READ",
+            "objective": "Inspect the caller relationship."
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "yield",
+    "valid": true,
+    "value": {
+      "tool": "yield_work",
+      "arguments": {
+        "checkpoint_id": "CP1",
+        "reason": "WAITING_FOR_CONTEXT",
+        "request_ids": [
+          "Q1"
+        ]
+      }
+    }
+  },
+  {
+    "name": "batch",
+    "valid": true,
+    "value": {
+      "tool": "read_batch",
+      "arguments": {
+        "items": [
+          {
+            "key": "helper",
+            "tool": "source_read",
+            "arguments": {
+              "symbol_id": "S42"
+            }
+          },
+          {
+            "key": "meta",
+            "tool": "symbol_get",
+            "arguments": {
+              "symbol_id": "S43"
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "batch_write",
+    "valid": false,
+    "value": {
+      "tool": "read_batch",
+      "arguments": {
+        "items": [
+          {
+            "key": "bad",
+            "tool": "report_lead",
+            "arguments": {}
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "identity_override",
+    "valid": false,
+    "value": {
+      "tool": "source_read",
+      "arguments": {
+        "symbol_id": "S42",
+        "snapshot_id": "OTHER"
+      }
+    }
+  },
+  {
+    "name": "bool_limit",
+    "valid": false,
+    "value": {
+      "tool": "symbol_list",
+      "arguments": {
+        "limit": true
+      }
+    }
+  },
+  {
+    "name": "long_source_ref",
+    "valid": true,
+    "value": {
+      "tool": "report_lead",
+      "arguments": {
+        "hypothesis": "A concrete suspected boundary issue.",
+        "observations": [
+          "The relevant assignment is source-bound."
+        ],
+        "subject_refs": [
+          {
+            "kind": "symbol",
+            "id": "S42"
+          }
+        ],
+        "source_refs": [
+          "src1.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ],
+        "unknowns": [],
+        "requested_check": "Check the relevant caller controls."
+      }
+    }
+  },
+  {
+    "name": "checkpoint_typed_action",
+    "valid": false,
+    "value": {
+      "tool": "checkpoint_state",
+      "arguments": {
+        "expected_sequence": 0,
+        "state": {
+          "facts": [],
+          "hypotheses": [],
+          "unknowns": [],
+          "next_action": "untyped action"
+        }
+      }
+    }
+  }
+]

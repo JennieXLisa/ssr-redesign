@@ -1,0 +1,158 @@
+{
+  "README.md": {
+    "sha256": "aa082b5f6dc995a974d2211f49ae1376e5cde61782354479356541b056a59b0f",
+    "bytes": 6921
+  },
+  "PUBLISH_HANDOFF.md": {
+    "sha256": "24c3fbe27825525c18271409ac48847bbbc0e9b245f8d85da6fd87d0f00b16be",
+    "bytes": 1890
+  },
+  "SOURCES.md": {
+    "sha256": "a4c8b90053125f0a3f63334eeaa3a9fd146940397fe3fc99f78b65a0b4f74897",
+    "bytes": 1939
+  },
+  "DECISION_REGISTER.md": {
+    "sha256": "1180cb7a52dc294a7818db8f31450ec93f9683d18a65f33a90e9e16186dda872",
+    "bytes": 36340
+  },
+  "PHASES.md": {
+    "sha256": "40d73947f8626c0cadb2e5ee5fbcdddf6d4bd7a9a1273fa006631c8205c4ed46",
+    "bytes": 5708
+  },
+  "07-contracts-persistence-integration/IMPLEMENTATION_PLAN.md": {
+    "sha256": "cbac91201e094388ffbebb8bc7192d3f51a372cd980d50b051f0c906f84801b4",
+    "bytes": 672
+  },
+  "07-contracts-persistence-integration/SPECIFICATION.md": {
+    "sha256": "acc357cef9736641d909e1977739fcab33b71b77b6cc75a746e5ec5dd806603a",
+    "bytes": 1035
+  },
+  "05-investigation-falsification-findings/IMPLEMENTATION_PLAN.md": {
+    "sha256": "b0089548fd1d9bca43dec9f37ba8c5c99e1d05b1c1950fbd775c9836efe5dd30",
+    "bytes": 677
+  },
+  "05-investigation-falsification-findings/SPECIFICATION.md": {
+    "sha256": "b13d085e6d8db7e80a880aeaf950a639d62934049a38037118fb4a1626bab591",
+    "bytes": 1038
+  },
+  "06-worker-pool-runtime/IMPLEMENTATION_PLAN.md": {
+    "sha256": "ffa34d00de0d3959162c70a0a84114a01e1f524df17a55c6e21d8d6671321aa7",
+    "bytes": 657
+  },
+  "06-worker-pool-runtime/SPECIFICATION.md": {
+    "sha256": "34b36afaabfc82fb891b4c6160e072dcecffb7fe9b605e9cff6567fa787f0a0e",
+    "bytes": 1041
+  },
+  "08-validation-delivery/IMPLEMENTATION_PLAN.md": {
+    "sha256": "f98ed1c0c464193d62a28570bb0ebe3269fd50e317a38462f11f572f6e0bca15",
+    "bytes": 730
+  },
+  "08-validation-delivery/SPECIFICATION.md": {
+    "sha256": "9d844f8ea8d9c480483eb70e1319675037973a0ae606bc43a8f0884a5fb177ae",
+    "bytes": 1017
+  },
+  "02-security-discovery/IMPLEMENTATION_PLAN.md": {
+    "sha256": "761875be16793b1e5fa400a690c89d8e6f0ba149cb80b147d555b12ae038e7b0",
+    "bytes": 663
+  },
+  "02-security-discovery/SPECIFICATION.md": {
+    "sha256": "c4203f51474cdf6357b738e37ad454a39284e2a8afcca566d14fbd554095b946",
+    "bytes": 1049
+  },
+  "03-contextual-collaboration/IMPLEMENTATION_PLAN.md": {
+    "sha256": "4eca26ce388e63199d06266df32354a5277724181a1d0684ba1984705229f207",
+    "bytes": 662
+  },
+  "03-contextual-collaboration/SPECIFICATION.md": {
+    "sha256": "1fd041a44acbcc46f79d899da17e3c5bd4825522db03be65c17380c3042c0c6d",
+    "bytes": 1026
+  },
+  "01-operating-model-autonomy-tools/IMPLEMENTATION_PLAN.md": {
+    "sha256": "f3f6f286fb0db8cd2f914209f1ec6b3295aaac1964d67be63cbbf9553ce745c8",
+    "bytes": 3003
+  },
+  "01-operating-model-autonomy-tools/SPECIFICATION.md": {
+    "sha256": "105f5ada9058114f9e926ec523531833c502057577c24e8f4ca03c22546b5c10",
+    "bytes": 3857
+  },
+  "01-operating-model-autonomy-tools/DISCUSSION.md": {
+    "sha256": "8123774ff5b1777d4ce5d5c0fe2d3bfa639c64509da9cb28aa668cf2de1b74ac",
+    "bytes": 918
+  },
+  "04-knowledge-evidence-coverage/IMPLEMENTATION_PLAN.md": {
+    "sha256": "931e9ab0f0da300a635c9e697fdef2368811ca33356963da2ffa2ca5d4a6d744",
+    "bytes": 677
+  },
+  "04-knowledge-evidence-coverage/SPECIFICATION.md": {
+    "sha256": "eed93ead5bea32a7e8e3970e06822534de38a97d84b523405b5c3d859e12e332",
+    "bytes": 1047
+  },
+  "04-knowledge-evidence-coverage/features/README.md": {
+    "sha256": "8d1f48e9de7b1088661f6f37091f5186528fab0b1116a97eb7d5a554afda2956",
+    "bytes": 285
+  },
+  "01-operating-model-autonomy-tools/features/P1-F09-grouped-read-only-retrieval.md": {
+    "sha256": "ff955a00775adb0f02150ff192dd09201fc0f942b6372a3cdca3b62ea7c8b093",
+    "bytes": 3047
+  },
+  "01-operating-model-autonomy-tools/features/P1-F05-submission-and-return-to-analysis.md": {
+    "sha256": "f23c21a9159f8ed1221bfaabfaddc77cf91e7e308af8ef75be47c7d67e345001",
+    "bytes": 2904
+  },
+  "01-operating-model-autonomy-tools/features/README.md": {
+    "sha256": "a69cd71a280db983d45ce531cc43a0dfa09e5f05dc6c29dbe75db5c6c1863973",
+    "bytes": 454
+  },
+  "01-operating-model-autonomy-tools/features/P1-F03-reference-based-inputs-and-submissions.md": {
+    "sha256": "4764a90da9a8166cbd93049627e5353ccf8b12012ccbdfe8a061841d39de3f1a",
+    "bytes": 3117
+  },
+  "01-operating-model-autonomy-tools/features/P1-F06-independent-lead-registration.md": {
+    "sha256": "f4fed98590e75e5ade7d89f03a255a6d0941241f088d12b376b92bc3e06d6cf0",
+    "bytes": 3550
+  },
+  "01-operating-model-autonomy-tools/features/P1-F08-tool-action-recovery.md": {
+    "sha256": "5ec4b7e0c0ca0b8cd0da91e8392c602516317e74bf227952506323b4b29f7abc",
+    "bytes": 3181
+  },
+  "01-operating-model-autonomy-tools/features/P1-F02-indexed-navigation-and-retrieval.md": {
+    "sha256": "dfae201f9effd16728aa531db3470996c2787293e27034e9d29b6db085d70190",
+    "bytes": 205199
+  },
+  "01-operating-model-autonomy-tools/features/P1-F07-tool-results-and-validation-errors.md": {
+    "sha256": "8ef07efcd865f3d72180c248ff6f6f05dd6cd477decf1ad6929a52abdc7c0f8d",
+    "bytes": 3279
+  },
+  "01-operating-model-autonomy-tools/features/P1-F01-research-access-and-ownership.md": {
+    "sha256": "c755a3ee49a92d0bed95c7c13aba35c6350f49fe7f8c72ee9265edfae655a792",
+    "bytes": 23041
+  },
+  "01-operating-model-autonomy-tools/features/P1-F04-progress-checkpoints.md": {
+    "sha256": "de1bdc7b4f0d936ee12aeca6a7067790541481d563729b795a29ea8ffc949dfd",
+    "bytes": 2828
+  },
+  "03-contextual-collaboration/features/README.md": {
+    "sha256": "b41337227c7a3cd596956664f1c2c0a432b38b95da5f4001fc622b00309f3bc2",
+    "bytes": 285
+  },
+  "02-security-discovery/features/README.md": {
+    "sha256": "fba19fe6d20eebb74b57ae1f1ce585386fa2ad3430121acf58ac95bdc30abca3",
+    "bytes": 285
+  },
+  "08-validation-delivery/features/README.md": {
+    "sha256": "891025a02c95780f610362d9af1297099c4cf27003c8b03dacae78bddd690386",
+    "bytes": 285
+  },
+  "06-worker-pool-runtime/features/README.md": {
+    "sha256": "47f166b96befe4ae86167640b3d2d67d72c20313e06769a8e6a27c73f621489e",
+    "bytes": 285
+  },
+  "05-investigation-falsification-findings/features/README.md": {
+    "sha256": "53edf2672e065e74644721e39d4c608d77ea12c9837784c187a7194332829c19",
+    "bytes": 285
+  },
+  "07-contracts-persistence-integration/features/README.md": {
+    "sha256": "2c8954ca2ebf569e950cedbe5fe8187405837ec53942150201beb2d19b006ba4",
+    "bytes": 285
+  }
+}

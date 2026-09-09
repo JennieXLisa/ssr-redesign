@@ -1,63 +1,79 @@
 # P1-F07 — Actionable tool results and validation errors
 
-Version: 0.1  
-Behavior: AGREED AT PHASE LEVEL  
-Detailed specification: PENDING FEATURE DISCUSSION  
-Implementation plan: PENDING FEATURE DISCUSSION  
-Implementation readiness: NOT READY
+Version: 1.0 · Authored: 2026-09-09  
+Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
+Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
+Dependencies: `P1-F03`
 
-This file saves the agreements already reached. It is not an instruction to invent
-missing schemas, mechanisms, budgets or implementation steps. A numbered file is
-not evidence that its detailed design has been approved.
+## Purpose and concrete outcome
 
-## 1. Agreed behavior
+The response delivered to the model identifies the actual problem and a valid next action. Rich host validation must not collapse to an opaque “invalid arguments” at the provider boundary.
 
-**P1-F07-B1.** Model-visible outcomes must distinguish missing analysis, unresolved relationships, no matches, incomplete search, partial pages, invalid inputs, operational failure, and authorization/integrity failure.
+## Existing implementation and ownership
 
-**P1-F07-B2.** Identify affected fields and provide a brief specific explanation with a recovery action the agent can actually execute using exposed tools.
+Use existing tooling.diagnostics allowlists, ToolBrokerError, role validators and provider-neutral tool results. Preserve secret-safe projection and map internal paths back to compact model input fields.
 
-**P1-F07-B3.** Collect independent validation problems in one bounded response where safe, rather than revealing one avoidable error per paid model turn.
+Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 
-**P1-F07-B4.** Stop when prerequisites, authority or integrity prevent further meaningful validation. Mark dependent checks as not evaluated rather than invent secondary errors.
+## Detailed requirements
 
-**P1-F07-B5.** Do not convert failures into empty success, silently omit limits, or keep useful detail only in host logs. Recovery guidance must not invent analytical answers or leak protected content.
+**P1-F07-R01.** Use the common outcome envelope with specific codes, JSON-pointer locations and bounded allowlisted details. Missing data, unsearchable input, partial pages, unknown outcome and explicit denial are different outcomes.
 
-## 2. Existing implementation and reuse
+**P1-F07-R02.** Collect up to 16 independent issues per validation stage, plus omitted count. A prerequisite failure marks dependent checks NOT_EVALUATED instead of inventing derivative errors.
 
-Map the actual refactored owners before implementation. Use the
-[reference baseline](../../SOURCES.md) and relevant existing source as navigation;
-do not assume a new framework, service or store is required. No complete mapping
-for this feature is asserted in this save.
+**P1-F07-R03.** Stop early for invalid execution identity, forbidden references, snapshot integrity and unparseable payloads. Do not disclose unauthorized IDs, paths, counts or raw provider/database exceptions through helpful-looking guidance.
 
-## 3. Questions to discuss before detailed drafting
+**P1-F07-R04.** Repair actions must name available operations or ordinary input corrections. Never instruct an agent to run a tool unavailable to its role or to mark an analytical facet true merely to satisfy a schema.
 
-1. Shared outcome structure and stable error vocabulary, using existing broker/diagnostic definitions where applicable.
+**P1-F07-R05.** Always identify effect commitment: no accepted mutation, committed receipt, prepared safe retry, or unresolved outcome. An empty data list is not success after a failed search/query.
 
-2. Per-tool detail fields, issue bounds/pagination, committed/unknown status linkage, and provider-visible serialization.
+**P1-F07-R06.** Keep exact errors through normalization, broker, context composition and backend adapters. Output truncation must preserve code, actionable location and omission status before optional detail.
 
-3. Which errors permit more research, retry, or narrowing, and which terminate/revoke further operations.
+## Inputs, outputs, and state
 
-4. End-to-end tests through broker and provider-facing tool response construction, not just isolated error constructors.
+Concrete initial codes include UNKNOWN_REFERENCE, REFERENCE_KIND_MISMATCH, STALE_INPUT, STALE_ATTEMPT, SOURCE_INTEGRITY_FAILURE, SOURCE_UNREAD, RESULT_UNREPRESENTABLE, PARTIAL_SCAN, MATCHER_UNAVAILABLE, UNSUPPORTED_PATTERN, ZERO_LENGTH_OCCURRENCE, SEARCH_PROGRESS_BLOCKED, INTEREST_LIMIT, INPUT_INVALID, OPERATION_OUTCOME_UNKNOWN. Legacy wire code aliases remain stable for legacy clients.
 
-## 4. Interfaces, state and implementation steps
+The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contract](../../contracts/STATE.md), and [configuration contract](../../contracts/CONFIGURATION.md) define reusable fields. This feature owns the behavior below; it does not create a competing lifecycle or database.
 
-Not yet specified. After the discussion, record exact inputs/outputs, validation,
-required persistence and transaction ownership, dependencies, ordered changes,
-and permitted developer discretion. Do not push all detail to Phase 7, but do not
-fill this section with unapproved defaults now.
+## Ordered implementation
 
-## 5. Tests and completion
+### Step 1: Inventory existing denial types
 
-Feature-level acceptance fixtures and regression mapping are pending discussion.
-No tests are claimed to have run. Before implementation readiness, document
-normal and negative outcomes, applicable race/retry cases, and how existing
-contracts are preserved or deliberately changed.
+Retain exact lower-layer diagnostics where safe and identify where adapters replace them. Make an explicit mapping table; do not global-string-match exception prose.
 
-## 6. Dependencies and scope
+### Step 2: Build stage-aware validation collection
 
-All tool features consume these meanings; P1-F05 uses them for return-to-analysis behavior and P1-F08 for operation recovery.
+Collect independent structural/type/ref checks, stop if authority fails, and label unevaluated semantic checks. Deduplicate repeated issues by code/location, not message text.
 
-See the [phase specification](../SPECIFICATION.md) and
-[decision register](../../DECISION_REGISTER.md). The future implementation must
-remain inside the agreed feature scope rather than implement later phases by
-accident.
+### Step 3: Validate recovery advice
+
+Unit-test role/tool availability against every repair action. Include current limits and allowed values only from authoritative configuration.
+
+### Step 4: Test final model request
+
+Inspect the actual provider-normalized tool-result block with synthetic errors. Confirm secret-safe content and enough detail remain after output budgeting.
+
+## Failure, concurrency, and recovery
+
+Unexpected host errors use a fixed safe code plus correlation identity. Detailed host diagnostics stay in the authorized diagnostic surface. Partial result payloads cannot claim exhaustive validation or zero effects unless the transaction owner proves it.
+
+## Acceptance tests
+
+These are tests to implement and execute, not test results from document authoring.
+
+| Test | Fixture or action | Required observable outcome |
+|---|---|---|
+| P1-F07-T01 | Three independent bad fields | Three bounded, precise issues in one result. |
+| P1-F07-T02 | Bad reference prevents source validation | Dependent hash/claim checks not falsely reported wrong. |
+| P1-F07-T03 | Forbidden reference | No protected metadata disclosed. |
+| P1-F07-T04 | Valid search times out | PARTIAL/UNAVAILABLE, not empty OK. |
+| P1-F07-T05 | Repair action names absent tool | Contract test fails. |
+| P1-F07-T06 | Provider adapter normalizes error | Model retains code/location/effect state. |
+
+## Do not overengineer or expand scope
+
+No generic catch-all error, retry-everything policy, logger-as-user-diagnostic substitute, raw stack trace to the model, or schemas weakened to achieve green tests.
+
+## Definition of done
+
+Implement each requirement through its identified owner; run the tests above and the adjacent existing regressions. Record exact source/distribution identities and actual test collection. Update the requirement-to-test map, public-contract compatibility checks, and package-resource checks where affected. A missing integration or unavailable dependency is a named build/release gate, not a license to silently substitute behavior. No live installation, target execution, provider spend, or deployment is authorized by this document.

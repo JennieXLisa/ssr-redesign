@@ -1,7 +1,7 @@
-# Phase 8 feature documents
+# Phase 8 feature index
 
-Status: feature breakdown not discussed.
+- [P8-F01: Deterministic end-to-end and failure acceptance](P8-F01-deterministic-acceptance.md)
+- [P8-F02: Quality, latency, cost, and regression measurement](P8-F02-quality-and-cost-evaluation.md)
+- [P8-F03: Dependency-ordered delivery and release handoff](P8-F03-delivery-and-release.md)
 
-This tracked placeholder preserves the agreed folder structure without inventing
-features. After discussion and approval, add one detailed Markdown document per
-feature. See the [phase scope](../SPECIFICATION.md).
+Each feature guide includes specification, implementation steps, failure cases and acceptance tests. Shared contracts are defined once under `contracts/`.

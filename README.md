@@ -1,98 +1,47 @@
-# SSR collaborative-review design
+# SSR collaborative review redesign
 
-A separate documentation workspace for the new `source-review-harness` design
-and its integration with `ssr-control`.
+Version: 2.0 · 2026-09-09  
+**Status: complete design draft; no harness/controller implementation, application test or deployment performed.**
 
-**Publication status:** published to [`JennieXLisa/ssr-redesign`](https://github.com/JennieXLisa/ssr-redesign)
-on branch `main`, at the user's explicit request. Repository visibility remains
-public. The [content checkpoint](https://github.com/JennieXLisa/ssr-redesign/commit/50d0d31ff6b15c6192b2fc176b53cd7c65c5027b)
-contains all 39 current Markdown files from the saved P1-F02 v0.7 package, with
-byte-identical content verified by the Git tree hash. This publication-status
-update does not approve new design choices. See the [publication record](PUBLISH_HANDOFF.md).
+This package completes the remaining specification and implementation-plan documents under the user's delegated authoring instruction. It retains previously agreed behavior and identifies remaining engineering choices as delegated selections, not approvals the user individually gave.
 
-Historical save statements inside feature documents describe their original local
-checkpoints; they are not the current GitHub publication status. Superseded
-checkpoint folders remain in the previously supplied archive; see [history](history/README.md).
+## Start here
 
-**Design status:** the eight phases, nine Phase 1 features, Phase 1 behavior
-agreements, P1-F01 implementation direction, and P1-F02 source-reading/pagination, cursor
-authentication, exact indexed symbol lookup and two-step analysis retrieval and subject-specific freshness notices have
-been agreed in conversation.
-Saving a first draft does not mean every contract or implementation detail has
-been reviewed. No new runtime behavior is claimed to exist.
+Read [DELIVERY.md](DELIVERY.md) for the implementing agent's R0–R7 work sequence, [BASELINE.md](BASELINE.md) for observed code/refactor owners, and [ENGINEERING_DECISIONS.md](ENGINEERING_DECISIONS.md) for decisions and scope. Then use the relevant phase plan and feature guide. [TRACEABILITY.json](TRACEABILITY.json) indexes every feature, its dependencies and test IDs.
 
-## Read in this order
+## Eight phases, detailed features
 
-Start with [PHASES.md](PHASES.md), then [DECISION_REGISTER.md](DECISION_REGISTER.md).
-For the current phase, read its [specification](01-operating-model-autonomy-tools/SPECIFICATION.md),
-[implementation plan](01-operating-model-autonomy-tools/IMPLEMENTATION_PLAN.md),
-and the relevant feature document.
+| Phase | Specification | Implementation plan | Features | Document status |
+|---:|---|---|---:|---|
+| 1 | [Operating model, agent autonomy, and tools](01-operating-model-autonomy-tools/SPECIFICATION.md) | [Implementation plan](01-operating-model-autonomy-tools/IMPLEMENTATION_PLAN.md) | 9 | DRAFT COMPLETE |
+| 2 | [Security discovery and analysis strategy](02-security-discovery/SPECIFICATION.md) | [Implementation plan](02-security-discovery/IMPLEMENTATION_PLAN.md) | 4 | DRAFT COMPLETE |
+| 3 | [Contextual collaboration and delegation](03-contextual-collaboration/SPECIFICATION.md) | [Implementation plan](03-contextual-collaboration/IMPLEMENTATION_PLAN.md) | 4 | DRAFT COMPLETE |
+| 4 | [Shared knowledge, evidence, and whole-project coverage](04-knowledge-evidence-coverage/SPECIFICATION.md) | [Implementation plan](04-knowledge-evidence-coverage/IMPLEMENTATION_PLAN.md) | 4 | DRAFT COMPLETE |
+| 5 | [Investigation, independent falsification, and findings](05-investigation-falsification-findings/SPECIFICATION.md) | [Implementation plan](05-investigation-falsification-findings/IMPLEMENTATION_PLAN.md) | 3 | DRAFT COMPLETE |
+| 6 | [Worker-pool scheduling and runtime](06-worker-pool-runtime/SPECIFICATION.md) | [Implementation plan](06-worker-pool-runtime/IMPLEMENTATION_PLAN.md) | 4 | DRAFT COMPLETE |
+| 7 | [Technical contracts, persistence, and integration](07-contracts-persistence-integration/SPECIFICATION.md) | [Implementation plan](07-contracts-persistence-integration/IMPLEMENTATION_PLAN.md) | 3 | DRAFT COMPLETE |
+| 8 | [Validation and implementation delivery](08-validation-delivery/SPECIFICATION.md) | [Implementation plan](08-validation-delivery/IMPLEMENTATION_PLAN.md) | 3 | DRAFT COMPLETE |
 
-The hierarchy is **main roadmap → phase → feature → detailed behavior,
-implementation steps, tests, and unresolved decisions**. A feature document owns
-its detailed requirements; phase documents link them rather than reproduce them.
+The main → phase → feature hierarchy is preserved. Feature documents include implementation steps and negative/race tests, not only architectural prose. There are 34 feature guides. Phase 1 keeps its nine agreed features; F02 has focused companion ledgers preserving earlier approved requirements/tests rather than requiring developers to navigate a 200 KB chronological discussion file.
 
-## Phase index
+## Shared developer contracts
 
-| Phase | Specification | Implementation plan | Status |
-|---|---|---|---|
-| 1 | [Operating model, agent autonomy, and tools](01-operating-model-autonomy-tools/SPECIFICATION.md) | [Plan](01-operating-model-autonomy-tools/IMPLEMENTATION_PLAN.md) | Nine features agreed; P1-F02 source reads, cursors, indexed lookup and two-step analysis retrieval and subject-specific freshness notices saved; remaining choices open. |
-| 2 | [Security discovery and analysis strategy](02-security-discovery/SPECIFICATION.md) | [Plan](02-security-discovery/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
-| 3 | [Contextual collaboration and delegation](03-contextual-collaboration/SPECIFICATION.md) | [Plan](03-contextual-collaboration/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
-| 4 | [Shared knowledge, evidence, and whole-project coverage](04-knowledge-evidence-coverage/SPECIFICATION.md) | [Plan](04-knowledge-evidence-coverage/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
-| 5 | [Investigation, independent falsification, and findings](05-investigation-falsification-findings/SPECIFICATION.md) | [Plan](05-investigation-falsification-findings/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
-| 6 | [Worker-pool scheduling and runtime](06-worker-pool-runtime/SPECIFICATION.md) | [Plan](06-worker-pool-runtime/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
-| 7 | [Technical contracts, persistence, and integration](07-contracts-persistence-integration/SPECIFICATION.md) | [Plan](07-contracts-persistence-integration/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
-| 8 | [Validation and implementation plan](08-validation-delivery/SPECIFICATION.md) | [Plan](08-validation-delivery/IMPLEMENTATION_PLAN.md) | Scope placeholder only; discussion not started. |
+[Tools and cursors](contracts/TOOLS.md) · [State/transactions](contracts/STATE.md) · [Configuration/bounds](contracts/CONFIGURATION.md) · [SDK/controller](contracts/SDK.md) · [Role submission projections](contracts/ROLE_PROJECTIONS.md) · [Reference JSON schemas](contracts/schemas/tool-inputs.schema.json).
 
-## Phase 1 feature index
+These contracts close the earlier open choices: search continuation, key provisioning/rotation, name/path and graph paging, dynamic-result epochs, persistent interests, notice delivery, contextual-answer acceptance, coverage adoption, candidate revisions, scheduling and integration. Numeric defaults are initial engineering choices requiring evaluation, not benchmark claims.
 
-| Feature | Document | Status |
-|---|---|---|
-| P1-F01 | [Research access and assignment ownership](01-operating-model-autonomy-tools/features/P1-F01-research-access-and-ownership.md) | Direction agreed; first detailed draft saved; integration mapping open. |
-| P1-F02 | [Indexed navigation and information retrieval](01-operating-model-autonomy-tools/features/P1-F02-indexed-navigation-and-retrieval.md) | Source reads, authenticated cursors, indexed lookup and exact analysis retrieval and freshness notices saved; final interfaces and integration remain open. |
-| P1-F03 | [Reference-based tool inputs and submissions](01-operating-model-autonomy-tools/features/P1-F03-reference-based-inputs-and-submissions.md) | Behavior agreed; detailed implementation discussion pending. |
-| P1-F04 | [Agent-initiated progress checkpoints](01-operating-model-autonomy-tools/features/P1-F04-progress-checkpoints.md) | Behavior agreed; detailed implementation discussion pending. |
-| P1-F05 | [Submission and return to analysis](01-operating-model-autonomy-tools/features/P1-F05-submission-and-return-to-analysis.md) | Behavior agreed; detailed implementation discussion pending. |
-| P1-F06 | [Independent lead registration](01-operating-model-autonomy-tools/features/P1-F06-independent-lead-registration.md) | Behavior agreed; detailed implementation discussion pending. |
-| P1-F07 | [Actionable tool results and validation errors](01-operating-model-autonomy-tools/features/P1-F07-tool-results-and-validation-errors.md) | Behavior agreed; detailed implementation discussion pending. |
-| P1-F08 | [Reliable tool actions and outcome recovery](01-operating-model-autonomy-tools/features/P1-F08-tool-action-recovery.md) | Behavior agreed; detailed implementation discussion pending. |
-| P1-F09 | [Grouped read-only retrieval](01-operating-model-autonomy-tools/features/P1-F09-grouped-read-only-retrieval.md) | Behavior agreed; detailed implementation discussion pending. |
+## Architectural direction
 
-## Collaboration and document status
+Use one continuously admitted worker pool, existing source/index/evidence/candidate services and the modularized runtime. Analysts own questions, can read permitted project context, record independent leads and request contextual reviews. The host owns resources, durable work, accepted artifacts, source integrity and final gates. Waiting releases model slots. Complete compatible analysis can satisfy canonical coverage; partial answers cannot. Fresh falsification and current evidence validity remain mandatory for current findings.
 
-Discuss one feature's significant choices with the user. Ask when a requirement
-is ambiguous; do not invent defaults. Record approval, write the feature's detail,
-and review the result before calling it implementation-ready. Save approved feature progress to GitHub or local files and report the actual
-location. Do not repeatedly reopen decisions already agreed unless a concrete
-conflict requires it.
+No mandatory manager model, source-target execution, general agent shell, separate message service, second source/knowledge database, or global phase barrier is introduced.
 
-Detailed drafts are saved for [P1-F01](01-operating-model-autonomy-tools/features/P1-F01-research-access-and-ownership.md)
-and the approved source-reading/pagination, cursor, indexed-lookup and analysis-retrieval portions of
-[P1-F02](01-operating-model-autonomy-tools/features/P1-F02-indexed-navigation-and-retrieval.md).
-P1-F02 remains in discussion; P1-F03–P1-F09 save their earlier approved behaviors
-and open implementation questions. Phases 2–8 contain scope and status placeholders,
-not invented specifications or delivery plans. Their `features/README.md` files
-keep the folder structure explicit without inventing feature names.
+## Approval and history
 
-Each completed feature document must cover purpose, baseline and reuse, precise
-requirements, interfaces, ordered implementation, state/persistence, limits on
-scope and complexity, tests, dependencies, and readiness. See the phase plan for
-how these sections are used. Feature numbers are not an execution-stage order.
+[DECISION_REGISTER.md](DECISION_REGISTER.md) preserves the approval history. [ENGINEERING_DECISIONS.md](ENGINEERING_DECISIONS.md) records delegated selections. The previous local F02 v0.16, decision register v1.16 and other checkpoint documents are preserved byte-for-byte under `history/before-delegated-completion/` with a manifest. They are historical records; use current phase/feature/contracts for implementation. Historical links/status text can describe superseded checkpoints.
 
-## Boundaries
+## Verification and publication
 
-The modular refactor is a separate workstream. This repository does not authorize
-changes to either implementation repository, its existing root specification,
-its historical design packages, or live review data. No new manager model,
-framework, permission service, database, or fixed worker ratio is implied.
-Approximately 100 workers is the user's scale example, not a mandatory default.
+[VALIDATION_REPORT.md](VALIDATION_REPORT.md) reports checks actually run on this documentation package. [PUBLISH_HANDOFF.md](PUBLISH_HANDOFF.md) describes publication to `JennieXLisa/ssr-redesign` only. Authoring did not modify either implementation repository, change repository visibility, or install/run the application. GitHub publication is not claimed unless a later verified commit is recorded.
 
-Keep source-derived facts, agreed requirements, implementation guidance, and
-open decisions visibly distinct. Pin code references to the inspected commit;
-verify their new owners after the refactor. [SOURCES.md](SOURCES.md) records the
-reference baseline and its limits. Never treat a snapshot-bound evidence hash as
-proof that a model interpretation is correct.
-
-Earlier roadmap and feature checkpoint copies remain unchanged in the supplied
-archive, as explained in [history](history/README.md).
+The production design remains subject to R0 factual baseline verification and all implementation/release gates. Do not confuse document completeness, schema-example validation, scripted scheduler tests, live-provider compatibility and measured vulnerability quality.

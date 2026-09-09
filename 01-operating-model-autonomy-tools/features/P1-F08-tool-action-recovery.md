@@ -1,63 +1,79 @@
 # P1-F08 — Reliable tool actions and outcome recovery
 
-Version: 0.1  
-Behavior: AGREED AT PHASE LEVEL  
-Detailed specification: PENDING FEATURE DISCUSSION  
-Implementation plan: PENDING FEATURE DISCUSSION  
-Implementation readiness: NOT READY
+Version: 1.0 · Authored: 2026-09-09  
+Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
+Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
+Dependencies: `P1-F07`
 
-This file saves the agreements already reached. It is not an instruction to invent
-missing schemas, mechanisms, budgets or implementation steps. A numbered file is
-not evidence that its detailed design has been approved.
+## Purpose and concrete outcome
 
-## 1. Agreed behavior
+Durable nonterminal tools must not duplicate effects when their acknowledgments are lost. Persistence recovery should reuse validated work instead of asking the model to reconstruct it.
 
-**P1-F08-B1.** The host should recover the outcome of an interrupted state-changing tool action before repeating its effects.
+## Existing implementation and ownership
 
-**P1-F08-B2.** A validated operation that committed must return its existing lead/task or checkpoint outcome on replay, not create another effect solely because acknowledgment was lost.
+Extend existing ToolPersistenceError prepared-artifact retry, database transactions and terminal receipt identities. Reuse request/attempt records and original-attempt finalization guards.
 
-**P1-F08-B3.** If no action committed, say so; if the outcome is unknown, report uncertainty and reconcile the original action before claiming success or safe repetition.
+Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 
-**P1-F08-B4.** Transient persistence problems should reuse the already validated input where safe. The model intervenes for argument or analytical corrections, not to reconstruct an artifact unnecessarily.
+## Detailed requirements
 
-**P1-F08-B5.** Operation replay identity is distinct from semantic lead deduplication. The same symbol can legitimately have multiple separately reported issues.
+**P1-F08-R01.** Assign a host operation identity before authoritative mutation using the normalized semantic action and bound work revision. Map transport call IDs to it; do not rely only on a provider call ID surviving a model retry.
 
-## 2. Existing implementation and reuse
+**P1-F08-R02.** Commit domain effects and the COMMITTED operation receipt atomically. Before commit, PREPARED stores source-free validated content/references sufficient for host retry, not raw source or an opaque transcript.
 
-Map the actual refactored owners before implementation. Use the
-[reference baseline](../../SOURCES.md) and relevant existing source as navigation;
-do not assume a new framework, service or store is required. No complete mapping
-for this feature is asserted in this save.
+**P1-F08-R03.** Exact replay returns the same effect IDs and immutable receipt. Same operation identity with a different normalized digest is a conflict; a new proposal receives a new identity.
 
-## 3. Questions to discuss before detailed drafting
+**P1-F08-R04.** On interruption, inspect the original owner’s receipt/effects before retry. Never say no effects were saved when the outcome is uncertain. External provider requests remain separately accounted and cannot be promised exactly-once.
 
-1. Exact operation identity, input binding, retention and replay/conflict protocol across attempts and restarts.
+**P1-F08-R05.** Authority rechecks apply to new writes; original committed outcome settlement uses exact old-attempt receipts without mutating the successor. A valid old operation ID does not permit an expired model to execute new actions.
 
-2. Existing persistence-retry machinery to reuse versus genuine new durable state.
+**P1-F08-R06.** Observe source/model delivery separately from effect commitment. A tool result omitted from the final prompt grants no read credit; an accepted side effect is not rolled back merely because its response was undelivered.
 
-3. Crash windows, registration/checkpoint transaction boundaries, and committed-versus-unknown outcome reporting.
+## Inputs, outputs, and state
 
-4. Deterministic tests for lost acknowledgment, duplicate delivery, conflicting replay and recovery without duplicate work.
+Operation states: PREPARED, COMMITTED, FAILED_NO_EFFECT, OUTCOME_UNKNOWN. Reconciliation is an owner-specific routine, not a second generic task scheduler. Store content digests and domain IDs; response display can be regenerated from immutable source-free receipt fields. Transaction errors keep their retryability classification.
 
-## 4. Interfaces, state and implementation steps
+The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contract](../../contracts/STATE.md), and [configuration contract](../../contracts/CONFIGURATION.md) define reusable fields. This feature owns the behavior below; it does not create a competing lifecycle or database.
 
-Not yet specified. After the discussion, record exact inputs/outputs, validation,
-required persistence and transaction ownership, dependencies, ordered changes,
-and permitted developer discretion. Do not push all detail to Phase 7, but do not
-fill this section with unapproved defaults now.
+## Ordered implementation
 
-## 5. Tests and completion
+### Step 1: Identify idempotent domain seams
 
-Feature-level acceptance fixtures and regression mapping are pending discussion.
-No tests are claimed to have run. Before implementation readiness, document
-normal and negative outcomes, applicable race/retry cases, and how existing
-contracts are preserved or deliberately changed.
+Map lead seed, checkpoint CAS, request registration, answer publication, yield and final submission to their unique domain constraints. Add the minimal shared operation wrapper around those owners.
 
-## 6. Dependencies and scope
+### Step 2: Build prepared/committed protocol
 
-P1-F03 binds trusted identity; P1-F04/P1-F06 are consumers; P1-F07 reports outcomes. Phase 4/7 reconcile durable contracts.
+Validate once, retain safe prepared material, execute one short transaction and save the exact receipt. Never re-run inference on a transient SQLite write collision.
 
-See the [phase specification](../SPECIFICATION.md) and
-[decision register](../../DECISION_REGISTER.md). The future implementation must
-remain inside the agreed feature scope rather than implement later phases by
-accident.
+### Step 3: Add host reconciliation
+
+Recover ambiguous returns from domain identity/receipt, retry only bounded transient failures, and return a safe typed blocker for unresolved cases. Preserve deadline/cancellation semantics.
+
+### Step 4: Inject failures at each boundary
+
+Simulate before commit, after commit, before response, after durable model response, and after successor claim. Assert exact effect counts and unchanged successor state.
+
+## Failure, concurrency, and recovery
+
+Two concurrent identical calls must converge via uniqueness/transaction serialization. Do not deduplicate two distinct actions by same file or sink. Receipt replay can still consume real model/transport resources; only the semantic mutation is reused. Deterministic test doubles validate persistence behavior, not live provider compatibility.
+
+## Acceptance tests
+
+These are tests to implement and execute, not test results from document authoring.
+
+| Test | Fixture or action | Required observable outcome |
+|---|---|---|
+| P1-F08-T01 | Commit then drop acknowledgment | Recovery returns original candidate/task. |
+| P1-F08-T02 | Concurrent same checkpoint action | One checkpoint sequence increase. |
+| P1-F08-T03 | Same key changed payload | Conflict with no second effect. |
+| P1-F08-T04 | New attempt follows old receipt | No old lease authority inherited. |
+| P1-F08-T05 | DB failure before commit | Prepared retry without another model call. |
+| P1-F08-T06 | Late prior finalizer | No successor task modification. |
+
+## Do not overengineer or expand scope
+
+No distributed exactly-once claim, implicit background retry agent, raw tool-body persistence, or arbitrary transactional replay of external side effects.
+
+## Definition of done
+
+Implement each requirement through its identified owner; run the tests above and the adjacent existing regressions. Record exact source/distribution identities and actual test collection. Update the requirement-to-test map, public-contract compatibility checks, and package-resource checks where affected. A missing integration or unavailable dependency is a named build/release gate, not a license to silently substitute behavior. No live installation, target execution, provider spend, or deployment is authorized by this document.
