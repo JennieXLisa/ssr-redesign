@@ -2,9 +2,15 @@
 
 Updated: 2026-09-09. Documentation only; none of the runtime tests below has been executed by this authoring change. Read the [feature specification](../P1-F01-research-access-and-ownership.md), [baseline](../../../BASELINE.md), and [tool contract](../../../contracts/TOOLS.md). Proposed helper names are private integration seams, not claims about existing APIs.
 
+## Contract-hardening integration — authority and cutover
+
+Research permission remains independent of owned deliverables. New runtime eligibility additionally requires collaborative-v1 state/receipt/input capabilities, not a legacy-mode facade. A source-readable subject does not grant visibility into pending prefix-backed artifacts, staged synthesis, another work's input token or quota-recovery rows.
+
+Map BrokerScope and source handlers to the actual modular checkout at0989172, not old agent.py paths. Apply the same current execution/input authority to every read and mutation; host recovery of an old committed effect uses its captured predecessor identity, never a successor lease. Use [CUTOVER.md](../../../contracts/CUTOVER.md) and [INPUT_REVISIONS.md](../../../contracts/INPUT_REVISIONS.md) for those exact boundaries.
+
 ## 1. Change inventory before changing permissions
 
-In the authorized harness checkout, locate `BrokerScope.authorize`, `_revalidate_scope`, `_allowed_paths`, `_file_ids`, every `allowed_symbol_ids` use, assigned-line/byte callbacks, `_tool_available`, `terminal_submission_preconditions_satisfied`, and the source-read interval tracker. The refactor map locates these responsibilities in `ssr.tools`, `ssr.tooling.source_handlers`, worker request construction and domain submission modules. Do not assume a module move removed the policy.
+In the authorized harness checkout, locate `BrokerScope.authorize`, `_revalidate_scope`, `_allowed_paths`, `_file_ids`, every `allowed_symbol_ids` use, assigned-line/byte callbacks, `_tool_available`, `terminal_submission_preconditions_satisfied`, and the source-read interval tracker. The refactor map locates these responsibilities in `ssr.tools`, `ssr.tools.source_handlers`, worker request construction and domain submission modules. Do not assume a module move removed the policy.
 
 Create a caller map classifying each use as execution authorization, research authorization, result visibility, or submission ownership. Source reads/searches/stat, symbol lookup and structural navigation use research authorization. Task role/lease/control identity uses execution authorization. Owned inventory membership, required unit inspection and canonical publication use submission ownership. Accepted-result readers retain their own visibility gate. One shared set must no longer imply all four decisions.
 

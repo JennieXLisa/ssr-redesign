@@ -11,7 +11,7 @@ An agent assigned unit A can investigate helper B without becoming B’s coverag
 
 ## Existing implementation and ownership
 
-Keep BrokerScope execution identity and the source resolver. The observed refactor source_handlers receives explicit assigned-range callbacks; change their use for research tools, not the canonical result ownership validator. Keep public SDK and old mode facades.
+Keep BrokerScope execution identity and the source resolver. The observed refactor source_handlers receives explicit assigned-range callbacks; change their use for research tools, not the canonical result ownership validator. Keep useful public context/ownership boundaries; the executing SDK is the exact new contract, not a required old-mode facade.
 
 Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 
@@ -68,7 +68,7 @@ These are tests to implement and execute, not test results from document authori
 | P1-F01-CT03 | Expired attempt replays valid cursor | No bytes returned. |
 | P1-F01-CT04 | Many files exceed context-item limit | Admission succeeds with bounded query results. |
 | P1-F01-CT05 | Synthesizer checks a contradictory helper | Source access allowed without changing child ownership. |
-| P1-F01-CT06 | Old-mode review reopened | Its prior tool surface and hashes remain unchanged. |
+| P1-F01-CT06 | Old-mode review opened for inspection | Original hashes remain historical; execution is rejected. |
 
 ## Do not overengineer or expand scope
 
