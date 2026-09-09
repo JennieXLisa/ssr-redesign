@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    if: github.repository == 'JennieXLisa/ssr-redesign' && startsWith(github.event.head_commit.message, 'docs: apply verified contract-hardening bundle')
+    if: >-
+      github.repository == 'JennieXLisa/ssr-redesign' && startsWith(github.event.head_commit.message, 'docs: apply verified contract-hardening bundle')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
