@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P3-F04-dependency-safety.md), [STATE.md](../../../contracts/STATE.md) and [CONFIGURATION.md](../../../contracts/CONFIGURATION.md). The implementation prevents actual wait dependencies from deadlocking; it does not reinterpret every call-graph edge as a runtime wait.
 
+## Contract-hardening integration — Atomic graph and finite continuation enforcement
+
+Treat request ownership, live consumer quota, cycle detection and depth as one transaction predicate. Recheck graph reachability under the writer before inserting the edge; two transactions cannot independently approve opposite edges. Keep canonical SCC obligations distinct from contextual blocking edges.
+
+After three consecutive settled no-progress continuations, stop automatic work with an explicit unresolved disposition. Exact replay does not increment counters; rephrasing a hypothesis or opening a duplicate request does not reset them. A new accepted relevant answer can reset progress, but does not refund token/time budgets. Tests include W=1, shared consumer cancellation, last quota slot, graph cycles and crash recovery before wait publication.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Define the graph being checked
 
 Build adjacency from unresolved blocking request-consumer-to-producer relationships plus actual unsatisfied hard task prerequisites. Exclude advisory freshness interests, nonblocking requests, already settled prerequisites and ordinary semantic CALLS relationships that are not scheduling dependencies.
