@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P3-F03`, `P5-F01`, `P6-F03`, `P7-F02`
 
+**Contract-hardening revision:** apply the concrete corrections in [P6-F01/IMPLEMENTATION_PLAN.md](P6-F01/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Run the collaborating team through the existing continuous-admission pool, prioritizing useful unblocking and findings while protecting whole-project coverage.
@@ -39,7 +41,7 @@ The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contra
 
 ### Step 1: Generalize eligibility, not pool implementation
 
-Audit planner, SQL claim filters, worker role validation, submit validators, public plan/query and closure together. Route new mode through shared predicate functions; leave legacy mode unchanged.
+Audit planner, SQL claim filters, worker role validation, submit validators, public plan/query and closure together. Route new mode through shared predicate functions; keep historical rows read-only and unclaimable.
 
 ### Step 2: Implement deterministic category selection
 

@@ -2,11 +2,19 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P6-F01-shared-pool-scheduling.md), [SDK plan contract](../../../contracts/SDK.md), [state](../../../contracts/STATE.md) and [configuration](../../../contracts/CONFIGURATION.md). Continuous admission already exists; extend its eligibility/plan contract, not replace the executor.
 
+## Contract-hardening integration — Single-mode settlement-aware mixed-role admission
+
+Replace the old type-to-review-phase CASE in every readiness/claim/exact-task path with ANALYZING plus the selected prerequisite and settlement predicate. Prepared yield tasks remain RUNNING; even a corrupt early PENDING with an unsettled predecessor must be excluded rather than triggering normal predecessor terminalization.
+
+Reserve each actual provider/host capacity and root budget atomically; full execution capacity queues already accepted leads, while metadata quotas are explicit independent outcomes. Preserve work-conserving refill and protected coverage; the cutoff is not a wave barrier. Test all seven task kinds, mixed prerequisites, last reservation slot, W=1 and virtual W=100, exact-task refusal and settled answer wake.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Inventory every phase-dependent gate
 
 Trace `drive_slice` and pool reservation/refill state, task claim SQL, role mapping, BrokerScope review-state validation, public review_planning, worker requests, submission validators and closure. A new planner alone is insufficient if a downstream guard still permits investigation only in a repository-wide phase.
 
-Introduce one mode-selected eligibility authority. Legacy mode retains existing predicates. Collaborative mode evaluates each canonical, focused, context, investigation and falsification task against its actual prerequisites while the review is ANALYZING. Shared source/receipt/candidate checks remain with their owners; do not duplicate their logic in the controller.
+Introduce one collaborative eligibility authority; the new release does not schedule old-mode work. Collaborative mode evaluates each canonical, focused, context, investigation and falsification task against its actual prerequisites while the review is ANALYZING. Shared source/receipt/candidate checks remain with their owners; do not duplicate their logic in the controller.
 
 ## 2. Eligibility versus resource fit
 
