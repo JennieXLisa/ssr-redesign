@@ -1,8 +1,12 @@
-# Phase 2 feature index
+# Phase 2 — specifications and detailed implementation plans
 
-- [P2-F01: Security-operation catalogue and indexed observations](P2-F01-security-operation-index.md)
-- [P2-F02: Entrypoints, prioritization, and bounded inquiry creation](P2-F02-prioritized-discovery.md)
-- [P2-F03: Conditional summaries and cross-boundary reasoning](P2-F03-conditional-summaries-and-flow.md)
-- [P2-F04: Host-first queries and trusted analyzer integration](P2-F04-trusted-analyzers.md)
+Use the detailed build plan alongside each specification. It supplies concrete data extraction, matching/routing algorithms, ownership, transactions, failure behavior and test fixtures; the older overview steps are not the implementation handoff.
 
-Each feature guide includes specification, implementation steps, failure cases and acceptance tests. Shared contracts are defined once under `contracts/`.
+| Feature | Specification | Detailed build plan |
+|---|---|---|
+| P2-F01 Security-operation index | [Specification](P2-F01-security-operation-index.md) | [Implementation](P2-F01/IMPLEMENTATION_PLAN.md) |
+| P2-F02 Prioritized discovery | [Specification](P2-F02-prioritized-discovery.md) | [Implementation](P2-F02/IMPLEMENTATION_PLAN.md) |
+| P2-F03 Conditional summaries and flow | [Specification](P2-F03-conditional-summaries-and-flow.md) | [Implementation](P2-F03/IMPLEMENTATION_PLAN.md) |
+| P2-F04 Trusted analyzers | [Specification](P2-F04-trusted-analyzers.md) | [Implementation](P2-F04/IMPLEMENTATION_PLAN.md) |
+
+Read the [operation catalogue](../OPERATION_CATALOG.md), [phase integration plan](../IMPLEMENTATION_PLAN.md), [all feature plans](../../FEATURE_IMPLEMENTATION_INDEX.md) and [dependency-ordered delivery](../../DELIVERY.md). Operation observations are not findings; matching names do not prove API binding. Preserve no-hit canonical coverage and explicit unsupported-analysis limitations. These documents do not claim runtime tests or performance results.
