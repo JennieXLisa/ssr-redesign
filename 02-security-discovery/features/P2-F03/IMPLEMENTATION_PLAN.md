@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P2-F03-conditional-summaries-and-flow.md), [artifact/acceptance state](../../../contracts/STATE.md) and [operation catalogue](../../OPERATION_CATALOG.md). A summary records conditional source-backed claims; it is not a global 'safe function' label.
 
+## Contract-hardening integration — Conditional summaries tied to typed source evidence
+
+A wrapper/flow summary references the exact callsite-ir-v1 generation and source ranges for supported argument roles; generic relationships alone do not establish receiver/argument semantics. Preserve explicit unknown behavior for dynamic dispatch, shadowing and unsupported languages.
+
+Publish a summary through its own prefix-backed artifact and exact input revision. Consuming a summary does not grant source-read credit or canonical coverage. A changed material summary creates a revision/validity event and must not silently replace a bound investigation input. Test stale summary generation, missing argument IR, stored/asynchronous channels and contradictory accepted summaries through the same material-dependency owner.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Extend accepted function analysis, not a second knowledge store
 
 Locate existing symbol documentation, parameter/return/side-effect fields, knowledge records and typed relationships. Add a versioned security-effect summary projection to accepted analysis. Its owner is the same result/knowledge acceptance path used for normal review. Store a backing result/artifact identity and exact subject/source/model digests rather than copying the whole function body.
