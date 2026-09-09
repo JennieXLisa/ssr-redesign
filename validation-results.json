@@ -1,18 +1,18 @@
 {
   "status": "PASS",
-  "active_markdown_files": 80,
+  "active_markdown_files": 127,
   "features": 34,
   "phase_specifications": 8,
   "phase_implementation_plans": 8,
   "completion_requirements": 204,
   "new_acceptance_scenarios": 206,
-  "local_links_checked": 387,
-  "markdown_tables_checked": 68,
+  "local_links_checked": 779,
+  "markdown_tables_checked": 96,
   "historical_files_verified": 39,
   "preserved_requirements": 113,
   "preserved_acceptance_scenarios": 156,
   "schema_fixtures": 30,
   "errors": [],
   "application_tests_run": false,
-  "github_published": false
+  "publication_checked": false
 }

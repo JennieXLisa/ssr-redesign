@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "kind": "DOCUMENT_AND_REFERENCE_CONTRACT_VALIDATION",
+  "tests_run": 60,
+  "failures": 0,
+  "errors": [],
+  "generated_files_checked": 5,
+  "closed_definitions": 55,
+  "sdk_methods": 8,
+  "feature_plans_checked": 34,
+  "application_tests_run": false,
+  "migration_tests_against_harness_run": false,
+  "provider_calls": 0,
+  "target_execution": false,
+  "publication_verified_by_this_script": false,
+  "manifest_content_set": "ab60d56be5cdd331d8bf197d183b8ab639b52f54b499d9f9b4fe9ce085f12092"
+}
