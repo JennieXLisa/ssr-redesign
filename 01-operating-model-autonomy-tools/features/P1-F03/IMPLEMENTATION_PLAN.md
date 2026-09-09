@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Design guidance, not implemented behavior. Read the [feature](../P1-F03-reference-based-inputs-and-submissions.md), [role projections](../../../contracts/ROLE_PROJECTIONS.md), [tools](../../../contracts/TOOLS.md) and [state](../../../contracts/STATE.md). This plan specifies the actual normalization and commit sequence; it does not authorize an unvalidated generic analysis dictionary.
 
+## Contract-hardening integration — Frozen input revisions and executable role projections
+
+Replace informal input_token resolution with INPUT_REVISIONS.md's canonical revision row, typed i1 token and actual request-observation binding. Derive host revision/attempt identity before normalization; verify the accepted requesting response observed that token and required delta digest. Recheck current revision under the domain transaction, recovering identical committed operations before a stale-head rejection.
+
+Generate FOCUSED_ANALYSIS and CONTEXT_REVIEW provider schemas directly from FocusedResult, ContextAnswer and ContextResult; tests must reject missing/unknown fields and invalid status/facet combinations. Do not build a generic analysis dict for these new roles. Existing semantic validators remain; record a deterministic per-role projection transform digest. FILE_REVIEW uses SynthesisSeal rather than an array of all child dispositions. Integrate exact error locations back to the supplied model fields, including staged entries.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Inventory the real role contracts
 
 Use the authorized implementation checkout and identify each SYMBOL_REVIEW, FILE_REVIEW, LINK_REVIEW, INVESTIGATION and FALSIFICATION input/result parser, validator and commit function. Include the new FOCUSED_ANALYSIS and CONTEXT_REVIEW contracts only once their owners exist. Record every outer field supplied mechanically by the task and every nested field chosen analytically by the model.

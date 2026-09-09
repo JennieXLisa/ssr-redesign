@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P1-F01`, `P1-F07`, `P1-F08`
 
+**Contract-hardening revision:** apply the concrete corrections in [P1-F03/IMPLEMENTATION_PLAN.md](P1-F03/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Let agents submit real analysis and selected references without reconstructing hashes, task identity, lease tokens or byte offsets already known to the host. Reduce accidental mismatch without weakening acceptance.
