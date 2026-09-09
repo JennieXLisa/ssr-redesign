@@ -10,7 +10,9 @@
       "path": "01-operating-model-autonomy-tools/features/P1-F01-research-access-and-ownership.md",
       "dependencies": [],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F02",
@@ -25,7 +27,9 @@
         "P1-F09"
       ],
       "requirements": 6,
-      "tests": 8
+      "tests": 8,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F03",
@@ -38,7 +42,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F04",
@@ -50,7 +56,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F04/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F05",
@@ -64,7 +72,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F05/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F06",
@@ -79,7 +89,9 @@
         "P5-F01"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F06/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F07",
@@ -90,7 +102,9 @@
         "P1-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F07/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F08",
@@ -101,7 +115,9 @@
         "P1-F07"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F08/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P1-F09",
@@ -114,7 +130,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "01-operating-model-autonomy-tools/features/P1-F09/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P2-F01",
@@ -126,7 +144,9 @@
         "P4-F04"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "02-security-discovery/features/P2-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P2-F02",
@@ -138,7 +158,9 @@
         "P6-F01"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "02-security-discovery/features/P2-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P2-F03",
@@ -151,7 +173,9 @@
         "P4-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "02-security-discovery/features/P2-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P2-F04",
@@ -164,7 +188,9 @@
         "P6-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "02-security-discovery/features/P2-F04/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P3-F01",
@@ -178,7 +204,9 @@
         "P4-F01"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "03-contextual-collaboration/features/P3-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P3-F02",
@@ -191,7 +219,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "03-contextual-collaboration/features/P3-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P3-F03",
@@ -205,7 +235,9 @@
         "P6-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "03-contextual-collaboration/features/P3-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P3-F04",
@@ -218,7 +250,9 @@
         "P6-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "03-contextual-collaboration/features/P3-F04/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P4-F01",
@@ -230,7 +264,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "04-knowledge-evidence-coverage/features/P4-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P4-F02",
@@ -242,7 +278,9 @@
         "P3-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "04-knowledge-evidence-coverage/features/P4-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P4-F03",
@@ -254,7 +292,9 @@
         "P5-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "04-knowledge-evidence-coverage/features/P4-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P4-F04",
@@ -266,7 +306,9 @@
         "P4-F01"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "04-knowledge-evidence-coverage/features/P4-F04/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P5-F01",
@@ -280,7 +322,9 @@
         "P6-F01"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "05-investigation-falsification-findings/features/P5-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P5-F02",
@@ -294,7 +338,9 @@
         "P7-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "05-investigation-falsification-findings/features/P5-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P5-F03",
@@ -307,7 +353,9 @@
         "P5-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "05-investigation-falsification-findings/features/P5-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P6-F01",
@@ -321,7 +369,9 @@
         "P7-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "06-worker-pool-runtime/features/P6-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P6-F02",
@@ -334,7 +384,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "06-worker-pool-runtime/features/P6-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P6-F03",
@@ -347,7 +399,9 @@
         "P1-F08"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "06-worker-pool-runtime/features/P6-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P6-F04",
@@ -361,7 +415,9 @@
         "P6-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "06-worker-pool-runtime/features/P6-F04/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P7-F01",
@@ -375,7 +431,9 @@
         "P6-F04"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "07-contracts-persistence-integration/features/P7-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P7-F02",
@@ -387,7 +445,9 @@
         "P6-F01"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "07-contracts-persistence-integration/features/P7-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P7-F03",
@@ -399,7 +459,9 @@
         "P7-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "07-contracts-persistence-integration/features/P7-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P8-F01",
@@ -415,7 +477,9 @@
         "P7-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "08-validation-delivery/features/P8-F01/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P8-F02",
@@ -427,7 +491,9 @@
         "P7-F02"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "08-validation-delivery/features/P8-F02/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     },
     {
       "id": "P8-F03",
@@ -440,7 +506,23 @@
         "P7-F03"
       ],
       "requirements": 6,
-      "tests": 6
+      "tests": 6,
+      "implementation_plan": "08-validation-delivery/features/P8-F03/IMPLEMENTATION_PLAN.md",
+      "hardening_index": "CONTRACT_HARDENING.md"
     }
-  ]
+  ],
+  "hardening_contracts": [
+    "INPUT_REVISIONS",
+    "PREFIX_RECEIPTS",
+    "CONTEXT_BUDGET",
+    "FILE_SYNTHESIS",
+    "STATE_MACHINE",
+    "MIGRATION_PLAN",
+    "CALLSITE_IR",
+    "RESOURCE_BOUNDS",
+    "CUTOVER"
+  ],
+  "hardening_schema": "contracts/schemas/hardening-v1.schema.json",
+  "hardening_tests": "tools/test_contract_hardening.py",
+  "hardening_status": "SPECIFIED_REFERENCE_TESTED_NOT_RUNTIME_TESTED"
 }

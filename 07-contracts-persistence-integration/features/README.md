@@ -10,4 +10,4 @@ These plans translate cross-feature requirements into concrete record constraint
 
 [Phase integration plan](../IMPLEMENTATION_PLAN.md) · [All feature plans](../../FEATURE_IMPLEMENTATION_INDEX.md) · [Delivery order](../../DELIVERY.md).
 
-Allocate migrations from the actual schema horizon, preserve historical contracts, and negotiate complete capabilities. The controller remains a public-SDK consumer with authenticated child-only engine dispatch where required. Clean installed-artifact and all four compatibility-pair tests are required; these documents are not reports that those application tests ran.
+Allocate migrations from the actual schema horizon, preserve historical contracts, and negotiate complete capabilities. The controller remains a public-SDK consumer with authenticated child-only engine dispatch where required. Clean installed-artifact and matching-pair and explicit mismatch-refusal tests are required; these documents are not reports that those application tests ran.

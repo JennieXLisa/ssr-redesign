@@ -1,15 +1,9 @@
-# Publication handoff — documentation only
+# Publication and validation provenance
 
-Destination: `JennieXLisa/ssr-redesign`. The user already selected this repository and authorized saving design documents. Do not create another repository, modify implementation repositories or change visibility.
+This documentation repository is `JennieXLisa/ssr-redesign`, branch main. It is already published; the prior v2 “not uploaded” status is historical and retained under history/pre-hardening-metadata. Subsequent hardening corrections are committed to this same repository, not only distributed as a ZIP.
 
-This task produced a complete local document tree. The connector exposed only read actions during this authoring pass; no GitHub commit/push is claimed. The last remote HEAD verified was `017bde3f0c1f59a01ca9d8b11273f5000676a7be`, while local approvals had advanced through v0.16. Use the full current tree, not an incremental patch against only one previous local version.
+The authoritative publication identity is the actual Git commit and tree returned by GitHub. A document cannot contain its own final commit hash without changing that hash; therefore no self-referential “current commit” field is embedded in MANIFEST.json. The manifest covers the content set and explicitly excludes its own bytes and named generated validation outputs.
 
-## Publishing agent steps
+The Validate design contracts workflow checks the exact pushed commit, runs structural/schema/reference validation, and stores commit.txt, tree.txt, the exact git archive and validator results as its artifact. Successful Git publication and CI checks do not claim harness/controller application tests, live migration or provider execution. Check the actual Actions run status; do not infer success from a file named validation-results.json.
 
-1. Read current remote HEAD and list existing files. Clone/use an authorized clean documentation worktree; preserve any intervening remote/user changes.
-2. Compare the package with the remote. Copy current documentation/contracts/tools and the explicitly historical approval checkpoint into the repository. Do not copy archives, actual source code, credentials, local environments or implementation data.
-3. Run `python tools/validate_docs.py` from the documentation root in its approved environment. Inspect all additions/changes. Record actual results; schema checks require jsonschema, and a missing dependency must be reported rather than silently skipped.
-4. Commit only documentation/reference-schema/validation artifacts with an accurate message such as `docs: complete collaborative review design and feature delivery plans` and push using authorized credentials. Do not force-push or reset unrelated work.
-5. Fetch the new remote commit/tree and verify changed-path/content hashes. Report the exact repository, branch and commit, with any unresolved merge/publication issue.
-
-Application code, database migrations, dependency installation, model calls and deployment are outside this publication task. Reference schemas and documentation-validator code are not the harness implementation.
+Future publication must preserve unrelated changes, use non-force updates and verify the remote branch after writing. Rebuild manifest and traceability when source documents change, run validators from the full checkout, and report exact failed/unrun gates. The developer starts at CODEX_HANDOFF.md; implementation instructions are already in the repository.

@@ -8,7 +8,7 @@ Read this phase's [specification](SPECIFICATION.md), each feature guide and [BAS
 
 ## Recommended implementation approach
 
-Finalize the logical-to-physical mapping on the actual refactor. Implement append-only migrations and capability checks, then public SDK and controller command/query/event changes. Test supported legacy/new pairs and clean installed artifacts before activation.
+Finalize the logical-to-physical mapping on the actual refactor. Implement append-only migrations and capability checks, then public SDK and controller command/query/event changes. Test the matching collaborative pair, explicit mismatch refusal and clean installed artifacts before activation.
 
 The cross-phase build order is [DELIVERY.md](../DELIVERY.md). Feature references describe interface dependencies and can be mutually referential; they are not an import graph or a requirement to implement an entire future phase before a small common contract. Delivery slices break those integrations into buildable steps.
 

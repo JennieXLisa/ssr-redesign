@@ -1,6 +1,6 @@
 # Dependency-ordered implementation delivery
 
-Version: 2.0 · 2026-09-09. This is the implementing agent's primary work sequence. The eight phases organize documentation; the R0–R7 slices below organize implementation. They are **not** new runtime modes.
+Version: 3.0 · 2026-09-09. This is the implementing agent's primary work sequence. The eight phases organize documentation; the R0–R7 slices below organize implementation. They are **not** new runtime modes.
 
 ## Before any code change
 
@@ -12,19 +12,15 @@ Deliver a source/module/test map, current schema/protocol/package versions and t
 
 Exit: owners and unchanged authority are documented; baseline tests have recorded outcomes; selected implementation branch is explicit. No new default or schema number is inferred from old design documents.
 
-## H0 — Contract hardening (blocking gate after baseline inspection)
+## H0 — Corrected contracts and executable reference baseline
 
-Read [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md). R0 factual inspection and isolated contract fixtures may proceed, but do not begin affected R1–R7 feature implementation on the basis of the current draft. Close the listed receipt, synthesis, context, exact SDK/role, state migration, outcome, operation-IR and cutover contracts first. Structural document validation alone does not close H0.
+The review findings are addressed in [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md), with exact schemas, transition rows, receipts, staged synthesis, context policy and migration/cutover plan. Run the current document/reference validators and inspect their actual results before R1. H0 is no longer a list of unspecified mechanisms; production integration remains part of the slices below.
 
-The initial yield correction is [YIELD_SETTLEMENT.md](contracts/YIELD_SETTLEMENT.md): prepare durably while RUNNING, finish the original attempt's mandatory settlement, then publish WAITING_DEPENDENCY or PENDING atomically. Do not implement the former early-requeue sequence or use generic claim cleanup to terminate a settling predecessor.
-
-The old-mode/default and four legacy/refactored-pair statements below are suspended requirements pending H09's explicit cutover scope. Preserving existing source/evidence and mutation authorities does not automatically require retaining the old runtime workflow. No destructive migration or live installation follows from this gate.
-
-Exit: each H0 item has a concrete normative contract, executable contract fixtures, an owner and reviewed traceability. Runtime/installed-package validation remains a separate requirement during implementation. H10 refreshes baseline, manifest and publication/validation records over the final tree; do not reuse stale checksums as certification.
+Implement PREFIX_RECEIPTS/INPUT_REVISIONS and STATE_MACHINE/MIGRATION_PLAN foundations before enabling independent publication or yield. Integrate CONTEXT_BUDGET before any new provider path and FILE_SYNTHESIS before enabling file parent completion. The sole runtime is collaborative-v1 under CUTOVER.md; matching new pair and mismatch rejection replace the old four-pair strategy. No live rollout is authorized by this documentation.
 
 ## R1 — Shared contract foundation, access and basic navigation
 
-Implement shared outcome/reference/operation contracts and the new immutable mode/capability identity. Extend BrokerScope research policy separately from assignment ownership. Add file locator queries, symbol/file/relationship navigation, verified source pages and the persistent key codec. Preserve all legacy schemas/hashes and stored inputs. Include current source-selection/reference/error tests before expanding agent permissions.
+Implement shared outcome/reference/operation contracts and the new immutable mode/capability identity. Extend BrokerScope research policy separately from assignment ownership. Add file locator queries, symbol/file/relationship navigation, verified source pages and the persistent key codec. Preserve old stored schemas/hashes/inputs as history; do not execute old-mode reviews. Include current source-selection/reference/error tests before expanding agent permissions.
 
 Features: P1-F01, P1-F03, P1-F07, core P1-F08; source/catalogue/symbol/relationship part of P1-F02; P7-F01/P7-F03 foundations.
 
@@ -68,7 +64,7 @@ Add operation/entrypoint catalogue, deterministic prioritization of required wor
 
 Features: Phase 2 and P7-F02/P7-F03 completion. Domain readiness remains identical with optional analyzer disabled.
 
-Exit: no-hit canonical coverage continues, API aliases/shadowing and stored-flow fixtures behave correctly, no one-task-per-alert explosion, mixed capacity plans work, all four legacy/refactored SDK pairs and clean packaged controller assets pass.
+Exit: no-hit canonical coverage continues, API aliases/shadowing and stored-flow fixtures behave correctly, no one-task-per-alert explosion, mixed capacity plans work, matching collaborative SDK pair, mismatch refusals and clean packaged controller assets pass.
 
 ## R7 — Integrated acceptance and separately authorized evaluation/release
 

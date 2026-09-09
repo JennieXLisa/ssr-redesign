@@ -1,5 +1,7 @@
 # SSR redesign decision register
 
+> **Current implementation guidance:** this file preserves individual approval history. Former open implementation details are resolved by the delegated correction in [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md) and [ENGINEERING_DECISIONS.md](ENGINEERING_DECISIONS.md). Use the current exact schemas and feature plans; do not interpret the preserved historical “open” wording as an instruction to invent local alternatives or re-enable legacy runtime. No earlier approval row has been rewritten.
+
 Version: 2.0 · Updated: 2026-09-09.
 
 ## Current authority

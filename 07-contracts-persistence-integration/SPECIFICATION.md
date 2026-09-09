@@ -5,7 +5,7 @@ Implementation: NOT PERFORMED · Application validation: NOT RUN.
 
 ## Scope and intended behavior
 
-Shared interfaces and persisted identities connect all phases. The controller negotiates explicit public collaborative capabilities and shows source-free operational state without recreating the harness state machine. Legacy reviews and contracts remain interpretable.
+Shared interfaces and persisted identities connect all phases. The controller negotiates explicit public collaborative capabilities and shows source-free operational state without recreating the harness state machine. Historical reviews and contracts remain attributable and optionally readable; they are not executable in the new runtime.
 
 The phase is a documentation boundary, not a mandatory global runtime stage. Its features may be delivered in another dependency order. The modular refactor is a separate behavior-preserving workstream; reconcile it through [BASELINE.md](../BASELINE.md).
 

@@ -1,14 +1,14 @@
 # SSR collaborative review redesign
 
-Version: 2.2 · Updated: 2026-09-09
+Version: 3.0 · Updated: 2026-09-09
 
 **Design documentation only. Harness/controller implementation, application tests, live installation and deployment are not established by this repository.**
 
-## Implementation hold: contract hardening
+## Corrected developer handoff
 
-**The package is not implementation-ready. Read [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md) before starting a feature.** The Codex review against harness `09891721b9d3509a3d618c7a25d3a3f184b0e225` identified a critical yield/settlement race and incomplete synthesis, receipt, context, SDK, state-machine and indexing contracts.
+**Start with [CODEX_HANDOFF.md](CODEX_HANDOFF.md).** [CONTRACT_HARDENING.md](CONTRACT_HARDENING.md) maps all ten Codex findings to concrete corrected protocols, generated schemas and executable reference fixtures. The plans are prepared for implementation under those contracts; this is not a claim that the harness/controller, migrations or gateway are already tested.
 
-The first corrective amendment specifies [settlement-before-continuation](contracts/YIELD_SETTLEMENT.md) and updates the conflicting plans. It does not claim those runtime tests passed or the other gates closed. Earlier “DRAFT COMPLETE” labels mean that documents were authored, not that their contracts were proved implementable. Existing manifest hashes and validation reports are historical until H10 regenerates and verifies the final tree.
+The fixes include settlement-before-requeue, versioned prefix/input proof, immutable-manifest/staged synthesis, exact new SDK/role schemas, enforceable170k dispatch policy, exhaustive state/outcome mappings, typed Python callsite pilot, finite quotas and collaborative-only cutover. Every feature's dedicated build plan identifies its integration steps. Historical approvals remain unchanged.
 
 ## Start here: the detailed build plans
 
@@ -16,7 +16,7 @@ The first corrective amendment specifies [settlement-before-continuation](contra
 
 **[P1-F02 — detailed navigation and retrieval plan](01-operating-model-autonomy-tools/features/P1-F02/IMPLEMENTATION_PLAN.md)** is the direct replacement for relying on its former five-step overview. It covers selector normalization, original-byte paging, cursor provisioning/validation, positioned search and safe resumption, exact metadata/artifact queries, availability/interest transactions and request-bound notice recovery.
 
-The v2 feature summaries were too broad to serve as implementation handoffs. The dedicated plans add procedural detail, but the subsequent review found the blocking defects tracked in H0. They were written and committed feature by feature, rather than claiming the phase-level checklists already supplied the necessary detail.
+The v2 feature summaries were too broad to serve as implementation handoffs. The dedicated plans add procedural detail, but the subsequent review found the defects now corrected and mapped in H0. They were written and committed feature by feature, rather than claiming the phase-level checklists already supplied the necessary detail.
 
 Read [BASELINE.md](BASELINE.md) to map the actual implementation owners, then [DELIVERY.md](DELIVERY.md) for the dependency-ordered R0–R7 slices. For each feature, read its specification and detailed plan together from the index. Shared contracts define reusable fields once; they do not replace feature-specific implementation procedures. [TRACEABILITY.json](TRACEABILITY.json) preserves the prior requirement/test inventory and should be extended with actual code/test outcomes during development.
 
@@ -57,6 +57,6 @@ The user's delegated writing and repository-publication authorization does not c
 
 ## Verification and handoff
 
-[VALIDATION_REPORT.md](VALIDATION_REPORT.md) describes checks performed on the earlier v2 package. It must not be treated as proof that newly added implementation plans or the application have passed tests. Each plan now specifies concrete tests and required evidence for the developer to run in the actual implementation checkout. Remote publication verifies that documents exist at a commit; it does not validate runtime concurrency, source accounting or analytical quality.
+[VALIDATION_REPORT.md](VALIDATION_REPORT.md) distinguishes full-tree structural/schema/reference results from application tests not run. [MANIFEST.json](MANIFEST.json) covers current source files and all34 feature plans with explicit non-self-referential exclusions. [TRACEABILITY.json](TRACEABILITY.json) points to each actual plan and hardening contract. The GitHub validation workflow runs on each published commit; its exact run/commit artifacts are publication evidence, not runtime certification.
 
-Give the developer this repository, the [feature build-plan index](FEATURE_IMPLEMENTATION_INDEX.md), and [DELIVERY.md](DELIVERY.md). Their slice reports must distinguish implemented, tested, built, installed and deployed states, and explicitly record real blockers and unrun gates.
+The handoff order is CODEX_HANDOFF → CONTRACT_HARDENING → DELIVERY → selected feature plan and shared schemas. Codex must report actual code/test/build outcomes before any release claim. Neither application repository nor live state is modified by these design commits.

@@ -1,6 +1,6 @@
 # Delegated engineering decisions
 
-Version: 2.0 · 2026-09-09 · Design choices, not implemented capabilities.
+Version: 3.0 · 2026-09-09 · Design choices, not implemented capabilities.
 
 ## Authorization and precedence
 
@@ -8,14 +8,14 @@ The user explicitly requested completing the remaining documentation without fur
 
 This package supplies one buildable recommended design, not a menu of unresolved alternatives. New choices below are **DELEGATED_SELECTION**, not falsely recorded as individually user-approved. Exact local helper names may change without changing contracts. Empirical release gates and current-worktree verification are execution prerequisites, not undecided design.
 
-The preserved decision register and prior F01/F02 documents are in `history/before-delegated-completion/`. The active phase/feature documents and `contracts/` replace their pending-detail statements. No previously approved behavioral rule is intentionally revoked. `contracts/` owns cross-feature wire/state details; phase features own their behavior; the traceability map links both.
+The preserved decision register and prior F01/F02 documents are in `history/before-delegated-completion/`. The active phase/feature documents and `contracts/` replace their pending-detail statements. Previously approved behavior is preserved. The delegated legacy-runtime default was erroneous and is explicitly replaced by CUTOVER.md under the user’s supplied correction. `contracts/` owns cross-feature wire/state details; phase features own their behavior; the traceability map links both.
 
 ## Decisions
 
 | ID | Selection | Reason / limit |
 |---|---|---|
 | E01 | One harness process architecture and existing SQLite stores; extend existing task/attempt/candidate owners. | No broker service, vector store, manager-model bottleneck, or separate agent framework. |
-| E02 | `collaborative-v1` is a new immutable per-review contract; legacy reviews retain their recorded semantics. | Do not reinterpret old receipts or turn a refactor into a workflow migration. |
+| E02 | `collaborative-v1` is the sole new runtime; prior reviews retain immutable semantics only for historical inspection. | Do not reinterpret old receipts or turn a refactor into a workflow migration. |
 | E03 | A long-lived inquiry uses a durable task ID; attempts are disposable executions. | No second scheduler or mandatory new inquiry subsystem. New task types are FOCUSED_ANALYSIS and CONTEXT_REVIEW; investigation/falsification reuse their canonical roles. |
 | E04 | Accepted contextual answers may be published before completion of the larger assignment. | They have separate immutable artifacts, validation and turn-level acceptance receipts; no private-note shortcut or fake coverage credit. |
 | E05 | A new independent lead is an existing-style SEEDED candidate plus canonical investigation work and explicit producer provenance. | No shadow lead database. Source-grounded suspicion is enough to request analysis; no proof required before investigation starts. |
@@ -31,7 +31,7 @@ The preserved decision register and prior F01/F02 documents are in `history/befo
 | E15 | Work-conserving shared pool; every fourth dispatch services eligible canonical coverage when competing work exists. | Initial testable policy, not an empirically optimal ratio. Empty reservations are loaned; no healthy worker preemption. |
 | E16 | Prioritize required unblocking and adjudication over opening optional new discovery. | Protect coverage and existing candidates from unbounded speculative fan-out. |
 | E17 | Candidate current-validity is a separate authoritative projection; historical verdicts are immutable. | Source-backed material counterevidence holds current export and schedules revalidation without rewriting history. |
-| E18 | Public SDK changes use explicit collaborative capability surfaces while preserving legacy methods/signatures. | Controller cannot guess or bypass strict SDK negotiation. |
+| E18 | Public SDK changes use explicit collaborative capability surfaces while freezing exact new methods/signatures; no legacy-runtime emulation. | Controller cannot guess or bypass strict SDK negotiation. |
 | E19 | No full freeze of result visibility across listing pages. H bounds new arrivals; current access/status still applies. | Restore/re-availability gets a new epoch and new availability sequence. |
 | E20 | No new runtime behavior is enabled before baseline, schema, publication, SDK and regression gates pass. | Documentation is complete even though application verification has not been performed. |
 
@@ -40,3 +40,9 @@ The preserved decision register and prior F01/F02 documents are in `history/befo
 No source-target execution/build/tests/install, live migration, generic shell tool for review agents, network access beyond configured providers and separately provisioned trusted analyzers, generated PoC, automatic archive extraction, foundation-model training, microservices, generic event bus, inferred final findings, or model-manager approval for ordinary navigation.
 
 Numeric values in CONFIGURATION.md are conservative **initial engineering defaults**, configurable per new review and requiring measurement before a scale claim. They are not universal findings about model efficiency.
+
+## Codex-review corrections adopted under delegated authority
+
+H01 selects keep-RUNNING yield preparation and mandatory terminal settlement before continuation publication. H02 selects immutable host synthesis manifests, bounded revision-CAS journal/reference pages and small final seals. H03 freezes runtime-prefix-v1/transcript-prefix-v1 and actual request-observed input revisions. H04 fixes170k route arithmetic, final serialization counting, bounded dossier/eviction and finite recovery. H05 freezes exact SDK ABI and new-role schemas with generated declarations. H06/H07 freeze total transition/outcome matrices and migration/activation steps. H08 introduces an explicitly new minimal callsite IR proven by an inert Python pilot, not assumed language infrastructure. H09 removes dual-runtime/four-pair compatibility while preserving history. H10 regenerates current manifest/traceability and separates structural/reference/application/publication evidence.
+
+These corrections are specified in CONTRACT_HARDENING.md and each feature’s integration section. They do not claim production implementation or tests. The earlier delegated decision text is retained in history/pre-hardening-metadata/ENGINEERING_DECISIONS.md and Git history.

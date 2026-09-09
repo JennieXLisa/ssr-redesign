@@ -1,41 +1,35 @@
-# Documentation validation report
+# Validation report — contract-hardening correction
 
-Run date: 2026-09-09  
-Package: SSR collaborative review redesign, document release 2.0  
-Result: **PASS for the documentation checks below.**
+Recorded:2026-09-09. Scope: the full design repository, generated contracts and executable specification/reference fixtures. **No harness/controller application tests, real database migrations, live gateway calls or reviewed-target execution were performed by these checks.**
 
-## Command actually run
+## Checks actually run locally
+
+| Check | Result and scope |
+|---|---|
+| `python tools/validate_docs.py` | PASS: 127 active Markdown documents; 34 features; eight specification/plan pairs; 779 local links; 96 tables; 30 input-schema fixtures |
+| Earlier approval preservation | PASS: 113 approved requirements,156 approved scenarios and39 historical checkpoint files retain the validator's required original text/bytes |
+| `python tools/test_contract_hardening.py` | PASS:60 unittest methods, including parameterized negative cases; exact generated schema/ABI,170k arithmetic, prefix/input/capture associations,10,000 staged decisions, quota rollback/replay, state fencing and Python IR pilot |
+| Schema generation | `tools/build_hardening_schemas.py` generates55 closed object definitions, eight exact SDK methods, the ABI stub, total state/outcome matrices and combined tool inputs; repeated generation is byte-identical |
+| `python tools/validate_hardening.py` | Runs the same reference suite, generated-file equality, all34 dedicated feature-plan membership and current manifest checks; machine result is hardening-validation.json |
+| `python tools/refresh_manifest.py --check` | Compares the current design content set with MANIFEST.json, including dedicated plans and hardening files; its explicit exclusions avoid self-referential hashes |
+
+The reference suite contains in-memory/small-SQL state models, not a disguised harness implementation. Its10,000-decision fixture proves bounded staged encodings/journal behavior, not actual production throughput. Context tests supply declared counts; the real gateway tokenizer/template must still be certified. Prefix tests check chain/identity/input rules on inert records; actual runtime reducers/capture persistence must pass their production fixtures. The Python callsite pilot proves selected structural cases without executing target imports; other language support is not claimed.
+
+## Reproduce from the actual checked-out commit
 
 ```sh
+python -m pip install 'jsonschema==4.23.0'
 python tools/validate_docs.py
+python tools/validate_hardening.py
+python tools/refresh_manifest.py --check
 ```
 
-The validator uses the already available Python environment and `jsonschema` package. It does not import either SSR application, execute a reviewed target, contact a model provider, or change a project database. The machine-readable output is `validation-results.json`.
+After a deliberate source edit, regenerate the manifest with `python tools/refresh_manifest.py` before verification. Do not manually edit hashes or cite an earlier PASS as proof of the modified tree. The generator test fails when checked-in schemas/stubs differ from their generated contents; it does not bless an arbitrary schema because it parses.
 
-## Checks performed
+## Publication and CI
 
-The final run verified all 80 active Markdown documents, eight phase specifications, eight phase implementation plans, and 34 distinct feature guides. Every feature has purpose, current-owner/reuse context, requirements, inputs/state, ordered implementation steps, failure/recovery guidance, acceptance scenarios, scope boundaries, and completion criteria.
+The GitHub Validate design contracts workflow validates the exact pushed commit and retains commit/tree identity, source archive and reports. Consult that run's actual outcome; this static report does not embed its own final commit hash. Earlier v2 unpublished flags and stale manifests are retained only as historical metadata. Current source manifests deliberately exclude their own bytes and named generated validation outputs.
 
-It checked 204 completion/new requirement definitions and 206 new acceptance-scenario definitions against `TRACEABILITY.json`, with unique identifiers and resolvable feature dependencies. Those scenarios describe application tests to implement; they were not executed as application tests.
+## Mandatory Codex implementation gates not run here
 
-It checked 387 local Markdown link targets, balanced fenced code blocks, and 68 Markdown tables. It does not validate private external repository links or prove that every narrative cross-reference is semantically correct.
-
-It verified SHA-256 preservation of 39 historical checkpoint documents. It additionally compared the text of 113 previously approved requirements and 156 original acceptance scenarios against the current preserved ledgers. These approvals remain separate from the subsequently delegated engineering selections.
-
-It validated the reference input schema against JSON Schema Draft 2020-12 and executed 30 positive/negative structural fixtures. All fixtures matched their expected validity. This does not validate source authorization, HMAC integrity, publication transactions, analytical truth, real provider schema compatibility, or runtime resource enforcement; those require implementation tests.
-
-## Integration review during authoring
-
-The final review corrected source-reference length handling, checkpoint next-action typing, source-sensitive search-query recovery, empty-source behavior, symbol-to-file artifact associations, and model-turn publication ordering. Early publication is tied to the completed producer exchange that requested the tool action, not an acknowledgment that depends on that action's own success response. These are specification corrections, not implemented bug fixes.
-
-Read-only GitHub inspection identified the original harness branch and observed newer refactor modules, as recorded in `BASELINE.md`. It did not certify refactor acceptance, full-suite results, installed wheels, or the live controller. Source citations identify the observation scope.
-
-## Explicitly not performed
-
-No harness or controller application tests, migration replay, scheduler simulation, provider integration, benchmark, live review, target execution, dependency installation, release build, deployment, or production-state change was performed. No new application feature was implemented. Neither implementation repository was edited.
-
-This document release has not been pushed to GitHub. The last verified remote design checkpoint is recorded in `PUBLISH_HANDOFF.md`; that remote checkpoint must not be described as containing this completed local release.
-
-## Reproducible archive checks
-
-The delivered ZIP is checked for CRC integrity and file-byte identity against the local package. `MANIFEST.json` records each packaged file's size and SHA-256, excluding itself. ZIP validity establishes packaging integrity, not application correctness or release readiness.
+Real claim/finalizer interleavings with paused transcript seals; migrations of baseline0989172 with complete triggers/views/FKs/fingerprints; actual prefix/capture reconciliation; large-file canonical publication; exact installed SDK/controller reflection and serialization; provider-projected170k token counting and zero-dispatch over-limit tests; actual Python LanguageAdapter integration; protected data paths; failure/restart/usage settlement; and separately authorized quality/cost experiments. These are specified concretely by CONTRACT_HARDENING.md and the feature plans, not marked PASSED by document validation.

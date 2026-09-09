@@ -1,43 +1,29 @@
-# Implementation baseline and reuse map
+# Verified baseline and implementation owners
 
-Inspection date: 2026-09-09. This is a read-only source/metadata inspection, not a test run or certification of refactor equivalence.
+Updated:2026-09-09. The Codex review baseline is harness **09891721b9d3509a3d618c7a25d3a3f184b0e225**. This is a pinned source baseline, not a claim about any installed/live process. The design repository before this hardening pass was009dd51; the exact working tree was obtained and verified at6460d32856e9c0afa26b3561a72f0b5b30b26ee2. Earlier baseline and validation records are preserved in history/pre-hardening-metadata.
 
-## Observed references
+## Observed facts and reuse map
 
-| Repository / reference | Observed commit | Meaning |
+| Responsibility | Verified source at0989172 | Consequence for the plan |
 |---|---|---|
-| source-review-harness / codex/0.1.2-investigation-tool-recovery | `8b7ed0e335d4f4fb5ae53ef6e059334661279f20` | User-selected original behavior baseline; still present. |
-| source-review-harness / codex/modular-refactor | `8f548f229dcac1c1d8aec2c5f8973353643ee99a` | Newly observed refactor branch; compare reports 36 commits ahead of original baseline. Not assumed deployed or approved. |
-| source-review-harness / main | `de3bfa6cfff012f5d26cbab3c7c5a1dd0f22dd5a` | Observed branch metadata only, not selected automatically. |
-| ssr-control / codex/controller-modular-refactor | `b7705ed35be54323fdf2a6d4a2ac8f2811d66745` | Observed branch and documentation tree; its code not fully re-audited. |
-| ssr-control / main | `dfb5114beebe386756f62c4fda1ac0a340391f9f` | Observed branch metadata; installed release is unknown. |
-| ssr-redesign / main | `017bde3f0c1f59a01ca9d8b11273f5000676a7be` | Last remote documentation checkpoint read during this task. Local approvals continued to F02 v0.16. |
+| Claim/admission | src/ssr/orchestration/service.py; contracts.py | PENDING claim terminalizes active agents; keep prepared yield RUNNING until settlement and change every claim path coherently |
+| Task/agent states | src/ssr/orchestration/contracts.py | WAITING_DEPENDENCY/new task kinds are not existing enum support; implement full new matrix/migration |
+| Agent loop | src/ssr/agent/runtime.py, events.py, policy.py, prompts.py, types.py | These are package modules; old agent.py/agent_events.py paths are not current owners |
+| Tool broker and schemas | src/ssr/tools/broker.py, contracts.py, diagnostics.py, source_handlers.py, metadata_handlers.py, terminal_handlers.py | Broker retains authority; extend handlers without creating another tool/permission subsystem |
+| Symbol workflow | broker imports ssr.symbol_review.submission and ssr.symbol_review.workflow | Preserve their canonical validators and original identities; do not prescribe obsolete flat module paths |
+| Worker execution | src/ssr/worker/__init__.py exposes runtime.WorkflowWorker, guards, transcripts, types | Preserve exact-attempt supervision/finalization; verify internal finalizer signatures before integrating |
+| Runtime receipts | src/ssr/runtime_receipt.py, contract1.0 | Current domain is completed graphs; runtime-prefix-v1/terminal2.0 are new explicit contracts |
+| Transcript proof | src/ssr/transcript/receipt.py and reconciliation.py | Current completed capture requires terminal runtime receipt; add appendable prefix seals without forging completion |
+| Schema owner | src/ssr/db/database.py, schema_contract.py, migrations/ | Admission checks migration history/FKs/canonical object fingerprints; rebuild all affected constraints/views safely |
+| Language adapter | src/ssr/languages/base.py | InventoryResult has symbols/relationships/diagnostics; typed callsite/argument/binding capability is new work |
+| Public application vocabulary | src/ssr/application/__init__.py | Reuse actual CommandContext, SSRConfig, SchedulingAdmissionToken; projects/reviews are packages, not assumed flat modules |
 
-Do not reset a developer's worktree to one of these commits. Read its AGENTS.md, status, selected ref, actual module map, and installed import paths. Reconcile changes and retain concurrent work. Feature behavior is a separately versioned change after structural extraction.
+The earlier controller source observation was dfb5114beebe386756f62c4fda1ac0a340391f9f; it is a navigation aid only. This correction does not claim a fresh full controller audit. Codex must resolve the selected controller checkout and map its authenticated child dispatch/SDK signature checks to the new exact ABI before implementation. No live database or installed artifact was inspected or changed by this task.
 
-## Concrete reuse and integration
+## Concrete verification required before code
 
-| Responsibility | Observed refactor owner / retained owner | Intended work |
-|---|---|---|
-| Source read/search result construction | `ssr.tooling.source_handlers`; `source_read_result` takes explicit dependencies and assigned-range callbacks | Replace assignment-based research restriction with P1-F01 policy, then extend source selection, search and paging. Do not bypass the verified reader. |
-| Broker execution identity / read accounting | `ssr.tools` still owns BrokerScope and broker dispatch | Keep attempt/lease authority; split research permission from assignment and record only final delivered intervals. |
-| Tool schemas / diagnostics | `ssr.tooling.contracts`, `ssr.tooling.diagnostics`, `ssr.tooling.types` | Version agent tools, preserve legacy surface, add actionable common outcomes and bounded normalization. |
-| Metadata and result retrieval | `ssr.tooling.metadata_handlers`, `distributed_handlers`, `candidate_handlers` | Delegate to existing index/query and acceptance owners, not duplicate private-result visibility logic. |
-| Source integrity | `ssr.source.SourceResolver`, `read_verified_file` | Preserve snapshot/classification/regular-file/hash/byte semantics. |
-| Inventory and dependency graph | `ssr.indexing`, `ssr.symbol_graph`, symbol workflow | Reuse symbol IDs, conservative resolution and SCCs; dynamic contextual requests are additional work edges, not guessed call edges. |
-| Runner and provider control | `ssr.agent`, `agent_policy`, `agent_prompts`, `agent_events`, `agent_types` | One loop with return-to-analysis, delivered-result evidence, notices and bounded grouped reads. |
-| Worker recovery/finalization | `worker_guards`, `worker_finalization`, `worker_transcripts`, `worker_context_recovery` | Preserve original-attempt/successor isolation, independent transcript store and bounded recovery. |
-| Public review planning | `ssr.application.review_planning`; public DTOs stay in `application.reviews` | Add collaborative prerequisite planning via explicit capability surfaces, reuse underlying admission. |
-| Queries | `query.analysis_records`, `candidate_associations`, `review_outcomes`, `review_receipts` behind `ReviewQueryService` | Retain exact projection/visibility boundaries; add collaboration and availability projections. |
-| Candidate / evidence / publication | existing `candidates`, `evidence`, `investigation`, `falsification`, `distributed_file_publication` | Retain single acceptance/final-gate owners. Extend producer paths and material-input revision binding. |
-| Controller | public SDK integration; prior `controller.explorer`, `supervisor`, `child_dispatch`, job and admission owners | Locate refactored equivalents; never import harness private code or query harness DB directly. Parent-side child command interfaces must retain intended delayed engine imports. |
+Read the selected implementation repository's AGENTS.md, actual schema ledger and module map. Record its source commit and any local edits. Compare the pinned behavior above with that checkout; where names moved, preserve the owning transaction and proof boundary rather than recreating old modules. Inventory all task/role/phase switches and canonical public DTO checks. Run the pre-change invariant regressions; old-runtime behavior itself is not a compatibility requirement for the new release.
 
-The refactor module map explicitly leaves some integrity-sensitive concentrations in place. Do not invent completed extractions or impose a new folder hierarchy just to match feature numbering.
+New exact contracts live in contracts/ and generated schemas/reference declarations. Reference tests in this repository use no ssr imports and cannot certify production locks, transcript writes, actual migration resources or provider token counting. Those are the first implementation acceptance fixtures described in CODEX_HANDOFF.md and DELIVERY.md.
 
-## Baseline validation required before implementation
-
-Read both repository specifications and AGENTS.md. Run and record existing source/tool, distributed publication, investigation-finalization race, SDK compatibility and affected controller tests. Verify unittest and pytest collection independently; unittest alone may miss pytest-style functions. New features must not be validated against an older installed wheel accidentally. Select the actual paired build before declaring compatibility.
-
-No application suite, live provider call, wheel installation, 100-worker performance test, or migration was run in authoring this package. Failures discovered during implementation need baseline evidence before being called pre-existing.
-
-See [SOURCES.md](SOURCES.md) for exact references.
+Permanent source URLs are in [SOURCES.md](SOURCES.md). All new helper/table names are selected contract names or logical ownership, not claims that they already exist in0989172.
