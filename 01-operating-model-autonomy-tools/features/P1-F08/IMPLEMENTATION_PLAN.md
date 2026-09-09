@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P1-F08-tool-action-recovery.md), [state contract](../../../contracts/STATE.md) and [tool envelope](../../../contracts/TOOLS.md). This feature makes a repeated host action recoverable; it does not promise exactly-once external model execution.
 
+## Contract-hardening integration — Prefix/fragment/yield replay boundaries
+
+Expand operation recovery fixtures across runtime-prefix insertion, transcript-prefix seal, semantic publication, synthesis entry/head CAS, yield preparation and settled continuation publication. Receipt IDs and exact input hashes must be recovered; no replay calls another model solely to reconstruct accepted effects.
+
+An operation COMMITTED receipt for yield identifies only the prepared intent until the separate finalizer seals publication. A stage COMMITTED receipt identifies a journal root/revision, not whole-file completion. Exact stage replay after newer revisions returns its old receipt; altered arguments are a new operation subject to CAS. Count metadata quotas once per semantic operation, and retain unknown provider usage instead of refunding it during recovery.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Inventory action owners and effect boundaries
 
 List every state-changing collaborative operation: checkpoint save, independent lead registration, contextual request, contextual answer publication, yield and terminal role submission. Also include analysis lookups that register interests. For each record which owner validates, which owner begins the authoritative transaction, which rows are effects, and what immutable receipt can reconstruct success. Existing `ToolPersistenceError`/prepared persistence recovery is a reuse point, not a reason to add a second commit system.
