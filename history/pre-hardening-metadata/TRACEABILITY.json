@@ -1,0 +1,446 @@
+{
+  "document_version": "2.0",
+  "status": "DRAFT_COMPLETE",
+  "application_implemented": false,
+  "features": [
+    {
+      "id": "P1-F01",
+      "phase": 1,
+      "title": "Research access and assignment ownership",
+      "path": "01-operating-model-autonomy-tools/features/P1-F01-research-access-and-ownership.md",
+      "dependencies": [],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F02",
+      "phase": 1,
+      "title": "Indexed navigation and information retrieval",
+      "path": "01-operating-model-autonomy-tools/features/P1-F02-indexed-navigation-and-retrieval.md",
+      "dependencies": [
+        "P1-F01",
+        "P1-F03",
+        "P1-F07",
+        "P1-F08",
+        "P1-F09"
+      ],
+      "requirements": 6,
+      "tests": 8
+    },
+    {
+      "id": "P1-F03",
+      "phase": 1,
+      "title": "Reference-based inputs and submissions",
+      "path": "01-operating-model-autonomy-tools/features/P1-F03-reference-based-inputs-and-submissions.md",
+      "dependencies": [
+        "P1-F01",
+        "P1-F07",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F04",
+      "phase": 1,
+      "title": "Agent-initiated progress checkpoints",
+      "path": "01-operating-model-autonomy-tools/features/P1-F04-progress-checkpoints.md",
+      "dependencies": [
+        "P1-F03",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F05",
+      "phase": 1,
+      "title": "Submission and return to analysis",
+      "path": "01-operating-model-autonomy-tools/features/P1-F05-submission-and-return-to-analysis.md",
+      "dependencies": [
+        "P1-F03",
+        "P1-F04",
+        "P1-F07",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F06",
+      "phase": 1,
+      "title": "Independent lead registration",
+      "path": "01-operating-model-autonomy-tools/features/P1-F06-independent-lead-registration.md",
+      "dependencies": [
+        "P1-F03",
+        "P1-F07",
+        "P1-F08",
+        "P4-F01",
+        "P5-F01"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F07",
+      "phase": 1,
+      "title": "Actionable tool results and validation errors",
+      "path": "01-operating-model-autonomy-tools/features/P1-F07-tool-results-and-validation-errors.md",
+      "dependencies": [
+        "P1-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F08",
+      "phase": 1,
+      "title": "Reliable tool actions and outcome recovery",
+      "path": "01-operating-model-autonomy-tools/features/P1-F08-tool-action-recovery.md",
+      "dependencies": [
+        "P1-F07"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P1-F09",
+      "phase": 1,
+      "title": "Grouped read-only retrieval",
+      "path": "01-operating-model-autonomy-tools/features/P1-F09-grouped-read-only-retrieval.md",
+      "dependencies": [
+        "P1-F02",
+        "P1-F07",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P2-F01",
+      "phase": 2,
+      "title": "Security-operation catalogue and indexed observations",
+      "path": "02-security-discovery/features/P2-F01-security-operation-index.md",
+      "dependencies": [
+        "P1-F02",
+        "P4-F04"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P2-F02",
+      "phase": 2,
+      "title": "Entrypoints, prioritization, and bounded inquiry creation",
+      "path": "02-security-discovery/features/P2-F02-prioritized-discovery.md",
+      "dependencies": [
+        "P2-F01",
+        "P6-F01"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P2-F03",
+      "phase": 2,
+      "title": "Conditional summaries and cross-boundary reasoning",
+      "path": "02-security-discovery/features/P2-F03-conditional-summaries-and-flow.md",
+      "dependencies": [
+        "P2-F01",
+        "P3-F01",
+        "P4-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P2-F04",
+      "phase": 2,
+      "title": "Host-first queries and trusted analyzer integration",
+      "path": "02-security-discovery/features/P2-F04-trusted-analyzers.md",
+      "dependencies": [
+        "P2-F01",
+        "P4-F01",
+        "P6-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P3-F01",
+      "phase": 3,
+      "title": "Contextual questions and review routing",
+      "path": "03-contextual-collaboration/features/P3-F01-contextual-requests-and-routing.md",
+      "dependencies": [
+        "P1-F02",
+        "P1-F03",
+        "P1-F08",
+        "P4-F01"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P3-F02",
+      "phase": 3,
+      "title": "Running-reviewer inbox and bounded context updates",
+      "path": "03-contextual-collaboration/features/P3-F02-active-reviewer-inbox.md",
+      "dependencies": [
+        "P3-F01",
+        "P1-F04",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P3-F03",
+      "phase": 3,
+      "title": "Accepted answers and inquiry continuation",
+      "path": "03-contextual-collaboration/features/P3-F03-answers-and-continuations.md",
+      "dependencies": [
+        "P3-F01",
+        "P3-F02",
+        "P4-F01",
+        "P6-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P3-F04",
+      "phase": 3,
+      "title": "Dependency cycles, joining, and finite collaboration",
+      "path": "03-contextual-collaboration/features/P3-F04-dependency-safety.md",
+      "dependencies": [
+        "P3-F01",
+        "P3-F03",
+        "P6-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P4-F01",
+      "phase": 4,
+      "title": "Independent artifact acceptance and publication",
+      "path": "04-knowledge-evidence-coverage/features/P4-F01-accepted-artifacts-and-publication.md",
+      "dependencies": [
+        "P1-F03",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P4-F02",
+      "phase": 4,
+      "title": "Coverage adoption and canonical file synthesis",
+      "path": "04-knowledge-evidence-coverage/features/P4-F02-coverage-adoption-and-file-synthesis.md",
+      "dependencies": [
+        "P4-F01",
+        "P3-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P4-F03",
+      "phase": 4,
+      "title": "Knowledge reuse, revision and conflict handling",
+      "path": "04-knowledge-evidence-coverage/features/P4-F03-knowledge-reuse-and-corrections.md",
+      "dependencies": [
+        "P4-F01",
+        "P5-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P4-F04",
+      "phase": 4,
+      "title": "Evidence integrity and sensitive-data boundaries",
+      "path": "04-knowledge-evidence-coverage/features/P4-F04-evidence-and-sensitive-data.md",
+      "dependencies": [
+        "P1-F03",
+        "P4-F01"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P5-F01",
+      "phase": 5,
+      "title": "Candidate admission and continuous investigation",
+      "path": "05-investigation-falsification-findings/features/P5-F01-candidate-investigation.md",
+      "dependencies": [
+        "P1-F05",
+        "P3-F03",
+        "P4-F01",
+        "P6-F01"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P5-F02",
+      "phase": 5,
+      "title": "Independent falsification and current findings",
+      "path": "05-investigation-falsification-findings/features/P5-F02-falsification-and-current-findings.md",
+      "dependencies": [
+        "P5-F01",
+        "P4-F01",
+        "P5-F03",
+        "P7-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P5-F03",
+      "phase": 5,
+      "title": "Counterevidence, reassessment, and historical export",
+      "path": "05-investigation-falsification-findings/features/P5-F03-counterevidence-reassessment-and-export.md",
+      "dependencies": [
+        "P4-F03",
+        "P5-F01",
+        "P5-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P6-F01",
+      "phase": 6,
+      "title": "Work-conserving shared-pool scheduling",
+      "path": "06-worker-pool-runtime/features/P6-F01-shared-pool-scheduling.md",
+      "dependencies": [
+        "P3-F03",
+        "P5-F01",
+        "P6-F03",
+        "P7-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P6-F02",
+      "phase": 6,
+      "title": "Execution lifecycle, yield, and restart",
+      "path": "06-worker-pool-runtime/features/P6-F02-execution-lifecycle-and-yield.md",
+      "dependencies": [
+        "P1-F04",
+        "P3-F03",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P6-F03",
+      "phase": 6,
+      "title": "Resource budgets, backpressure, and finite discovery",
+      "path": "06-worker-pool-runtime/features/P6-F03-budgets-backpressure-and-limits.md",
+      "dependencies": [
+        "P6-F01",
+        "P6-F02",
+        "P1-F08"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P6-F04",
+      "phase": 6,
+      "title": "Completion, quiescence, and reconciliation",
+      "path": "06-worker-pool-runtime/features/P6-F04-completion-and-reconciliation.md",
+      "dependencies": [
+        "P4-F01",
+        "P5-F03",
+        "P6-F02",
+        "P6-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P7-F01",
+      "phase": 7,
+      "title": "Cross-feature contracts and persistence integration",
+      "path": "07-contracts-persistence-integration/features/P7-F01-contracts-and-persistence.md",
+      "dependencies": [
+        "P1-F03",
+        "P4-F01",
+        "P5-F03",
+        "P6-F04"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P7-F02",
+      "phase": 7,
+      "title": "Public SDK and controller integration",
+      "path": "07-contracts-persistence-integration/features/P7-F02-public-sdk-and-controller.md",
+      "dependencies": [
+        "P7-F01",
+        "P6-F01"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P7-F03",
+      "phase": 7,
+      "title": "Configuration, versioning, and compatibility activation",
+      "path": "07-contracts-persistence-integration/features/P7-F03-configuration-versioning-and-rollout.md",
+      "dependencies": [
+        "P7-F01",
+        "P7-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P8-F01",
+      "phase": 8,
+      "title": "Deterministic end-to-end and failure acceptance",
+      "path": "08-validation-delivery/features/P8-F01-deterministic-acceptance.md",
+      "dependencies": [
+        "P1-F02",
+        "P3-F03",
+        "P4-F02",
+        "P5-F02",
+        "P6-F04",
+        "P7-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P8-F02",
+      "phase": 8,
+      "title": "Quality, latency, cost, and regression measurement",
+      "path": "08-validation-delivery/features/P8-F02-quality-and-cost-evaluation.md",
+      "dependencies": [
+        "P8-F01",
+        "P7-F02"
+      ],
+      "requirements": 6,
+      "tests": 6
+    },
+    {
+      "id": "P8-F03",
+      "phase": 8,
+      "title": "Dependency-ordered delivery and release handoff",
+      "path": "08-validation-delivery/features/P8-F03-delivery-and-release.md",
+      "dependencies": [
+        "P8-F01",
+        "P8-F02",
+        "P7-F03"
+      ],
+      "requirements": 6,
+      "tests": 6
+    }
+  ]
+}

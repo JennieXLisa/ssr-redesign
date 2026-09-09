@@ -160,6 +160,7 @@ result = {'status': 'PASS' if not errors else 'FAIL', 'active_markdown_files': l
           'historical_files_verified': len(manifest), 'preserved_requirements': preserved_requirements,
           'preserved_acceptance_scenarios': preserved_scenarios,
           'schema_fixtures': schema_cases, 'errors': errors,
-          'application_tests_run': False, 'github_published': False}
+          'application_tests_run': False, 'publication_checked': False}
+(ROOT / 'validation-results.json').write_text(json.dumps(result, indent=2) + '\n')
 print(json.dumps(result, indent=2))
 sys.exit(1 if errors else 0)

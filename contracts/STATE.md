@@ -2,7 +2,7 @@
 
 Contract: collaborative-v1 · Design specification; append-only migrations are allocated from the implementation checkout, not from this document.
 
-**Implementation is blocked by [CONTRACT_HARDENING.md](../CONTRACT_HARDENING.md).** The yield ordering below has been corrected against harness `0989172`; new public states, prefix receipts, terminal DTOs and migration semantics are not made implementation-ready by this amendment.
+**Contract-hardening amendments are indexed in [CONTRACT_HARDENING.md](../CONTRACT_HARDENING.md).** STATE_MACHINE.md and MIGRATION_PLAN.md freeze transitions/cutover; PREFIX_RECEIPTS.md and INPUT_REVISIONS.md freeze producer/input proof; FILE_SYNTHESIS.md replaces unbounded model synthesis. Real harness integration and migration tests remain implementation gates, not results claimed by this specification.
 
 ## 1. Identities and authorities
 
@@ -12,7 +12,7 @@ Three checks stay separate: execution authority (attempt/lease/control generatio
 
 The existing orchestration/coordinator authority owns transitions. Add `WAITING_DEPENDENCY` only through the complete state-machine hardening/migration gate. A yield first records a durable prepared intent while the task remains RUNNING with its original lease. Only after the exact predecessor is terminal and its required runtime/transcript receipts have settled may one guarded transaction publish PENDING or WAITING_DEPENDENCY and clear that lease. Answers arriving during settlement record wake information but do not requeue the task. WAITING_DEPENDENCY → PENDING requires the same settlement and wait-generation checks. [YIELD_SETTLEMENT.md](YIELD_SETTLEMENT.md) defines the mandatory ordering, recovery rules and race tests; it supersedes the earlier early-requeue prescription. Terminal work never reopens because of an optional notice. Retry/failure counters are separate from normal continuation count; every actual execution still increments the attempt identity and consumes its actual resources.
 
-New task kinds: `FOCUSED_ANALYSIS` and `CONTEXT_REVIEW`. Existing SYMBOL_REVIEW, FILE_REVIEW, LINK_REVIEW, INVESTIGATION and FALSIFICATION retain their domains. New review mode has an ANALYZING activity state after indexing; legacy review states remain unchanged for legacy configurations. A review's activity state is not the candidate readiness predicate.
+New task kinds: `FOCUSED_ANALYSIS` and `CONTEXT_REVIEW`. Existing SYMBOL_REVIEW, FILE_REVIEW, LINK_REVIEW, INVESTIGATION and FALSIFICATION retain their domains. The sole executing workflow has ANALYZING after indexing. Historical reviews retain their old contract/state meanings but are read-only under CUTOVER.md. A review's activity state is not the candidate readiness predicate.
 
 ## 2. Minimum logical persistence additions
 
@@ -20,7 +20,7 @@ These are logical records with required unique/index constraints, not a requirem
 
 | Record | Essential fields / uniqueness | Owner |
 |---|---|---|
-| work_descriptors | task_id PK/FK, root_work_id, objective, input_revision, safe assumptions, descriptor_hash | task/work service |
+| work_descriptors | task_id PK/FK, root_work_id, objective, safe assumptions, descriptor_hash; current input head belongs to tasks | task/work service |
 | context_requests | request_id, caller_task_id, question_revision, question, subject_set_digest, assumptions_digest, requested_facets, equivalence_key, state, producer_task_id nullable | collaboration router |
 | request_consumers | request_id + consumer_task_id + required_revision unique, blocking bool, disposition | collaboration router |
 | analysis_artifacts | artifact_id, review/snapshot, kind, backing document/result ID, producer kind/ID, input digest, payload digest, acceptance state, current availability generation | existing result owner plus artifact registry |
@@ -46,7 +46,7 @@ Reuse existing document/evidence payload storage; `analysis_artifacts` is an acc
 
 Model-authored answers and observations are proposals. Validate shape, source-free prose, IDs, permissions, source anchors and claimed source-read coverage before accepting. This validates origin and contract, not the truth of a security interpretation.
 
-A contextual answer may be accepted during a larger attempt. Its own producer exchange has an immutable accepted response and relevant source-delivery receipts. When full transcripts are required, a sealed per-turn contribution receipt is needed; the entire unfinished attempt need not be sealed. Implement that explicit turn receipt before enabling mid-review publication. Never synthesize a completed agent or silently waive a transcript gap.
+A contextual answer may be accepted during a larger attempt. Its own producer exchange has an immutable accepted response and relevant source-delivery receipts. When full transcripts are required, a sealed per-turn contribution receipt is needed; the entire unfinished attempt need not be sealed. Implement runtime-prefix-v1/transcript-prefix-v1 and the exact event/input/capture validation in PREFIX_RECEIPTS.md before enabling mid-review publication. Never synthesize a completed agent or silently waive a transcript gap.
 
 Result payload and semantic acceptance commit in ssr.db. If the required transcript receipt is not yet available, state is ACCEPTANCE_PENDING. Transcript storage is a separate database: commit and verify its turn seal, then link a source-free receipt in ssr.db. A short ssr.db transaction rechecks all prerequisites and changes the artifact to AVAILABLE, increments the review counter, and inserts exactly one `BECAME_AVAILABLE` event using a deterministic transition key. A retry returns the same transition. No inference or transcript-byte write is inside that ssr.db transaction.
 
@@ -103,3 +103,11 @@ A transcript contribution seal can authenticate an immutable completed prefix/ex
 ## 9. Checkpoint search queries and sensitive text
 
 A source search query can itself contain source or a discovered secret. Do not persist arbitrary query strings in ordinary checkpoint/operation/audit rows just because they are tool arguments. Saved search state always includes its authenticated cursor, query digest, mode, flags and manifest selection; query text is optional and may be saved only if the existing persistent-prose/content guard accepts it as source-free and credential-free. Otherwise store `query_omitted_reason: SOURCE_SENSITIVE` and tell the resumed analyst that exact query text must be supplied again to continue; it may instead start a fresh suitable query. Do not pretend the cursor digest can reconstruct the text or create a new sensitive store solely for pagination. This explicit limitation does not affect source-reading cursors, which need no query text.
+
+## 10. Exact hardening owners
+
+Use [STATE_MACHINE.md](STATE_MACHINE.md) and machine-readable `schemas/state-transitions.json` for every task, agent, review and investigation/falsification transition; all unlisted transitions are forbidden. [MIGRATION_PLAN.md](MIGRATION_PLAN.md) covers DDL, views, triggers, fingerprints, two-store activation and guarded SQL. The new runtime executes only collaborative-v1 under [CUTOVER.md](CUTOVER.md).
+
+[INPUT_REVISIONS.md](INPUT_REVISIONS.md) and [PREFIX_RECEIPTS.md](PREFIX_RECEIPTS.md) define exact immutable revision/request/prefix bodies, hashing and replay. Prefix proof never substitutes for mandatory terminal predecessor settlement on yield. [FILE_SYNTHESIS.md](FILE_SYNTHESIS.md) defines manifest/journal/CAS/final-seal storage; the model cannot be required to retransmit the complete canonical graph. [RESOURCE_BOUNDS.md](RESOURCE_BOUNDS.md) freezes transactional root/review/consumer/pending counters and finite progress. These are shared contracts, not separate state authorities.
+
+The new task row owns `input_revision_id`, `input_generation` and `last_settlement_id` for guarded admission. work_descriptors does not maintain a competing writable revision head. Input revisions are immutable; the task head and descriptor projection change in one task-owner transaction.

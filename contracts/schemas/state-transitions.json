@@ -1,0 +1,350 @@
+{
+  "contract": "state-v1",
+  "task_states": [
+    "PENDING",
+    "LEASED",
+    "RUNNING",
+    "WAITING_DEPENDENCY",
+    "COMPLETED",
+    "FAILED",
+    "CANCELLED",
+    "SUPERSEDED",
+    "SKIPPED"
+  ],
+  "task_kinds": [
+    "SYMBOL_REVIEW",
+    "FILE_REVIEW",
+    "LINK_REVIEW",
+    "FOCUSED_ANALYSIS",
+    "CONTEXT_REVIEW",
+    "INVESTIGATION",
+    "FALSIFICATION"
+  ],
+  "task_transitions": [
+    {
+      "from": "PENDING",
+      "to": "LEASED",
+      "guards": [
+        "ADMIT"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "COMPLETED",
+      "guards": [
+        "ADOPT_COMPLETE_UNIT"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "CANCELLED",
+      "guards": [
+        "CANCEL_UNCLAIMED"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "SUPERSEDED",
+      "guards": [
+        "RETIRE_UNCLAIMED"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "SKIPPED",
+      "guards": [
+        "DECLARE_NONREVIEWABLE"
+      ]
+    },
+    {
+      "from": "LEASED",
+      "to": "RUNNING",
+      "guards": [
+        "START"
+      ]
+    },
+    {
+      "from": "LEASED",
+      "to": "PENDING",
+      "guards": [
+        "RELEASE_UNDISPATCHED",
+        "RETRY_SETTLED"
+      ]
+    },
+    {
+      "from": "LEASED",
+      "to": "FAILED",
+      "guards": [
+        "TERMINAL_FAILED_SAFE"
+      ]
+    },
+    {
+      "from": "LEASED",
+      "to": "CANCELLED",
+      "guards": [
+        "TERMINAL_CANCELLED_SAFE"
+      ]
+    },
+    {
+      "from": "LEASED",
+      "to": "SUPERSEDED",
+      "guards": [
+        "TERMINAL_SUPERSEDED_SAFE"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "RUNNING",
+      "guards": [
+        "PREPARE_YIELD",
+        "SAVE_PROGRESS"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "WAITING_DEPENDENCY",
+      "guards": [
+        "PUBLISH_SETTLED_WAIT"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "PENDING",
+      "guards": [
+        "PUBLISH_SETTLED_CONTINUATION",
+        "RETRY_SETTLED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "COMPLETED",
+      "guards": [
+        "COMPLETE_SETTLED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "FAILED",
+      "guards": [
+        "FAIL_SETTLED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "CANCELLED",
+      "guards": [
+        "CANCEL_SETTLED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "SUPERSEDED",
+      "guards": [
+        "RETIRE_SETTLED"
+      ]
+    },
+    {
+      "from": "WAITING_DEPENDENCY",
+      "to": "PENDING",
+      "guards": [
+        "WAKE"
+      ]
+    },
+    {
+      "from": "WAITING_DEPENDENCY",
+      "to": "FAILED",
+      "guards": [
+        "STOP_NO_PROGRESS",
+        "DEPENDENCY_UNRECOVERABLE"
+      ]
+    },
+    {
+      "from": "WAITING_DEPENDENCY",
+      "to": "CANCELLED",
+      "guards": [
+        "CANCEL_WAIT"
+      ]
+    },
+    {
+      "from": "WAITING_DEPENDENCY",
+      "to": "SUPERSEDED",
+      "guards": [
+        "RETIRE_WAIT"
+      ]
+    },
+    {
+      "from": "FAILED",
+      "to": "PENDING",
+      "guards": [
+        "EXPLICIT_RETRY"
+      ]
+    },
+    {
+      "from": "FAILED",
+      "to": "SUPERSEDED",
+      "guards": [
+        "EXPLICIT_RETIRE"
+      ]
+    },
+    {
+      "from": "CANCELLED",
+      "to": "SUPERSEDED",
+      "guards": [
+        "EXPLICIT_RETIRE"
+      ]
+    }
+  ],
+  "review_states": [
+    "CREATED",
+    "INDEXING",
+    "ANALYZING",
+    "COMPLETE",
+    "COMPLETE_WITH_LIMITATIONS",
+    "FAILED",
+    "CANCELLED"
+  ],
+  "review_transitions": {
+    "CREATED": [
+      "INDEXING",
+      "CANCELLED"
+    ],
+    "INDEXING": [
+      "ANALYZING",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "ANALYZING": [
+      "COMPLETE",
+      "COMPLETE_WITH_LIMITATIONS",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "COMPLETE": [],
+    "COMPLETE_WITH_LIMITATIONS": [],
+    "FAILED": [],
+    "CANCELLED": []
+  },
+  "investigation_outcomes": [
+    {
+      "outcome": "SUPPORT_FOR_FALSIFICATION",
+      "tool": "submit_investigation",
+      "artifact": "INVESTIGATION_ARGUMENT",
+      "candidate": "READY_FOR_FALSIFICATION",
+      "task_after_settlement": "COMPLETED",
+      "successor": "FALSIFICATION",
+      "completion": "REQUIRED_SUCCESSOR"
+    },
+    {
+      "outcome": "DISMISS_WITH_EVIDENCE",
+      "tool": "submit_investigation",
+      "artifact": "INVESTIGATION_DISPOSITION",
+      "candidate": "DISMISSED",
+      "task_after_settlement": "COMPLETED",
+      "successor": "NONE",
+      "completion": "DISPOSED"
+    },
+    {
+      "outcome": "INCONCLUSIVE",
+      "tool": "submit_investigation",
+      "artifact": "INVESTIGATION_DISPOSITION",
+      "candidate": "INCONCLUSIVE",
+      "task_after_settlement": "COMPLETED",
+      "successor": "NONE",
+      "completion": "LIMITATION"
+    },
+    {
+      "outcome": "NEED_CONTEXT",
+      "tool": "record_investigation_progress",
+      "artifact": "INVESTIGATION_PROGRESS",
+      "candidate": "NEEDS_CONTEXT",
+      "task_after_settlement": "WAITING_DEPENDENCY_OR_PENDING",
+      "successor": "CONTEXT_PRODUCERS",
+      "completion": "REQUIRED_OPEN"
+    }
+  ],
+  "runtime_mode": "collaborative-v1",
+  "historical_mode": "READ_ONLY",
+  "agent_states": [
+    "CREATED",
+    "RUNNING",
+    "WAITING_FOR_TOOL",
+    "COMPLETED",
+    "INVALID_OUTPUT",
+    "TIMED_OUT",
+    "REFUSED",
+    "FAILED",
+    "CANCELLED"
+  ],
+  "agent_transitions": {
+    "CREATED": [
+      "RUNNING",
+      "TIMED_OUT",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "RUNNING": [
+      "WAITING_FOR_TOOL",
+      "COMPLETED",
+      "INVALID_OUTPUT",
+      "TIMED_OUT",
+      "REFUSED",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "WAITING_FOR_TOOL": [
+      "RUNNING",
+      "COMPLETED",
+      "INVALID_OUTPUT",
+      "TIMED_OUT",
+      "REFUSED",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "COMPLETED": [],
+    "INVALID_OUTPUT": [],
+    "TIMED_OUT": [],
+    "REFUSED": [],
+    "FAILED": [],
+    "CANCELLED": []
+  },
+  "yield_intent_transitions": {
+    "PREPARED": [
+      "SETTLING",
+      "BLOCKED"
+    ],
+    "SETTLING": [
+      "PUBLISHED",
+      "CANCELLED",
+      "BLOCKED"
+    ],
+    "BLOCKED": [
+      "SETTLING",
+      "CANCELLED"
+    ],
+    "PUBLISHED": [],
+    "CANCELLED": []
+  },
+  "falsification_outcomes": [
+    {
+      "outcome": "UPHELD",
+      "candidate_after_host_gate": "CONFIRMED",
+      "task_after_settlement": "COMPLETED",
+      "successor": "NONE",
+      "completion": "DISPOSED"
+    },
+    {
+      "outcome": "REFUTED",
+      "candidate_after_host_gate": "REFUTED",
+      "task_after_settlement": "COMPLETED",
+      "successor": "NONE",
+      "completion": "DISPOSED"
+    },
+    {
+      "outcome": "INCONCLUSIVE",
+      "candidate_after_host_gate": "INCONCLUSIVE",
+      "task_after_settlement": "COMPLETED",
+      "successor": "NONE",
+      "completion": "LIMITATION"
+    }
+  ]
+}

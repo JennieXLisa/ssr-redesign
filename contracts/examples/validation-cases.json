@@ -306,19 +306,31 @@
     "value": {
       "tool": "publish_context_answer",
       "arguments": {
+        "contract": "context-answer-v1",
+        "input_token": "i1.fixture",
         "request_id": "Q1",
         "request_revision": 1,
-        "outcome": "INCONCLUSIVE",
-        "analysis": "One source-visible writer is known; import paths remain unresolved.",
-        "unresolved": [
-          "Import write path"
-        ],
         "scope_checked": [
           {
             "kind": "symbol",
             "id": "S42"
           }
-        ]
+        ],
+        "facets": [
+          {
+            "facet_id": "imports",
+            "status": "UNRESOLVED",
+            "analysis": "Additional writer scope remains unknown.",
+            "references": []
+          }
+        ],
+        "answer": "Known writer reviewed; remaining import paths are unresolved.",
+        "assumptions": [],
+        "counterevidence": [],
+        "unknowns": [
+          "Import write path"
+        ],
+        "outcome": "INCONCLUSIVE"
       }
     }
   },

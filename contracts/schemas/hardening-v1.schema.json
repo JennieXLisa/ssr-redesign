@@ -1,1828 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:ssr:collaborative-v1:tool-inputs",
-  "title": "SSR collaborative tool structural inputs",
-  "description": "Exact collaborative-v1 tool inputs. Generated hardening roles/proofs use local closed definitions; full host byte, ownership and semantic validation still applies.",
-  "oneOf": [
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "source_read"
-        },
-        "arguments": {
-          "$ref": "#/$defs/source_read"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "symbol_get"
-        },
-        "arguments": {
-          "$ref": "#/$defs/symbol_get"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "source_stat"
-        },
-        "arguments": {
-          "$ref": "#/$defs/source_stat"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "symbol_list"
-        },
-        "arguments": {
-          "$ref": "#/$defs/symbol_list"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "file_list"
-        },
-        "arguments": {
-          "$ref": "#/$defs/file_list"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "relationship_query"
-        },
-        "arguments": {
-          "$ref": "#/$defs/relationship_query"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "source_search"
-        },
-        "arguments": {
-          "$ref": "#/$defs/source_search"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "document_query"
-        },
-        "arguments": {
-          "$ref": "#/$defs/document_query"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "analysis_get"
-        },
-        "arguments": {
-          "$ref": "#/$defs/analysis_get"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "analysis_interest_release"
-        },
-        "arguments": {
-          "$ref": "#/$defs/analysis_interest_release"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "report_lead"
-        },
-        "arguments": {
-          "$ref": "#/$defs/report_lead"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "request_context_review"
-        },
-        "arguments": {
-          "$ref": "#/$defs/request_context_review"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "publish_context_answer"
-        },
-        "arguments": {
-          "$ref": "#/$defs/publish_context_answer"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "checkpoint_state"
-        },
-        "arguments": {
-          "$ref": "#/$defs/checkpoint_state"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "yield_work"
-        },
-        "arguments": {
-          "$ref": "#/$defs/yield_work"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "read_batch"
-        },
-        "arguments": {
-          "$ref": "#/$defs/read_batch"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "submit_focused_analysis"
-        },
-        "arguments": {
-          "$ref": "#/$defs/submit_focused_analysis"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false,
-      "x-python-field-order": [
-        "tool",
-        "arguments"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "submit_context_review"
-        },
-        "arguments": {
-          "$ref": "#/$defs/submit_context_review"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false,
-      "x-python-field-order": [
-        "tool",
-        "arguments"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "record_investigation_progress"
-        },
-        "arguments": {
-          "$ref": "#/$defs/record_investigation_progress"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false,
-      "x-python-field-order": [
-        "tool",
-        "arguments"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "stage_file_synthesis"
-        },
-        "arguments": {
-          "$ref": "#/$defs/stage_file_synthesis"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false,
-      "x-python-field-order": [
-        "tool",
-        "arguments"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "tool": {
-          "const": "submit_file_synthesis"
-        },
-        "arguments": {
-          "$ref": "#/$defs/submit_file_synthesis"
-        }
-      },
-      "required": [
-        "tool",
-        "arguments"
-      ],
-      "additionalProperties": false,
-      "x-python-field-order": [
-        "tool",
-        "arguments"
-      ]
-    }
-  ],
+  "$id": "urn:ssr:collaborative:hardening:1",
+  "title": "Collaborative-v1 hardening contracts",
   "$defs": {
-    "source_read": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "symbol_id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            }
-          },
-          "required": [
-            "symbol_id"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "file_id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            },
-            "start_line": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "end_line": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          "required": [
-            "file_id",
-            "start_line",
-            "end_line"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "cursor": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 16384
-            }
-          },
-          "required": [
-            "cursor"
-          ],
-          "additionalProperties": false
-        }
-      ]
-    },
-    "symbol_get": {
-      "type": "object",
-      "properties": {
-        "symbol_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        }
-      },
-      "required": [
-        "symbol_id"
-      ],
-      "additionalProperties": false
-    },
-    "source_stat": {
-      "type": "object",
-      "properties": {
-        "file_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        }
-      },
-      "required": [
-        "file_id"
-      ],
-      "additionalProperties": false
-    },
-    "symbol_list": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "file_id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            },
-            "path": {
-              "type": "string",
-              "maxLength": 4096
-            },
-            "local_name": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 10000
-            },
-            "qualified_name": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 10000
-            },
-            "parent_symbol_id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            },
-            "kinds": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          "required": [],
-          "additionalProperties": false,
-          "allOf": [
-            {
-              "not": {
-                "required": [
-                  "file_id",
-                  "path"
-                ]
-              }
-            },
-            {
-              "not": {
-                "required": [
-                  "local_name",
-                  "qualified_name"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "cursor": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 16384
-            }
-          },
-          "required": [
-            "cursor"
-          ],
-          "additionalProperties": false
-        }
-      ]
-    },
-    "file_list": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "mode": {
-              "const": "BROWSE"
-            },
-            "directory": {
-              "type": "string",
-              "maxLength": 4096
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          "required": [
-            "mode",
-            "directory"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "mode": {
-              "const": "FIND"
-            },
-            "filename": {
-              "type": "string",
-              "maxLength": 4096
-            },
-            "path": {
-              "type": "string",
-              "maxLength": 4096
-            },
-            "directory": {
-              "type": "string",
-              "maxLength": 4096
-            },
-            "recursive": {
-              "type": "boolean"
-            },
-            "languages": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "classifications": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          "required": [
-            "mode"
-          ],
-          "additionalProperties": false,
-          "not": {
-            "required": [
-              "filename",
-              "path"
-            ]
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "cursor": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 16384
-            }
-          },
-          "required": [
-            "cursor"
-          ],
-          "additionalProperties": false
-        }
-      ]
-    },
-    "relationship_query": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "symbol_id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            },
-            "kinds": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 1,
-              "maxItems": 32
-            },
-            "direction": {
-              "enum": [
-                "IN",
-                "OUT",
-                "BOTH"
-              ]
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          "required": [
-            "symbol_id",
-            "kinds",
-            "direction"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "cursor": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 16384
-            }
-          },
-          "required": [
-            "cursor"
-          ],
-          "additionalProperties": false
-        }
-      ]
-    },
-    "source_search": {
-      "type": "object",
-      "properties": {
-        "query": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 4096
-        },
-        "mode": {
-          "enum": [
-            "LITERAL",
-            "REGEX"
-          ],
-          "default": "LITERAL"
-        },
-        "flags": {
-          "type": "object",
-          "properties": {
-            "case_sensitive": {
-              "type": "boolean",
-              "default": true
-            },
-            "multiline": {
-              "type": "boolean",
-              "default": false
-            },
-            "dotall": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          "required": [],
-          "additionalProperties": false
-        },
-        "selection": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "kind": {
-                  "const": "FILES"
-                },
-                "file_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "minItems": 1,
-                  "maxItems": 64,
-                  "uniqueItems": true
-                }
-              },
-              "required": [
-                "kind",
-                "file_ids"
-              ],
-              "additionalProperties": false
-            },
-            {
-              "type": "object",
-              "properties": {
-                "kind": {
-                  "const": "DIRECTORY"
-                },
-                "directory": {
-                  "type": "string",
-                  "maxLength": 4096
-                },
-                "recursive": {
-                  "type": "boolean"
-                },
-                "languages": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "minItems": 0,
-                  "maxItems": 64
-                },
-                "classifications": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "minItems": 0,
-                  "maxItems": 64
-                }
-              },
-              "required": [
-                "kind",
-                "directory",
-                "recursive"
-              ],
-              "additionalProperties": false
-            },
-            {
-              "type": "object",
-              "properties": {
-                "kind": {
-                  "const": "SNAPSHOT"
-                },
-                "languages": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "minItems": 0,
-                  "maxItems": 64
-                },
-                "classifications": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "minItems": 0,
-                  "maxItems": 64
-                }
-              },
-              "required": [
-                "kind"
-              ],
-              "additionalProperties": false
-            }
-          ]
-        },
-        "cursor": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 16384
-        },
-        "limit": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100
-        }
-      },
-      "required": [
-        "query",
-        "selection"
-      ],
-      "additionalProperties": false,
-      "allOf": [
-        {
-          "if": {
-            "anyOf": [
-              {
-                "properties": {
-                  "mode": {
-                    "const": "LITERAL"
-                  }
-                },
-                "required": [
-                  "mode"
-                ]
-              },
-              {
-                "not": {
-                  "required": [
-                    "mode"
-                  ]
-                }
-              }
-            ]
-          },
-          "then": {
-            "properties": {
-              "flags": {
-                "properties": {
-                  "multiline": {
-                    "const": false
-                  },
-                  "dotall": {
-                    "const": false
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "document_query": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "subject": {
-              "type": "object",
-              "properties": {
-                "kind": {
-                  "enum": [
-                    "symbol",
-                    "file",
-                    "candidate",
-                    "artifact"
-                  ]
-                },
-                "id": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 200
-                }
-              },
-              "required": [
-                "kind",
-                "id"
-              ],
-              "additionalProperties": false
-            },
-            "result_kinds": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "include_superseded": {
-              "type": "boolean"
-            },
-            "limit": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          "required": [
-            "subject"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "properties": {
-            "cursor": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 16384
-            }
-          },
-          "required": [
-            "cursor"
-          ],
-          "additionalProperties": false
-        }
-      ]
-    },
-    "analysis_get": {
-      "type": "object",
-      "properties": {
-        "artifact_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "section": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "cursor": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 16384
-        }
-      },
-      "required": [
-        "artifact_id"
-      ],
-      "additionalProperties": false
-    },
-    "analysis_interest_release": {
-      "type": "object",
-      "properties": {
-        "subject": {
-          "type": "object",
-          "properties": {
-            "kind": {
-              "enum": [
-                "symbol",
-                "file",
-                "candidate",
-                "artifact"
-              ]
-            },
-            "id": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            }
-          },
-          "required": [
-            "kind",
-            "id"
-          ],
-          "additionalProperties": false
-        },
-        "filters": {
-          "type": "object",
-          "properties": {
-            "result_kinds": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "include_superseded": {
-              "type": "boolean"
-            }
-          },
-          "required": [],
-          "additionalProperties": false
-        }
-      },
-      "required": [
-        "subject",
-        "filters"
-      ],
-      "additionalProperties": false
-    },
-    "report_lead": {
-      "type": "object",
-      "properties": {
-        "hypothesis": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 10000
-        },
-        "observations": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "minItems": 1,
-          "maxItems": 64
-        },
-        "subject_refs": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "enum": [
-                  "symbol",
-                  "file",
-                  "candidate",
-                  "artifact"
-                ]
-              },
-              "id": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              }
-            },
-            "required": [
-              "kind",
-              "id"
-            ],
-            "additionalProperties": false
-          },
-          "minItems": 1,
-          "maxItems": 64
-        },
-        "evidence_refs": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "minItems": 0,
-          "maxItems": 64
-        },
-        "source_refs": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 16384
-          },
-          "minItems": 0,
-          "maxItems": 64
-        },
-        "unknowns": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "minItems": 0,
-          "maxItems": 64
-        },
-        "requested_check": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 10000
-        },
-        "category": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        }
-      },
-      "required": [
-        "hypothesis",
-        "observations",
-        "subject_refs",
-        "unknowns",
-        "requested_check"
-      ],
-      "additionalProperties": false,
-      "anyOf": [
-        {
-          "properties": {
-            "evidence_refs": {
-              "minItems": 1
-            }
-          },
-          "required": [
-            "evidence_refs"
-          ]
-        },
-        {
-          "properties": {
-            "source_refs": {
-              "minItems": 1
-            }
-          },
-          "required": [
-            "source_refs"
-          ]
-        }
-      ]
-    },
-    "request_context_review": {
-      "type": "object",
-      "properties": {
-        "question": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 10000
-        },
-        "subjects": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "kind": {
-                "enum": [
-                  "symbol",
-                  "file",
-                  "candidate",
-                  "artifact"
-                ]
-              },
-              "id": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              }
-            },
-            "required": [
-              "kind",
-              "id"
-            ],
-            "additionalProperties": false
-          },
-          "minItems": 1,
-          "maxItems": 64
-        },
-        "assumptions": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "minItems": 0,
-          "maxItems": 64
-        },
-        "evidence_refs": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "minItems": 0,
-          "maxItems": 64
-        },
-        "source_refs": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 16384
-          },
-          "minItems": 0,
-          "maxItems": 64
-        },
-        "requested_facets": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "minItems": 1,
-          "maxItems": 32
-        },
-        "blocking": {
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "question",
-        "subjects",
-        "assumptions",
-        "requested_facets",
-        "blocking"
-      ],
-      "additionalProperties": false
-    },
-    "publish_context_answer": {
-      "$ref": "#/$defs/h_ContextAnswer"
-    },
-    "checkpoint_state": {
-      "type": "object",
-      "properties": {
-        "expected_sequence": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "state": {
-          "type": "object",
-          "properties": {
-            "facts": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 10000
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "hypotheses": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 10000
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "unknowns": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 10000
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "next_action": {
-              "type": "object",
-              "properties": {
-                "kind": {
-                  "enum": [
-                    "READ",
-                    "QUERY",
-                    "REQUEST_CONTEXT",
-                    "INVESTIGATE",
-                    "SUBMIT",
-                    "WAIT"
-                  ]
-                },
-                "objective": {
-                  "type": "string",
-                  "minLength": 1,
-                  "maxLength": 10000
-                }
-              },
-              "required": [
-                "kind",
-                "objective"
-              ],
-              "additionalProperties": false
-            },
-            "subject_refs": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "kind": {
-                    "enum": [
-                      "symbol",
-                      "file",
-                      "candidate",
-                      "artifact"
-                    ]
-                  },
-                  "id": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  }
-                },
-                "required": [
-                  "kind",
-                  "id"
-                ],
-                "additionalProperties": false
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "artifact_refs": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "source_cursors": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 16384
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "search_cursors": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "query": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 10000
-                  },
-                  "query_hash": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "query_omitted_reason": {
-                    "const": "SOURCE_SENSITIVE"
-                  },
-                  "selection": {
-                    "oneOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "kind": {
-                            "const": "FILES"
-                          },
-                          "file_ids": {
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 200
-                            },
-                            "minItems": 1,
-                            "maxItems": 64,
-                            "uniqueItems": true
-                          }
-                        },
-                        "required": [
-                          "kind",
-                          "file_ids"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "kind": {
-                            "const": "DIRECTORY"
-                          },
-                          "directory": {
-                            "type": "string",
-                            "maxLength": 4096
-                          },
-                          "recursive": {
-                            "type": "boolean"
-                          },
-                          "languages": {
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 200
-                            },
-                            "minItems": 0,
-                            "maxItems": 64
-                          },
-                          "classifications": {
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 200
-                            },
-                            "minItems": 0,
-                            "maxItems": 64
-                          }
-                        },
-                        "required": [
-                          "kind",
-                          "directory",
-                          "recursive"
-                        ],
-                        "additionalProperties": false
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "kind": {
-                            "const": "SNAPSHOT"
-                          },
-                          "languages": {
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 200
-                            },
-                            "minItems": 0,
-                            "maxItems": 64
-                          },
-                          "classifications": {
-                            "type": "array",
-                            "items": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 200
-                            },
-                            "minItems": 0,
-                            "maxItems": 64
-                          }
-                        },
-                        "required": [
-                          "kind"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "mode": {
-                    "enum": [
-                      "LITERAL",
-                      "REGEX"
-                    ]
-                  },
-                  "flags": {
-                    "type": "object",
-                    "properties": {
-                      "case_sensitive": {
-                        "type": "boolean",
-                        "default": true
-                      },
-                      "multiline": {
-                        "type": "boolean",
-                        "default": false
-                      },
-                      "dotall": {
-                        "type": "boolean",
-                        "default": false
-                      }
-                    },
-                    "required": [],
-                    "additionalProperties": false
-                  },
-                  "cursor": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 16384
-                  }
-                },
-                "required": [
-                  "query_hash",
-                  "selection",
-                  "mode",
-                  "flags",
-                  "cursor"
-                ],
-                "additionalProperties": false
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "answer_refs": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "source_refs": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 16384
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "evidence_refs": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            },
-            "request_refs": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              },
-              "minItems": 0,
-              "maxItems": 64
-            }
-          },
-          "required": [
-            "facts",
-            "hypotheses",
-            "unknowns",
-            "next_action"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "required": [
-        "expected_sequence",
-        "state"
-      ],
-      "additionalProperties": false
-    },
-    "yield_work": {
-      "type": "object",
-      "properties": {
-        "checkpoint_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 200
-        },
-        "reason": {
-          "enum": [
-            "WAITING_FOR_CONTEXT",
-            "CONTEXT_PRESSURE",
-            "OTHER_WORK_READY"
-          ]
-        },
-        "request_ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "minItems": 0,
-          "maxItems": 8
-        }
-      },
-      "required": [
-        "checkpoint_id",
-        "reason",
-        "request_ids"
-      ],
-      "additionalProperties": false
-    },
-    "read_batch": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "source_read"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/source_read"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "source_stat"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/source_stat"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "symbol_get"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/symbol_get"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "symbol_list"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/symbol_list"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "file_list"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/file_list"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "relationship_query"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/relationship_query"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "source_search"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/source_search"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "document_query"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/document_query"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 200
-                  },
-                  "tool": {
-                    "const": "analysis_get"
-                  },
-                  "arguments": {
-                    "$ref": "#/$defs/analysis_get"
-                  }
-                },
-                "required": [
-                  "key",
-                  "tool",
-                  "arguments"
-                ],
-                "additionalProperties": false
-              }
-            ]
-          },
-          "minItems": 1,
-          "maxItems": 8
-        }
-      },
-      "required": [
-        "items"
-      ],
-      "additionalProperties": false
-    },
-    "submit_focused_analysis": {
-      "$ref": "#/$defs/h_FocusedResult"
-    },
-    "submit_context_review": {
-      "$ref": "#/$defs/h_ContextResult"
-    },
-    "record_investigation_progress": {
-      "$ref": "#/$defs/h_InvestigationProgress"
-    },
-    "stage_file_synthesis": {
-      "$ref": "#/$defs/h_SynthesisStage"
-    },
-    "submit_file_synthesis": {
-      "$ref": "#/$defs/h_SynthesisSeal"
-    },
-    "h_Subject": {
+    "Subject": {
       "type": "object",
       "properties": {
         "kind": {
@@ -1852,7 +33,7 @@
         "id"
       ]
     },
-    "h_Reference": {
+    "Reference": {
       "type": "object",
       "properties": {
         "kind": {
@@ -1880,7 +61,7 @@
         "id"
       ]
     },
-    "h_Assertion": {
+    "Assertion": {
       "type": "object",
       "properties": {
         "claim": {
@@ -1891,7 +72,7 @@
         "references": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Reference"
+            "$ref": "#/$defs/Reference"
           },
           "minItems": 1,
           "maxItems": 32
@@ -1907,7 +88,7 @@
         "references"
       ]
     },
-    "h_Facet": {
+    "Facet": {
       "type": "object",
       "properties": {
         "facet_id": {
@@ -1933,7 +114,7 @@
         "references": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Reference"
+            "$ref": "#/$defs/Reference"
           },
           "minItems": 0,
           "maxItems": 32
@@ -1953,7 +134,7 @@
         "references"
       ]
     },
-    "h_IssueDetails": {
+    "IssueDetails": {
       "type": "object",
       "properties": {
         "expected_type": {
@@ -2045,7 +226,7 @@
         "reference_kind"
       ]
     },
-    "h_Issue": {
+    "Issue": {
       "type": "object",
       "properties": {
         "code": {
@@ -2104,7 +285,7 @@
           ]
         },
         "details": {
-          "$ref": "#/$defs/h_IssueDetails"
+          "$ref": "#/$defs/IssueDetails"
         }
       },
       "required": [
@@ -2125,7 +306,7 @@
         "details"
       ]
     },
-    "h_Error": {
+    "Error": {
       "type": "object",
       "properties": {
         "contract": {
@@ -2167,7 +348,7 @@
         "issues": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Issue"
+            "$ref": "#/$defs/Issue"
           },
           "minItems": 0,
           "maxItems": 16
@@ -2207,7 +388,7 @@
         "commit_state"
       ]
     },
-    "h_AttemptIdentity": {
+    "AttemptIdentity": {
       "type": "object",
       "properties": {
         "review_run_id": {
@@ -2263,7 +444,7 @@
         "control_generation"
       ]
     },
-    "h_InputRevision": {
+    "InputRevision": {
       "type": "object",
       "properties": {
         "contract": {
@@ -2380,7 +561,7 @@
         "required_delta_manifest_hash"
       ]
     },
-    "h_InputTokenPayload": {
+    "InputTokenPayload": {
       "type": "object",
       "properties": {
         "contract": {
@@ -2393,7 +574,7 @@
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
         },
         "identity": {
-          "$ref": "#/$defs/h_AttemptIdentity"
+          "$ref": "#/$defs/AttemptIdentity"
         },
         "revision_id": {
           "type": "string",
@@ -2428,7 +609,7 @@
         "required_delta_manifest_hash"
       ]
     },
-    "h_OriginCall": {
+    "OriginCall": {
       "type": "object",
       "properties": {
         "call_id": {
@@ -2467,7 +648,7 @@
         "arguments_hash"
       ]
     },
-    "h_TranscriptPrefix": {
+    "TranscriptPrefix": {
       "type": "object",
       "properties": {
         "contract": {
@@ -2488,7 +669,7 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "identity": {
-          "$ref": "#/$defs/h_AttemptIdentity"
+          "$ref": "#/$defs/AttemptIdentity"
         },
         "request_id": {
           "type": "string",
@@ -2575,7 +756,7 @@
         "parent_prefix_hash"
       ]
     },
-    "h_CaptureProof": {
+    "CaptureProof": {
       "type": "object",
       "properties": {
         "mode": {
@@ -2633,14 +814,14 @@
         "prefix_hash"
       ]
     },
-    "h_RuntimePrefix": {
+    "RuntimePrefix": {
       "type": "object",
       "properties": {
         "contract": {
           "const": "runtime-prefix-v1"
         },
         "identity": {
-          "$ref": "#/$defs/h_AttemptIdentity"
+          "$ref": "#/$defs/AttemptIdentity"
         },
         "execution_contract_hash": {
           "type": "string",
@@ -2697,13 +878,13 @@
         "origin_calls": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_OriginCall"
+            "$ref": "#/$defs/OriginCall"
           },
           "minItems": 1,
           "maxItems": 256
         },
         "transcript": {
-          "$ref": "#/$defs/h_CaptureProof"
+          "$ref": "#/$defs/CaptureProof"
         }
       },
       "required": [
@@ -2740,14 +921,14 @@
         "transcript"
       ]
     },
-    "h_RequestBinding": {
+    "RequestBinding": {
       "type": "object",
       "properties": {
         "contract": {
           "const": "request-binding-v1"
         },
         "identity": {
-          "$ref": "#/$defs/h_AttemptIdentity"
+          "$ref": "#/$defs/AttemptIdentity"
         },
         "request_id": {
           "type": "string",
@@ -2843,7 +1024,7 @@
         "response_hash"
       ]
     },
-    "h_RequestEvent": {
+    "RequestEvent": {
       "type": "object",
       "properties": {
         "contract": {
@@ -2922,7 +1103,7 @@
         "counter_digest"
       ]
     },
-    "h_ResponseEvent": {
+    "ResponseEvent": {
       "type": "object",
       "properties": {
         "contract": {
@@ -2971,7 +1152,7 @@
         "origin_calls": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_OriginCall"
+            "$ref": "#/$defs/OriginCall"
           },
           "minItems": 0,
           "maxItems": 256
@@ -3031,7 +1212,7 @@
         "output_tokens"
       ]
     },
-    "h_ToolEvent": {
+    "ToolEvent": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3130,7 +1311,7 @@
         "delivery_manifest_hash"
       ]
     },
-    "h_TerminalEvent": {
+    "TerminalEvent": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3226,7 +1407,7 @@
         "settlement_manifest_hash"
       ]
     },
-    "h_FocusedResult": {
+    "FocusedResult": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3246,7 +1427,7 @@
         "checked_subjects": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Subject"
+            "$ref": "#/$defs/Subject"
           },
           "minItems": 1,
           "maxItems": 64
@@ -3254,7 +1435,7 @@
         "observations": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Assertion"
+            "$ref": "#/$defs/Assertion"
           },
           "minItems": 0,
           "maxItems": 64
@@ -3262,7 +1443,7 @@
         "counterevidence": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Assertion"
+            "$ref": "#/$defs/Assertion"
           },
           "minItems": 0,
           "maxItems": 64
@@ -3396,7 +1577,7 @@
         }
       ]
     },
-    "h_ContextAnswer": {
+    "ContextAnswer": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3422,7 +1603,7 @@
         "scope_checked": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Subject"
+            "$ref": "#/$defs/Subject"
           },
           "minItems": 1,
           "maxItems": 64
@@ -3430,7 +1611,7 @@
         "facets": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Facet"
+            "$ref": "#/$defs/Facet"
           },
           "minItems": 1,
           "maxItems": 64
@@ -3453,7 +1634,7 @@
         "counterevidence": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Assertion"
+            "$ref": "#/$defs/Assertion"
           },
           "minItems": 0,
           "maxItems": 64
@@ -3506,7 +1687,7 @@
         "outcome"
       ]
     },
-    "h_ContextResult": {
+    "ContextResult": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3569,7 +1750,7 @@
         "disposition"
       ]
     },
-    "h_SynthesisManifest": {
+    "SynthesisManifest": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3672,7 +1853,7 @@
         "origin_manifest_root"
       ]
     },
-    "h_SynthesisManifestItem": {
+    "SynthesisManifestItem": {
       "type": "object",
       "properties": {
         "ordinal": {
@@ -3817,7 +1998,7 @@
         "required_decision_key"
       ]
     },
-    "h_SynthesisDecision": {
+    "SynthesisDecision": {
       "type": "object",
       "properties": {
         "kind": {
@@ -3902,7 +2083,7 @@
         "supersedes_digest"
       ]
     },
-    "h_SynthesisReferences": {
+    "SynthesisReferences": {
       "type": "object",
       "properties": {
         "kind": {
@@ -3922,7 +2103,7 @@
         "references": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Reference"
+            "$ref": "#/$defs/Reference"
           },
           "minItems": 1,
           "maxItems": 128
@@ -3947,7 +2128,7 @@
         "final_page"
       ]
     },
-    "h_SynthesisStage": {
+    "SynthesisStage": {
       "type": "object",
       "properties": {
         "contract": {
@@ -3979,10 +2160,10 @@
           "items": {
             "oneOf": [
               {
-                "$ref": "#/$defs/h_SynthesisDecision"
+                "$ref": "#/$defs/SynthesisDecision"
               },
               {
-                "$ref": "#/$defs/h_SynthesisReferences"
+                "$ref": "#/$defs/SynthesisReferences"
               }
             ]
           },
@@ -4008,7 +2189,7 @@
         "entries"
       ]
     },
-    "h_SynthesisSeal": {
+    "SynthesisSeal": {
       "type": "object",
       "properties": {
         "contract": {
@@ -4058,7 +2239,7 @@
         "journal_hash"
       ]
     },
-    "h_SynthesisReceipt": {
+    "SynthesisReceipt": {
       "type": "object",
       "properties": {
         "session_id": {
@@ -4110,7 +2291,7 @@
         "operation_id"
       ]
     },
-    "h_InvestigationProgress": {
+    "InvestigationProgress": {
       "type": "object",
       "properties": {
         "contract": {
@@ -4179,7 +2360,7 @@
         "missing_facets"
       ]
     },
-    "h_CallRange": {
+    "CallRange": {
       "type": "object",
       "properties": {
         "start_byte": {
@@ -4203,11 +2384,11 @@
         "end_byte"
       ]
     },
-    "h_ExpressionRef": {
+    "ExpressionRef": {
       "type": "object",
       "properties": {
         "range": {
-          "$ref": "#/$defs/h_CallRange"
+          "$ref": "#/$defs/CallRange"
         },
         "kind": {
           "type": "string",
@@ -4231,7 +2412,7 @@
         "kind"
       ]
     },
-    "h_CallArgument": {
+    "CallArgument": {
       "type": "object",
       "properties": {
         "ordinal": {
@@ -4261,7 +2442,7 @@
           ]
         },
         "expression": {
-          "$ref": "#/$defs/h_ExpressionRef"
+          "$ref": "#/$defs/ExpressionRef"
         },
         "constant_bool": {
           "anyOf": [
@@ -4290,7 +2471,7 @@
         "constant_bool"
       ]
     },
-    "h_CallBinding": {
+    "CallBinding": {
       "type": "object",
       "properties": {
         "state": {
@@ -4393,7 +2574,7 @@
         }
       ]
     },
-    "h_Callsite": {
+    "Callsite": {
       "type": "object",
       "properties": {
         "callsite_id": {
@@ -4416,15 +2597,15 @@
           ]
         },
         "range": {
-          "$ref": "#/$defs/h_CallRange"
+          "$ref": "#/$defs/CallRange"
         },
         "callee": {
-          "$ref": "#/$defs/h_ExpressionRef"
+          "$ref": "#/$defs/ExpressionRef"
         },
         "receiver": {
           "anyOf": [
             {
-              "$ref": "#/$defs/h_ExpressionRef"
+              "$ref": "#/$defs/ExpressionRef"
             },
             {
               "type": "null"
@@ -4434,7 +2615,7 @@
         "arguments": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_CallArgument"
+            "$ref": "#/$defs/CallArgument"
           },
           "minItems": 0,
           "maxItems": 256
@@ -4443,7 +2624,7 @@
           "type": "boolean"
         },
         "binding": {
-          "$ref": "#/$defs/h_CallBinding"
+          "$ref": "#/$defs/CallBinding"
         },
         "limitations": {
           "type": "array",
@@ -4481,7 +2662,7 @@
         "limitations"
       ]
     },
-    "h_AdapterCallBinding": {
+    "AdapterCallBinding": {
       "type": "object",
       "properties": {
         "state": {
@@ -4544,7 +2725,7 @@
         "candidate_local_ids"
       ]
     },
-    "h_AdapterCallsite": {
+    "AdapterCallsite": {
       "type": "object",
       "properties": {
         "containing_symbol_local_id": {
@@ -4561,15 +2742,15 @@
           ]
         },
         "range": {
-          "$ref": "#/$defs/h_CallRange"
+          "$ref": "#/$defs/CallRange"
         },
         "callee": {
-          "$ref": "#/$defs/h_ExpressionRef"
+          "$ref": "#/$defs/ExpressionRef"
         },
         "receiver": {
           "anyOf": [
             {
-              "$ref": "#/$defs/h_ExpressionRef"
+              "$ref": "#/$defs/ExpressionRef"
             },
             {
               "type": "null"
@@ -4579,7 +2760,7 @@
         "arguments": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_CallArgument"
+            "$ref": "#/$defs/CallArgument"
           },
           "minItems": 0,
           "maxItems": 256
@@ -4588,7 +2769,7 @@
           "type": "boolean"
         },
         "binding": {
-          "$ref": "#/$defs/h_AdapterCallBinding"
+          "$ref": "#/$defs/AdapterCallBinding"
         },
         "limitations": {
           "type": "array",
@@ -4624,7 +2805,7 @@
         "limitations"
       ]
     },
-    "h_AdapterCallsiteBatch": {
+    "AdapterCallsiteBatch": {
       "type": "object",
       "properties": {
         "contract": {
@@ -4658,7 +2839,7 @@
         "calls": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_AdapterCallsite"
+            "$ref": "#/$defs/AdapterCallsite"
           },
           "minItems": 0,
           "maxItems": 10000
@@ -4709,7 +2890,7 @@
         "limitations"
       ]
     },
-    "h_CallsiteBatch": {
+    "CallsiteBatch": {
       "type": "object",
       "properties": {
         "contract": {
@@ -4755,7 +2936,7 @@
         "calls": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_Callsite"
+            "$ref": "#/$defs/Callsite"
           },
           "minItems": 0,
           "maxItems": 10000
@@ -4811,7 +2992,7 @@
         "limitations"
       ]
     },
-    "h_PageRequest": {
+    "PageRequest": {
       "type": "object",
       "properties": {
         "cursor": {
@@ -4843,7 +3024,7 @@
         "limit"
       ]
     },
-    "h_WorkFilter": {
+    "WorkFilter": {
       "type": "object",
       "properties": {
         "task_types": {
@@ -4910,11 +3091,11 @@
         "root_work_id"
       ]
     },
-    "h_ArtifactFilter": {
+    "ArtifactFilter": {
       "type": "object",
       "properties": {
         "subject": {
-          "$ref": "#/$defs/h_Subject"
+          "$ref": "#/$defs/Subject"
         },
         "kinds": {
           "type": "array",
@@ -4955,7 +3136,7 @@
         "include_superseded"
       ]
     },
-    "h_Capabilities": {
+    "Capabilities": {
       "type": "object",
       "properties": {
         "contract": {
@@ -5025,7 +3206,7 @@
         "max_page_items"
       ]
     },
-    "h_ResourceCapacity": {
+    "ResourceCapacity": {
       "type": "object",
       "properties": {
         "resource_id": {
@@ -5073,7 +3254,7 @@
         "upper_bound"
       ]
     },
-    "h_SlicePlan": {
+    "SlicePlan": {
       "type": "object",
       "properties": {
         "plan_id": {
@@ -5114,7 +3295,7 @@
         "resources": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_ResourceCapacity"
+            "$ref": "#/$defs/ResourceCapacity"
           },
           "minItems": 0,
           "maxItems": 128
@@ -5190,7 +3371,7 @@
         "plan_digest"
       ]
     },
-    "h_DriveResult": {
+    "DriveResult": {
       "type": "object",
       "properties": {
         "plan_id": {
@@ -5276,7 +3457,7 @@
         "completion"
       ]
     },
-    "h_WorkSummary": {
+    "WorkSummary": {
       "type": "object",
       "properties": {
         "task_id": {
@@ -5426,7 +3607,7 @@
         "blocker"
       ]
     },
-    "h_RequestSummary": {
+    "RequestSummary": {
       "type": "object",
       "properties": {
         "request_id": {
@@ -5513,7 +3694,7 @@
         "answer_hash"
       ]
     },
-    "h_ArtifactSummary": {
+    "ArtifactSummary": {
       "type": "object",
       "properties": {
         "artifact_id": {
@@ -5612,7 +3793,7 @@
         "subject_manifest_ref"
       ]
     },
-    "h_FindingSummary": {
+    "FindingSummary": {
       "type": "object",
       "properties": {
         "family_id": {
@@ -5676,7 +3857,7 @@
         "review_complete"
       ]
     },
-    "h_Completion": {
+    "Completion": {
       "type": "object",
       "properties": {
         "review_run_id": {
@@ -5792,13 +3973,13 @@
         "as_of_sequence"
       ]
     },
-    "h_WorkPage": {
+    "WorkPage": {
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_WorkSummary"
+            "$ref": "#/$defs/WorkSummary"
           },
           "minItems": 0,
           "maxItems": 100
@@ -5839,13 +4020,13 @@
         "as_of_sequence"
       ]
     },
-    "h_RequestPage": {
+    "RequestPage": {
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_RequestSummary"
+            "$ref": "#/$defs/RequestSummary"
           },
           "minItems": 0,
           "maxItems": 100
@@ -5886,13 +4067,13 @@
         "as_of_sequence"
       ]
     },
-    "h_ArtifactPage": {
+    "ArtifactPage": {
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_ArtifactSummary"
+            "$ref": "#/$defs/ArtifactSummary"
           },
           "minItems": 0,
           "maxItems": 100
@@ -5933,13 +4114,13 @@
         "as_of_sequence"
       ]
     },
-    "h_FindingPage": {
+    "FindingPage": {
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/h_FindingSummary"
+            "$ref": "#/$defs/FindingSummary"
           },
           "minItems": 0,
           "maxItems": 100

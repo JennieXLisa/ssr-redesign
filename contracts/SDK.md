@@ -1,40 +1,56 @@
-# Collaborative public SDK and controller contract
+# Frozen collaborative public SDK contract
 
-Contract version: collaborative-v1. Add public facades; keep old signatures and DTO identities. These proposed names are the selected integration contract, not current exported APIs.
+Contract: `sdk-abi-v1`, wire mode `collaborative-v1`. Resolves H05/H09. Exact callable ABI is `schemas/sdk-abi.json`; every referenced request/result/error object is a closed `$defs` type in `schemas/hardening-v1.schema.json`. `reference/public-api.pyi` is the generated signature/DTO declaration. These are selected new interfaces to implement, not claims that the current harness exports them.
 
-## Service methods
+## Exports, construction and signatures
 
-| Facade / method | Inputs | Output and authority |
-|---|---|---|
-| CollaborativeReviewService.capabilities | public application context | Supported execution, tool, artifact, notice, scheduling and query contract identities. Read only. |
-| plan_collaborative_slice | context, review_run_id, requested_capacity | CollaborativeSlicePlan; no task leases, provider calls or mutations. |
-| drive_collaborative_slice | context, plan, admission_token | Bounded slice outcome with actual settled attempts/usage, independent refill, explicit blockers and public effect refs. |
-| CollaborativeQueryService.list_work | query context, review_run_id, typed filters, cursor, limit | Work summary pages, canonical owned subjects, active/queued/waiting reasons and current attempt identity. |
-| list_requests | context, review_run_id, task_id optional, cursor, limit | Consumer/producer/request revision, states and permitted answer refs; no private pending answer body. |
-| list_artifacts | context, review_run_id, subject/filter, cursor, limit | Acceptance availability, type/provenance and current status. Explicit detail/content reader remains separate. |
-| list_current_findings | context, review_run_id, cursor, limit | Only currently eligible family revisions with valid upheld receipts; historical query explicitly labels historical rows. |
-| get_review_completion | context, review_run_id | Authoritative coverage/work/receipt/material-event/resource blockers and terminal/limited status. |
+Export CollaborativeReviewService from `ssr.application`, CollaborativeQueryService from `ssr.query`, and the new DTOs from `ssr.collaborative.dto`. The public facade must re-export the same class objects, not redeclare equivalent dataclasses. ReviewService constructor is `(config: SSRConfig)`; QueryService constructor takes no arguments. Reuse the actual public CommandContext and SchedulingAdmissionToken from ssr.application and ProjectQueryContext from ssr.query.context; no replacement authentication context or controller-owned task authority.
 
-Use existing public context types and ownership checks. New positional/keyword choices are defined here consistently when implemented; they must be tested in strict signature negotiation. Do not add optional parameters to old methods and assume that is harmless to a strict consumer.
+All method signatures include self as the first ordinary parameter. `context` is positional-or-keyword; every following parameter is keyword-only. No **kwargs, inferred defaults or optional omitted fields outside those frozen in the ABI manifest are permitted.
 
-## Required typed projections
+```python
+capabilities(self, context: CommandContext) -> Capabilities
+plan_collaborative_slice(self, context: CommandContext, *, review_run_id: str,
+                         requested_capacity: int, exact_task_id: str | None = None) -> SlicePlan
+drive_collaborative_slice(self, context: CommandContext, *, plan: SlicePlan,
+                          admission_token: SchedulingAdmissionToken) -> DriveResult
+list_work(self, context: ProjectQueryContext, *, review_run_id: str,
+          filters: WorkFilter, page: PageRequest) -> WorkPage
+list_requests(self, context: ProjectQueryContext, *, review_run_id: str,
+              task_id: str | None, page: PageRequest) -> RequestPage
+list_artifacts(self, context: ProjectQueryContext, *, review_run_id: str,
+               filters: ArtifactFilter, page: PageRequest) -> ArtifactPage
+list_current_findings(self, context: ProjectQueryContext, *, review_run_id: str,
+                      page: PageRequest) -> FindingPage
+get_review_completion(self, context: ProjectQueryContext, *, review_run_id: str) -> Completion
+```
 
-CollaborativeSlicePlan contains plan_id/digest, review_id, immutable config/mode/capability digests, control_generation, requested/effective total upper bounds, per-resource capacity vector, command-wide budget envelope, exact_task_id nullable, selection_policy identity, and read state-as-of. A dynamic plan authorizes bounded eligibility reevaluation, not a frozen list of all task IDs. A task claim still validates its exact input revision and availability under current state. An operator exact-task plan may not claim another task if the target becomes unavailable.
+The three command/service methods retain existing coordinator/admission authority. Planning is read-only; it neither reserves resources nor issues task leases. The dynamic plan permits bounded eligibility re-evaluation within its exact resource vector and command budgets, not a frozen batch of tasks. Exact-task plans may claim only their selected task. Driver rechecks cancellation/admission token before each refill and never multiplies capacity through batching.
 
-Capacity vector identifies backend/protocol/model route and shared resource-group identity, maximum concurrent provider calls and host-process categories where relevant. Controller assigns shared upper-bound admission; harness owns actual per-task feasibility. No provider count is multiplied by batching or a new task type.
+## DTO order, types and defaults
 
-WorkSummary includes task/root IDs, task type, owned subjects, mode, state, reason code, current attempt, readiness/receipt/budget blockers, question refs and result refs. Source-derived freeform text is available only in existing explicitly authorized content surfaces. Ordinary operational lists use safe metadata.
+All generated DTOs are frozen, slots-based, keyword-only dataclasses. Their field order is `x-python-field-order` in the schema, repeated in sdk-abi.json and verified by the generator. Required nullable fields remain present as null on the wire. Collections use tuples in Python, JSON arrays on wire, in the documented stable order. Unknown keys, bool-as-integer, nonfinite numbers, negative counts, out-of-range integers and duplicate object keys are rejected. IDs are bounded to 200 characters; opaque tokens are bounded to 4096; byte/source cursor references remain governed by their separate 16384 limit.
 
-CurrentFindingSummary includes family/current candidate revision, argument digest, validity generation, independent verdict reference, evidence-verification state and review completion status. It may coexist with IN_PROGRESS coverage. Server computes it with the same predicate export uses; clients cannot declare readiness by combining partial rows.
+All counts/sequences are nonnegative integers at most 2^53−1. Timestamp fields are UTC `YYYY-MM-DDTHH:MM:SS.sssZ`; strings are not interpreted in local time. Explicit list filters use empty tuples for no restriction. PageRequest is exactly `{cursor: null|string, limit: 1..100}`; no hidden default when the DTO is supplied. The convenience caller may construct limit=25, but the service signature itself does not silently synthesize a page.
 
-## Events and UI
+Serialization uses UTF-8 compact JSON, exact declared wire key names, enum strings and all declared fields. Canonical hashes sort keys; ordinary presentation need not preserve key order, but dataclass/signature identity is part of the new paired ABI. Prohibited source/prose does not enter ordinary WorkSummary/RequestSummary; full content uses the explicitly authorized existing reader.
 
-Emit typed source-free events for WORK_READY, WORK_WAITING, REQUEST_ROUTED, ANSWER_AVAILABLE, LEAD_RECORDED, ARTIFACT_AVAILABLE, FINDING_VALIDITY_CHANGED and RESOURCE_BLOCKED through the existing event transport. Preserve sequence/cursor/reconnect behavior and scope all events by review/project. Avoid copied source/prompt/transcript in SSE payloads. Event availability is a UI hint; refresh the authoritative query after gaps, not an inferred local transition.
+## Pagination and availability
 
-UI shows original assignment with linked independent leads, blocking context requests, producer/answer status and real queue reasons. New information can be advertised without forcing an analyst/provider call or downloading source. A later validity hold clearly removes current-upheld status while preserving historical records. Keep transcript histories lazy and abort obsolete frontend fetches on task/project change.
+Use typed authenticated query cursors with domain SDK_WORK, SDK_REQUEST, SDK_ARTIFACT or SDK_FINDING; never accept a source/search token as an SDK page. Payload binds project/review, canonical filter hash, state contract and policy digest, initial H and last ordering tuple. Work/request pages order `(created_sequence,id)`; artifact pages order `(availability_sequence,artifact_id)`; findings order `(validity_publication_sequence,candidate_id)` through H. Current visibility/status rechecks apply on each page; H does not freeze authorization. Mutable state is observed at the page transaction and recorded in as_of_sequence. New arrivals require refresh. Return exhausted/next_cursor consistently; no numeric offset into a changing list.
 
-## Compatibility and packaging gate
+List methods return only the exact declared page type and at most 100 rows. Work/Artifact summaries point to paged subject/result manifests instead of embedding unbounded membership. If dynamic visibility produces an empty page before H is exhausted, return a progressing cursor and exhausted=false, not a false final page. Scans have a bounded host work allowance and no hidden model calls.
 
-Test all four legacy/refactored pairs. Old mode must stay valid in supported pairs; new mode refuses absent capabilities explicitly. Assert parameter equality, enum membership/meaning, dataclass identity, serialized forms and authenticated child-command schemas. Do not import engine symbols early in parent-only code merely to deduplicate type definitions. Build wheels/sdists from clean source, verify no sibling checkout is required, and rebuild hashed frontend assets when UI source changes.
+## Error form and capability negotiation
 
-No new-mode deployment before schema, tool, receipt, planner, claim, query, export and controller support agree. Existing installation hashes/version coordinates come from the tested release manifest, never from this design's historical branch references.
+Raise `CollaborativeServiceError` carrying the immutable Error DTO; do not expose arbitrary Python exceptions or dictionaries across the SDK. The controller serializes failures as `{ok:false,error:<Error>}` and successes as `{ok:true,value:<declared DTO>}`. It must not reinterpret an exception message to infer retryability. Error.code/retry_kind/commit_state and Issue locations are closed by the schema. SQL paths, raw source, lease secrets and provider bodies never appear in diagnostics.
+
+Before running a new review, compare exact schema-bundle, SDK ABI, state, runtime and prefix receipt digests advertised by Capabilities. Both releases embed the same generated contract artifact. Mismatch is CONTRACT_MISMATCH before mutation, not a best-effort downgrade. The new harness/controller pair is the only supported executing combination. Old runtime mode and four old/new executing pair tests are removed. Historical database/report inspection is read-only and preserves original schema/receipt meaning; it is not a legacy scheduling mode.
+
+Controller parent code may compare inert contract descriptors without importing engine execution modules prematurely. Authenticated child dispatch imports public services only after existing execution authority validation. Do not duplicate core task/candidate eligibility in the UI. Events are source-free hints; after a missed sequence, query the authoritative service. Preserve lazy transcript reads and stale frontend request cancellation.
+
+## Tests and implementation sequence
+
+Generate the .pyi, schemas and ABI fingerprint together; compare regenerated bytes to committed artifacts. Compile/inspect declarations and test every field's requiredness/nullability/bounds/enum, method positional/keyword/default/return properties, class identity through public re-exports, and serialization round trips. Run mismatched-digest rejection before any coordinator mutation. Test independent list cursors, exact-task plan restrictions, expired plan, capacity-vector sums, direct source-content refusal and event-gap refresh.
+
+The schema fixtures prove the selected wire contract, not the behavior of the current engine. Codex must implement this exact facade on the pinned owners, then run the same fixtures against installed wheels for the coordinated pair. Freeze generated-schema hashes in both distribution manifests. There is no requirement to preserve old runtime signatures as a second supported workflow.

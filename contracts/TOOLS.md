@@ -1,10 +1,10 @@
 # Agent-facing tools and common contracts
 
-Version: collaborative-v1. This is a normative host contract, not a claim that these surfaces are implemented. Agent schemas are a provider-supported projection of it. The host always enforces the full discriminated input variants, unknown-field rejection and semantic checks. Existing tools retain their legacy schemas for legacy attempts.
+Version: collaborative-v1. This is a normative host contract, not a claim that these surfaces are implemented. Agent schemas are a provider-supported projection of it. The host always enforces the full discriminated input variants, unknown-field rejection and semantic checks. The new runtime exposes only the frozen collaborative-v1 projection; old stored schemas remain historical records, not a fallback execution route.
 
 ## 1. Common values and outcome envelope
 
-IDs are existing opaque identifiers, nonempty strings bounded to 200 characters. A `Subject` is exactly `{kind: "symbol"|"file"|"candidate"|"artifact", id}`. Every supplied subject resolves within the current execution's bound review/snapshot; no agent-facing override selects another snapshot. Relative paths are exact manifest spellings; root directory input is `""`, not `/`. Path comparisons and ordering use UTF-8 byte ordering of the canonical manifest path, matching database BINARY ordering; no case folding or normalization.
+IDs are existing opaque identifiers, nonempty strings bounded to 200 characters. A `Subject` is exactly `{kind: "symbol"|"file"|"candidate"|"artifact"|"relationship", id}`. Every supplied subject resolves within the current execution's bound review/snapshot; no agent-facing override selects another snapshot. Relative paths are exact manifest spellings; root directory input is `""`, not `/`. Path comparisons and ordering use UTF-8 byte ordering of the canonical manifest path, matching database BINARY ordering; no case folding or normalization.
 
 `SourceRef` is a host-authenticated reference to exact snapshot/file/byte/hash metadata, not an evidence ID. `EvidenceRef` is an existing evidence ID with its original analytical claim/provenance. `ArtifactRef` selects an exact immutable accepted-result body. Do not interchange these reference kinds by guessing.
 
@@ -24,7 +24,7 @@ Every result uses:
 
 `status`: OK, PARTIAL, REJECTED, UNAVAILABLE, RETRYABLE, OUTCOME_UNKNOWN. `effect.state`: NONE, PREPARED, COMMITTED, UNKNOWN. Only bounded source-free semantic operation receipts enter ordinary persistence. Tool-read data containing source belongs only to the normal model context and separately governed transcript, not this envelope copied wholesale into ssr.db.
 
-Each issue: `{code, location, message, retry_kind, repair_action, details}`. Location is a JSON pointer. Details come from a per-code allowlist; no raw exception, SQL, secret, protected identifier or arbitrary source echo. `retry_kind`: FIX_INPUT, MORE_ANALYSIS, RETRY_SAME_OPERATION, HOST_RECOVERY, NONE. Return independent errors together up to 16 plus omitted count; stop on bad identity/authorization/integrity or missing prerequisites. Unknown/unavailable protected subjects use nondisclosing errors.
+Each issue: `{code, location, message, retry_kind, repair_action, details}`. Location is a JSON pointer. Issue/IssueDetails and repair_action are closed shapes in hardening-v1.schema.json; details expose only expected type/maximum, observed integer, expected contract and reference kind. Per-code disclosure still applies; no raw exception, SQL, secret, protected identifier or arbitrary source echo. `retry_kind`: FIX_INPUT, MORE_ANALYSIS, RETRY_SAME_OPERATION, HOST_RECOVERY, NONE. Return independent errors together up to 16 plus omitted count; stop on bad identity/authorization/integrity or missing prerequisites. Unknown/unavailable protected subjects use nondisclosing errors.
 
 Freshness notices are an explicit host-context attachment at the next normal turn, not fields injected into a source string or fake provider tool call. Their budget counts toward the actual outgoing request. Payload: `{batch_id, subject, new_result_refs, observed_through, count, omitted_count, action:"FETCH_EXACT_OR_REFRESH"}`. The internal batch ID/sequence is not a result-consumption receipt.
 
@@ -83,9 +83,14 @@ The native matcher runs in a fixed host-owned process pool (default two). Kill/r
 | `checkpoint_state` | `{expected_sequence,state:{facts,hypotheses,unknowns,next_action,subject_refs,evidence_refs,source_refs,artifact_refs,source_cursors,search_cursors,answer_refs,request_refs}}` | Same owner for host-requested and ordinary saves. Revision CAS, source-free validation, checkpoint ID/sequence. No automatic yield. |
 | `report_lead` | `{hypothesis,observations,subject_refs,evidence_refs,source_refs,unknowns,requested_check,category?}` | Validate and atomically record SEEDED candidate + independent work intent; return lead/candidate/task refs and queued/associated/budget reason. No wait for parent completion. |
 | `request_context_review` | `{question,subjects,assumptions,evidence_refs,source_refs,requested_facets,blocking}` | Register/join/routable request; return exact request ID, routing disposition and available answer if exact compatible reuse. No automatic yield or finalization. |
-| `publish_context_answer` | `{request_id,request_revision,outcome,analysis,evidence_refs,source_refs,unresolved,scope_checked}` | ACCEPTED/PENDING_ACCEPTANCE artifact with independent turn provenance; does not complete canonical assignment. |
-| `yield_work` | `{checkpoint_id,reason:WAITING_FOR_CONTEXT\|CONTEXT_PRESSURE\|OTHER_WORK_READY,request_ids}` | Atomic checkpoint/dependency validation and task transition; releases model slot. An acknowledgment is host control, not another model exchange. |
-| `submit_*` | `{input_token,analysis,explicit_refs,unknowns,disposition}` with role-specific semantic body | Host binds identity from execution and validates exact original inputs plus accepted deltas. No model-supplied review/lease identity; no inferred missing analysis. |
+| `publish_context_answer` | `$defs.ContextAnswer` in hardening-v1.schema.json | Independent prefix-backed answer artifact; exact request/facets, no canonical task completion. |
+| `yield_work` | `{checkpoint_id,reason,request_ids}`; current input bound by request receipt | Commit preparation only while RUNNING; stop inference, settle predecessor, then guarded WAITING/PENDING publication. Never clear lease early. |
+| `submit_focused_analysis` | `$defs.FocusedResult` | Exact question, checked subjects, observations/counterevidence, registered leads and explicit disposition. |
+| `submit_context_review` | `$defs.ContextResult` | Seal the exact accepted answer artifact for the assigned request/revision. |
+| `record_investigation_progress` | `$defs.InvestigationProgress` | Nonterminal NEED_CONTEXT; requires real checkpoint/requests, followed by explicit yield. |
+| `stage_file_synthesis` | `$defs.SynthesisStage` | Prefix-backed bounded journal append with manifest hash and revision CAS. |
+| `submit_file_synthesis` | `$defs.SynthesisSeal` | Small final identity seal, full host validation/publication; never full-unit arrays in model arguments. |
+| Other role-specific `submit_*` | Mechanically projected exact existing semantic contract under ROLE_PROJECTIONS.md | Preserve required analytical fields and validators; no generic analysis dictionary. |
 | `read_batch` | `{items:[{key,tool,arguments}]}` | Up to configured bound; known independent read-like tools only. Individually identified outcomes, aggregate budget and authorization. |
 
 `input_token` is a host-issued revision/digest reference, not authority. Each exact submission tool retains its full role-specific analysis fields (file/symbol coverage, path, controls, impact, falsifier verdict). The smaller envelope removes only mechanically known identity and metadata. It does not flatten all result kinds into a generic unrestricted object.
@@ -102,3 +107,7 @@ Error/repair does not reset resources or force accepted success. Recoverable sch
 
 
 Checkpoint `next_action` is `{kind: READ|QUERY|REQUEST_CONTEXT|INVESTIGATE|SUBMIT|WAIT, objective: string}`. Reference fields remain separate and typed. Saved search query text is optional and subject to the source-free guard described in STATE.md; raw query text is never automatically durable. SourceRef/cursor tokens have the bounded token length, not the shorter existing-ID limit. Whole input/checkpoint encoded-byte bounds still apply after per-field validation.
+
+## Hardening contract binding
+
+The combined executable tool variants in `schemas/tool-inputs.schema.json` and `schemas/hardening-v1.schema.json` must agree. INPUT_REVISIONS.md governs actual delivered input tokens; PREFIX_RECEIPTS.md governs nonterminal producer proof; FILE_SYNTHESIS.md governs all canonical synthesis stages/seals; CONTEXT_BUDGET.md governs final dispatch and RESOURCE_BOUNDS.md governs finite work. A source cursor remains cross-attempt navigation; an input token is bound to one exact attempt/request-observed revision.

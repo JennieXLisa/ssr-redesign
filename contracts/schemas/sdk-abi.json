@@ -1,0 +1,726 @@
+{
+  "contract": "sdk-abi-v1",
+  "command_export": "ssr.application",
+  "query_export": "ssr.query",
+  "dto_export": "ssr.collaborative.dto",
+  "methods": [
+    {
+      "class": "CollaborativeReviewService",
+      "name": "capabilities",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "CommandContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "Capabilities"
+    },
+    {
+      "class": "CollaborativeReviewService",
+      "name": "plan_collaborative_slice",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "CommandContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "review_run_id",
+          "annotation": "str",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "requested_capacity",
+          "annotation": "int",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "exact_task_id",
+          "annotation": "str | None",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": "None"
+        }
+      ],
+      "return_annotation": "SlicePlan"
+    },
+    {
+      "class": "CollaborativeReviewService",
+      "name": "drive_collaborative_slice",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "CommandContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "plan",
+          "annotation": "SlicePlan",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "admission_token",
+          "annotation": "SchedulingAdmissionToken",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "DriveResult"
+    },
+    {
+      "class": "CollaborativeQueryService",
+      "name": "list_work",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "ProjectQueryContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "review_run_id",
+          "annotation": "str",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "filters",
+          "annotation": "WorkFilter",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "page",
+          "annotation": "PageRequest",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "WorkPage"
+    },
+    {
+      "class": "CollaborativeQueryService",
+      "name": "list_requests",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "ProjectQueryContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "review_run_id",
+          "annotation": "str",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "task_id",
+          "annotation": "str | None",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "page",
+          "annotation": "PageRequest",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "RequestPage"
+    },
+    {
+      "class": "CollaborativeQueryService",
+      "name": "list_artifacts",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "ProjectQueryContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "review_run_id",
+          "annotation": "str",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "filters",
+          "annotation": "ArtifactFilter",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "page",
+          "annotation": "PageRequest",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "ArtifactPage"
+    },
+    {
+      "class": "CollaborativeQueryService",
+      "name": "list_current_findings",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "ProjectQueryContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "review_run_id",
+          "annotation": "str",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        },
+        {
+          "name": "page",
+          "annotation": "PageRequest",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "FindingPage"
+    },
+    {
+      "class": "CollaborativeQueryService",
+      "name": "get_review_completion",
+      "parameters": [
+        {
+          "name": "context",
+          "annotation": "ProjectQueryContext",
+          "kind": "POSITIONAL_OR_KEYWORD",
+          "default_expression": null
+        },
+        {
+          "name": "review_run_id",
+          "annotation": "str",
+          "kind": "KEYWORD_ONLY",
+          "default_expression": null
+        }
+      ],
+      "return_annotation": "Completion"
+    }
+  ],
+  "dto_field_order": {
+    "Subject": [
+      "kind",
+      "id"
+    ],
+    "Reference": [
+      "kind",
+      "id"
+    ],
+    "Assertion": [
+      "claim",
+      "references"
+    ],
+    "Facet": [
+      "facet_id",
+      "status",
+      "analysis",
+      "references"
+    ],
+    "IssueDetails": [
+      "expected_type",
+      "expected_maximum",
+      "observed_integer",
+      "expected_contract",
+      "reference_kind"
+    ],
+    "Issue": [
+      "code",
+      "location",
+      "message",
+      "retry_kind",
+      "repair_action",
+      "details"
+    ],
+    "Error": [
+      "contract",
+      "code",
+      "message",
+      "correlation_id",
+      "issues",
+      "omitted_issue_count",
+      "commit_state"
+    ],
+    "AttemptIdentity": [
+      "review_run_id",
+      "snapshot_id",
+      "task_id",
+      "agent_run_id",
+      "attempt_number",
+      "control_generation"
+    ],
+    "InputRevision": [
+      "contract",
+      "review_run_id",
+      "snapshot_id",
+      "task_id",
+      "generation",
+      "predecessor_digest",
+      "assignment_digest",
+      "policy_digest",
+      "material_manifest_hash",
+      "request_manifest_hash",
+      "checkpoint_id",
+      "checkpoint_hash",
+      "required_delta_manifest_hash"
+    ],
+    "InputTokenPayload": [
+      "contract",
+      "key_id",
+      "identity",
+      "revision_id",
+      "revision_hash",
+      "required_delta_manifest_hash"
+    ],
+    "OriginCall": [
+      "call_id",
+      "call_ordinal",
+      "tool_name",
+      "arguments_hash"
+    ],
+    "TranscriptPrefix": [
+      "contract",
+      "capture_id",
+      "capture_identity_hash",
+      "execution_contract_hash",
+      "identity",
+      "request_id",
+      "response_id",
+      "end_record_sequence",
+      "record_count",
+      "total_bytes",
+      "head_hash",
+      "request_hash",
+      "response_hash",
+      "parent_prefix_hash"
+    ],
+    "CaptureProof": [
+      "mode",
+      "disposition",
+      "prefix_id",
+      "prefix_hash"
+    ],
+    "RuntimePrefix": [
+      "contract",
+      "identity",
+      "execution_contract_hash",
+      "input_revision_hash",
+      "request_id",
+      "response_id",
+      "request_hash",
+      "response_hash",
+      "end_event_sequence",
+      "event_chain_hash",
+      "parent_prefix_hash",
+      "delivery_manifest_hash",
+      "origin_calls",
+      "transcript"
+    ],
+    "RequestBinding": [
+      "contract",
+      "identity",
+      "request_id",
+      "request_hash",
+      "input_revision_id",
+      "input_revision_hash",
+      "input_token_hash",
+      "delivered_delta_manifest_hash",
+      "delivery_manifest_hash",
+      "status",
+      "response_id",
+      "response_hash"
+    ],
+    "RequestEvent": [
+      "contract",
+      "sequence",
+      "kind",
+      "request_id",
+      "request_hash",
+      "input_revision_hash",
+      "delivery_manifest_hash",
+      "input_token_hash",
+      "token_count",
+      "reserved_output_tokens",
+      "counter_digest"
+    ],
+    "ResponseEvent": [
+      "contract",
+      "sequence",
+      "kind",
+      "request_id",
+      "response_id",
+      "request_hash",
+      "response_hash",
+      "complete",
+      "stop_reason",
+      "origin_calls",
+      "input_tokens",
+      "output_tokens"
+    ],
+    "ToolEvent": [
+      "contract",
+      "sequence",
+      "kind",
+      "response_id",
+      "call_id",
+      "call_ordinal",
+      "operation_id",
+      "arguments_hash",
+      "result_hash",
+      "committed",
+      "delivery_manifest_hash"
+    ],
+    "TerminalEvent": [
+      "contract",
+      "sequence",
+      "kind",
+      "status",
+      "termination_reason",
+      "yield_intent_id",
+      "result_artifact_id",
+      "final_input_revision_hash",
+      "settlement_manifest_hash"
+    ],
+    "FocusedResult": [
+      "contract",
+      "input_token",
+      "question",
+      "checked_subjects",
+      "observations",
+      "counterevidence",
+      "assumptions",
+      "unknowns",
+      "disposition",
+      "registered_lead_ids",
+      "next_context_request_ids"
+    ],
+    "ContextAnswer": [
+      "contract",
+      "input_token",
+      "request_id",
+      "request_revision",
+      "scope_checked",
+      "facets",
+      "answer",
+      "assumptions",
+      "counterevidence",
+      "unknowns",
+      "outcome"
+    ],
+    "ContextResult": [
+      "contract",
+      "input_token",
+      "answer_artifact_id",
+      "answer_artifact_hash",
+      "request_id",
+      "request_revision",
+      "disposition"
+    ],
+    "SynthesisManifest": [
+      "contract",
+      "task_id",
+      "input_revision_hash",
+      "snapshot_id",
+      "file_id",
+      "graph_id",
+      "graph_hash",
+      "policy_hash",
+      "item_count",
+      "items_root",
+      "required_decision_count",
+      "required_decisions_root",
+      "evidence_closure_root",
+      "origin_manifest_root"
+    ],
+    "SynthesisManifestItem": [
+      "ordinal",
+      "item_key",
+      "kind",
+      "unit_id",
+      "unit_input_hash",
+      "artifact_id",
+      "artifact_hash",
+      "adoption_receipt_id",
+      "subject_set_hash",
+      "evidence_closure_hash",
+      "dependency_closure_hash",
+      "origin_manifest_hash",
+      "required_decision_key"
+    ],
+    "SynthesisDecision": [
+      "kind",
+      "key",
+      "action",
+      "origin_set_key",
+      "evidence_set_key",
+      "rationale",
+      "supersedes_digest"
+    ],
+    "SynthesisReferences": [
+      "kind",
+      "set_key",
+      "page_index",
+      "references",
+      "final_page"
+    ],
+    "SynthesisStage": [
+      "contract",
+      "input_token",
+      "session_id",
+      "manifest_hash",
+      "expected_revision",
+      "entries"
+    ],
+    "SynthesisSeal": [
+      "contract",
+      "input_token",
+      "session_id",
+      "manifest_hash",
+      "expected_revision",
+      "journal_hash"
+    ],
+    "SynthesisReceipt": [
+      "session_id",
+      "manifest_hash",
+      "revision",
+      "journal_hash",
+      "committed_entry_count",
+      "operation_id"
+    ],
+    "InvestigationProgress": [
+      "contract",
+      "input_token",
+      "candidate_revision",
+      "outcome",
+      "checkpoint_id",
+      "request_ids",
+      "missing_facets"
+    ],
+    "CallRange": [
+      "start_byte",
+      "end_byte"
+    ],
+    "ExpressionRef": [
+      "range",
+      "kind"
+    ],
+    "CallArgument": [
+      "ordinal",
+      "kind",
+      "keyword",
+      "expression",
+      "constant_bool"
+    ],
+    "CallBinding": [
+      "state",
+      "canonical_api",
+      "basis",
+      "candidate_symbol_ids"
+    ],
+    "Callsite": [
+      "callsite_id",
+      "containing_symbol_id",
+      "range",
+      "callee",
+      "receiver",
+      "arguments",
+      "arguments_complete",
+      "binding",
+      "limitations"
+    ],
+    "AdapterCallBinding": [
+      "state",
+      "canonical_api",
+      "basis",
+      "candidate_local_ids"
+    ],
+    "AdapterCallsite": [
+      "containing_symbol_local_id",
+      "range",
+      "callee",
+      "receiver",
+      "arguments",
+      "arguments_complete",
+      "binding",
+      "limitations"
+    ],
+    "AdapterCallsiteBatch": [
+      "contract",
+      "file_hash",
+      "adapter_id",
+      "adapter_version",
+      "status",
+      "calls",
+      "next_start_byte",
+      "limitations"
+    ],
+    "CallsiteBatch": [
+      "contract",
+      "snapshot_id",
+      "file_id",
+      "file_hash",
+      "adapter_id",
+      "adapter_version",
+      "status",
+      "calls",
+      "next_cursor",
+      "limitations"
+    ],
+    "PageRequest": [
+      "cursor",
+      "limit"
+    ],
+    "WorkFilter": [
+      "task_types",
+      "states",
+      "root_work_id"
+    ],
+    "ArtifactFilter": [
+      "subject",
+      "kinds",
+      "include_superseded"
+    ],
+    "Capabilities": [
+      "contract",
+      "schema_bundle_hash",
+      "sdk_abi_hash",
+      "state_contract_hash",
+      "runtime_receipt_contract",
+      "prefix_receipt_contract",
+      "supported_task_types",
+      "max_page_items"
+    ],
+    "ResourceCapacity": [
+      "resource_id",
+      "kind",
+      "route_ids",
+      "upper_bound"
+    ],
+    "SlicePlan": [
+      "plan_id",
+      "review_run_id",
+      "config_hash",
+      "contract_hash",
+      "control_generation",
+      "requested_capacity",
+      "effective_capacity",
+      "resources",
+      "command_input_token_budget",
+      "command_output_token_budget",
+      "exact_task_id",
+      "observed_sequence",
+      "expires_at",
+      "plan_digest"
+    ],
+    "DriveResult": [
+      "plan_id",
+      "started",
+      "completed",
+      "failed",
+      "settling",
+      "waiting",
+      "still_running",
+      "reason",
+      "completion"
+    ],
+    "WorkSummary": [
+      "task_id",
+      "root_work_id",
+      "task_type",
+      "state",
+      "attempt_id",
+      "attempt_number",
+      "input_revision_hash",
+      "wait_generation",
+      "subject_manifest_ref",
+      "result_manifest_ref",
+      "blocker"
+    ],
+    "RequestSummary": [
+      "request_id",
+      "revision",
+      "producer_task_id",
+      "state",
+      "consumer_count",
+      "answer_artifact_id",
+      "answer_hash"
+    ],
+    "ArtifactSummary": [
+      "artifact_id",
+      "kind",
+      "payload_hash",
+      "producer_task_id",
+      "producer_attempt_id",
+      "state",
+      "availability_sequence",
+      "availability_generation",
+      "subject_manifest_ref"
+    ],
+    "FindingSummary": [
+      "family_id",
+      "candidate_id",
+      "revision",
+      "argument_hash",
+      "validity_generation",
+      "verdict_artifact_id",
+      "state",
+      "review_complete"
+    ],
+    "Completion": [
+      "review_run_id",
+      "status",
+      "canonical_total",
+      "canonical_complete",
+      "required_open",
+      "settling_count",
+      "receipt_pending_count",
+      "unresolved_limitations",
+      "blockers",
+      "omitted_blocker_count",
+      "as_of_sequence"
+    ],
+    "WorkPage": [
+      "items",
+      "next_cursor",
+      "exhausted",
+      "as_of_sequence"
+    ],
+    "RequestPage": [
+      "items",
+      "next_cursor",
+      "exhausted",
+      "as_of_sequence"
+    ],
+    "ArtifactPage": [
+      "items",
+      "next_cursor",
+      "exhausted",
+      "as_of_sequence"
+    ],
+    "FindingPage": [
+      "items",
+      "next_cursor",
+      "exhausted",
+      "as_of_sequence"
+    ]
+  },
+  "exception": "CollaborativeServiceError",
+  "error_schema": "Error",
+  "constructors": {
+    "CollaborativeReviewService": "(config: SSRConfig)",
+    "CollaborativeQueryService": "()"
+  }
+}

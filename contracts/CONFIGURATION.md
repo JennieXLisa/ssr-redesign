@@ -1,10 +1,27 @@
 # Initial configuration and limits
 
-Contract: collaborative-v1. These are selected initial engineering defaults, not benchmark-derived optima. Bind effective values, rule versions and tool-contract hashes to each new review. Existing role wall-time/token/provider limits remain authoritative and are not reset by pagination, yield, repair or a new checkpoint.
+Contract: collaborative-v1. These are selected initial engineering defaults, not benchmark-derived optima. Bind effective values, rule versions and tool-contract hashes to each new review. Existing explicitly selected role wall-time/provider limits remain authoritative alongside CONTEXT_BUDGET.md's request-token policy and are not reset by pagination, yield, repair or a new checkpoint.
 
 ## Activation
 
-`review.execution_mode = "collaborative-v1"` is explicit at review creation. Default remains the installed legacy mode until the paired release gate authorizes a default change. Never convert an active legacy review in place. Expose a dry-run effective policy before creating work. New capability absence is an error, not silent legacy behavior.
+`review.execution_mode = "collaborative-v1"` is explicit at review creation. The new release supports only collaborative-v1 and defaults new reviews to it after capability preflight; legacy execution is rejected. Never convert an active legacy review in place. Expose a dry-run effective policy before creating work. New capability absence is an error, not silent legacy behavior.
+
+## Enforceable context and collaboration policies
+
+[CONTEXT_BUDGET.md](CONTEXT_BUDGET.md), [RESOURCE_BOUNDS.md](RESOURCE_BOUNDS.md) and [CUTOVER.md](CUTOVER.md) are normative, not optional tuning notes. The host uses one final-request dispatch gate; no checkpoint, repair, batch or continuation bypasses it.
+
+| Setting | Value | Enforcement |
+|---|---:|---|
+| context.effective_ceiling_tokens | 170000 | Minimum with verified route capacity |
+| context.output_reservation_tokens | 16384 | Includes bounded reasoning and visible output |
+| context.safety_margin_tokens | 4096 | In addition to counted protocol/template overhead |
+| context.checkpoint_percent | 85 | Threshold is floor(85 × maximum input / 100) |
+| context.checkpoint_output_tokens | 4096 | Reserved within the same bound, not extra capacity |
+| context.checkpoint_attempts | 2 | No unlimited emergency summary loop |
+| context.dossier_tokens | 8192 | Also enforce 32768 UTF-8 bytes |
+| context.dossier_core_tokens | 4096 | Also enforce 16384 bytes |
+
+For the 170k profile, maximum request input is **149520** and soft checkpoint threshold is **127092**. An unavailable exact/certified-conservative counter blocks dispatch. Initial lead/request/consumer/pending-artifact and no-progress bounds are defined once in RESOURCE_BOUNDS.md; their counters are transactionally reserved and retry-idempotent.
 
 ## Bounds
 
