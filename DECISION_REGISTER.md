@@ -1,6 +1,6 @@
 # SSR collaborative review — decision register
 
-Version: 1.7  
+Version: 1.8  
 Recorded: 2026-09-08  
 Updated: 2026-09-09  
 Basis: user-approved direction and constraints in the design conversation.
@@ -80,7 +80,12 @@ not assert that final schemas, module paths, or rollout behavior were approved.
 | P1-D39 | P1-F02 | An authorized analysis lookup automatically registers interest in its subject/query for the ongoing task or inquiry, without a separate subscribe call. The interest does not belong to a reusable worker slot or broadcast every project update. |
 | P1-D40 | P1-F02 / Phase 4 | Advertise relevant newly consumable analysis at the next ordinary tool-response/model-turn boundary, even after another tool call. Use current visibility and exact subject associations; do not expose private results, interrupt in-flight responses, or create a notice-only model call/task. |
 | P1-D41 | P1-F02 | The agent may retrieve an advertised result by exact ID, refresh the listing, defer reading, or ignore the notice. Do not auto-load bodies, substitute a selected result, or reset the current listing. Notice receipt grants no result-consumption or source-read credit. |
-| P1-D42 | P1-F02 / P1-F04 / P1-F08 | Keep notices bounded/coalesced and avoid repeating unchanged advertised updates each turn. Distinguish advertised from retrieved information and preserve work isolation. Exact markers, persistent state, delivery/replay, limits and pagination mechanics remain open; optional refresh never bypasses stale-input checks. |
+| P1-D42 | P1-F02 / P1-F04 / P1-F08 | Keep notices bounded/coalesced and avoid repeating unchanged advertised updates each turn. Distinguish advertised from retrieved information and preserve work isolation. Durable interest ownership is refined by P1-D43–P1-D47. Exact schema/markers, delivery/replay, limits and pagination mechanics remain open; optional refresh never bypasses stale-input checks. |
+| P1-D43 | P1-F02 / P1-F04 | Persist a small host-owned source-free interest per ongoing task/inquiry as part of completing a successful authorized analysis lookup. Do not rely solely on worker memory or the next model checkpoint; a replacement attempt continuing the same work restores it. |
+| P1-D44 | P1-F02 | Reuse one equivalent interest keyed logically by review, ongoing work, existing subject and normalized query filters. Use an existing durable task identity where suitable; do not invent an inquiry subsystem or merge interests by worker slot/name similarity. Exact normalization and storage fields remain open. |
+| P1-D45 | P1-F02 / P1-F04 / Phase 3 | Waiting and retryable attempt interruption preserve interest for normal same-work resumption. Stop advertising on logical-work completion/cancellation, not merely one attempt ending. Unrelated work inherits nothing; restored interests still require current authority/visibility and transfer no read credit. |
+| P1-D46 | P1-F02 / P1-F07 / P1-F08 | Lookup contents and initial observed availability must agree: a racing relevant publication is represented by the lookup or remains eligible for notice. Distinguish observed, advertised, retrieved and source-read information; fetching a later result does not mark earlier results read. Exact markers, registration failure and delivery/replay protocols remain open. |
+| P1-D47 | P1-F02 | Prefer a compatible existing durable-state extension, otherwise a small source-free persistence structure under existing owners. Do not copy source/results/conversations/publication history per interest, create a messaging service or notification workers, or hold transactions across model turns. No table/migration/retention scheme is selected by this approval. |
 
 ## P1-F01 implementation choices still open
 
@@ -98,25 +103,31 @@ which remains open in O-005/O-007.
 ## P1-F02 checkpoint
 
 The [feature document](01-operating-model-autonomy-tools/features/P1-F02-indexed-navigation-and-retrieval.md)
-now saves source reads, independent authenticated cursors, indexed symbol lookup,
-exact analysis retrieval and automatic subject-specific update notices. P1-D39–
-P1-D42 record the latest approval; the previous absolute subscription prohibition
-in P1-D37/R35 is explicitly narrowed. No automatic waiting or task creation follows
-from a lookup or an optional notice.
+is v0.8. It retains all source-read, authenticated-cursor, indexed-lookup,
+exact-analysis-retrieval and automatic-notice agreements. P1-D43–P1-D47 now add
+durable work-scoped interests, successful-lookup registration, equivalent-query
+reuse, same-work restoration and logical-work lifecycle handling. No implicit
+review task, blocking dependency or auto-resumption follows from a lookup/notice.
 
-The agent chooses whether to fetch newly advertised results or refresh; notices
-belong to ongoing work, not worker slots. Detailed publication-bounded/keyset list
-paging was proposed but not separately selected. Marker/state/delivery contracts,
-final schemas, cursor encoding/provisioning, remaining navigation interfaces and
-refactored integration remain open. The proposed direct-relationship interface has
-not been promoted to an approved detailed requirement. The feature is partial and
-not ready for implementation. This checkpoint is local documentation only.
+The observed listing and its initial availability position must not lose a racing
+publication. This is an approved invariant, not an approved publication sequence,
+transaction protocol, or dynamic-list paging algorithm. Interest state is durable;
+its exact schema, filters/owner mapping, marker, delivery acknowledgment and
+physical retention remain open. Publication-bounded/keyset listing was proposed
+but not separately selected. Final wire contracts, cursor provisioning details,
+remaining navigation interfaces and refactored integration also remain open.
+The detailed direct-relationship proposal is not an approved requirement.
+
+R44-R48, steps I1-I6 and scenarios T62-T69 record this approval. They are written
+guidance and specified tests, not implemented behavior or executed application
+tests. P1-F02 remains partial and not ready for implementation. Earlier approvals
+are preserved; publication of this amendment does not change that status.
 
 ## Explicitly unresolved — do not promote to requirements
 
 | ID | Open choice | Owning phase |
 |---|---|---|
-| O-001 | Partially resolved by P1-D01–P1-D42 above: access, synthesis, return to research and tool directions are agreed. Exact feature contracts and role-to-code mapping remain open. | 1 |
+| O-001 | Partially resolved by P1-D01–P1-D47 above: access, synthesis, return to research and tool directions are agreed. Exact feature contracts and role-to-code mapping remain open. | 1 |
 | O-002 | Whether any dedicated orientation analyst is needed. The earlier suggestion was not approved. | 2, informed by 1 |
 | O-003 | Detailed operation catalogue, analyzer selection, recognition rules, binding support, and discovery policy. | 2 |
 | O-004 | Contextual request identity, joining/routing, updates to running reviewers, shared answers, and cycle handling. | 3 |

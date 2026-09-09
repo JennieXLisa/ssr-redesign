@@ -1,9 +1,9 @@
 # P1-F02 — Indexed navigation and information retrieval
 
-Version: 0.7  
+Version: 0.8  
 Updated: 2026-09-09  
 Feature status: IN DISCUSSION  
-Approved detail saved: source selection, pagination, authenticated cursors, indexed lookup, exact analysis retrieval, and automatic subject-specific freshness notices  
+Approved detail saved: source selection, pagination, authenticated cursors, indexed lookup, exact analysis retrieval, automatic freshness notices, and durable work-scoped interests  
 Detailed specification: PARTIAL — further interfaces and navigation choices remain open  
 Implementation readiness: NOT READY  
 Implementation and application tests: NOT PERFORMED
@@ -17,9 +17,12 @@ subject's analysis, followed by lightweight notices at the ongoing work's next
 ordinary interaction when relevant new analysis is available. Retrieval and refresh
 remain the agent's choice. This amends R35's previous blanket prohibition on
 subscriptions; it does not add contextual dependencies, task creation or waiting.
+The latest approval also requires durable, source-free interests registered with
+successful lookups, independently of worker memory or model checkpoints. Restore
+interests for the same ongoing work; do not transfer them to unrelated work.
 The feature remains partial. Final wire/key-file formats, rotation/expiry, other
-matching modes, changing-list pagination, notice-state persistence and delivery
-mechanics, new publication rules, and rollout are not approved by this save.
+matching modes, changing-list pagination, exact interest schema/change markers,
+delivery acknowledgment, new publication rules, and rollout remain open.
 Do not fill open choices with defaults without discussion.
 
 ## 1. Purpose and earlier agreements
@@ -563,8 +566,9 @@ regardless of which list-pagination mechanism is subsequently agreed.
 
 This section records the user's proposal to advertise new records and the explicit
 approval, after clarification, of automatic interest registration and next-normal-
-interaction delivery. The approved interaction does not select the underlying
-change-marker, result-list pagination, persistence or event-delivery algorithm.
+interaction delivery. R44-R48 below now add the approved durable work-scoped
+interest mechanism. The exact change-marker, result-list pagination, storage
+schema and delivery-acknowledgment protocol remain undecided.
 
 ### P1-F02-R37 — An analysis lookup registers interest automatically
 
@@ -576,8 +580,9 @@ Invalid or unauthorized lookups must not establish access to restricted subjects
 
 The interest belongs to the logical work, not a reusable worker slot. A slot that
 later executes unrelated work must not inherit it. The behavior is intended to
-support the ongoing analysis; its precise persistence, resumption and retirement
-contracts must be agreed with the owners of work and checkpoint state.
+support the ongoing analysis. Durable registration, same-work restoration and
+logical-work lifecycle behavior are now specified in R44-R46; exact owner mapping,
+marker and acknowledgment contracts still require implementation-level agreement.
 
 ### P1-F02-R38 — Announce only relevant, discoverable analysis
 
@@ -650,6 +655,95 @@ bound inputs. A choice not to refresh does not permit acceptance of an obsolete
 assessment or bypass current authorization, evidence or submission checks. Retain
 the owning stale-input/invalidation rules; this feature does not create a new
 invalidation policy or force a conclusion about the new analysis.
+
+## 4D. Approved durable ownership of freshness interests
+
+This section records the explicit approval of durable interests attached to ongoing
+work. It narrows the earlier persistence open item; it does not choose an SQL schema,
+a publication sequence, a list-pagination algorithm or a delivery receipt protocol.
+
+### P1-F02-R44 — Persist interest with a successful analysis lookup
+
+Keep a small host-owned, source-free interest record when an authorized analysis
+lookup establishes interest in a subject. Registration is part of completing the
+successful lookup, not something deferred until the model next saves a checkpoint.
+Worker memory may cache the record but must not be its only durable authority.
+
+A process stopping after successful lookup but before an agent checkpoint must not
+lose that work's interest. A normal authorized continuation of the same logical
+work restores its interests without requiring another subscribe call. Do not claim
+that registration succeeded when its persistence outcome is not established; the
+exact failure/retry response must be settled with P1-F07/P1-F08 before implementation.
+
+### P1-F02-R45 — One interest per equivalent work-subject query
+
+Use the logical identity `(review, ongoing work, subject, normalized filters)` to
+associate and deduplicate interests. Use existing indexed subject identities and
+an existing durable task identity where it already represents the ongoing work.
+Do not require a new inquiry subsystem merely to implement this capability. If a
+continuation changes task identity, its same-work mapping must be explicit rather
+than inferred from a worker slot, subject name or similar question text.
+
+Repeated equivalent lookups reuse the interest instead of creating duplicate
+listeners. Distinct work owners and materially different filters remain distinct.
+Filter normalization and the exact key representation are still to be specified;
+do not silently broaden filters or merge incompatible interests. Refreshing an
+interest must not discard updates that were neither represented by the lookup nor
+advertised under the eventual observation/delivery contract.
+
+Retain only the metadata necessary to identify the review/work, subject, normalized
+query, observed availability position, and notice-delivery progress. These are
+logical fields, not prescribed database columns. Result retrieval remains distinct
+from advertising: fetching D22 is not evidence that D20 and D21 were read. Reuse
+existing consumption/read accounting instead of a blanket 'read through' marker.
+Do not copy source, result bodies, conversation content or publication history into
+each interest record.
+
+### P1-F02-R46 — Restore and retire by logical-work lifecycle
+
+A replacement attempt continuing the same logical work can use the durable
+interests, with current recipient authorization and result visibility rechecked.
+A reusable worker slot running unrelated work must not inherit those interests.
+A failed or interrupted attempt does not by itself close still-continuable work.
+Temporary waiting or a retryable interruption preserves interest for normal
+resumption; a freshness notice does not itself resume, schedule or reopen work.
+
+Stop advertising when the logical work is completed or cancelled under its owning
+lifecycle. Do not use an individual attempt's terminal state as a substitute for
+that decision. The exact closure mapping, physical retention/cleanup and restore
+interfaces require reconciliation with the task/inquiry and checkpoint owners.
+The record must not confer authority on a stale attempt or grant inherited source
+or result-consumption credit.
+
+### P1-F02-R47 — No publication gap between lookup and registration
+
+The lookup's represented analysis and its initial observed availability position
+must agree. A relevant result becoming available during lookup/registration must
+be represented by that lookup or remain eligible for a later notice; it cannot be
+lost between an earlier listing read and a later marker update. Only authorized,
+consumable results qualify under the owning acceptance/visibility contract.
+
+This is an acceptance invariant, not selection of a high-water mark, event counter,
+timestamp or frozen listing. The concrete ordering, registration failure handling
+and race-safe transaction/replay protocol remain required design decisions. Use
+short host operations; never keep a transaction open across a model turn. Do not
+mark a result advertised merely because an outgoing response has been constructed.
+
+### P1-F02-R48 — Reuse host state and keep persistence narrowly scoped
+
+Inspect existing host-owned durable state for a compatible extension before adding
+storage. If none fits, a small source-free persistence structure is acceptable;
+it must have an explicit owner and fit the existing authorization, transaction and
+migration practices. This approval does not allocate a table or migration number.
+
+Register interests through the analysis-query owner and restore/check them through
+the normal runtime-response/continuation integration. Derive bounded, coalesced
+notices from authoritative availability information rather than creating a
+notification task for every result or copying the publication history per agent.
+Do not scan and summarize the entire project every turn. No general messaging
+service, manager model, extra notification worker pool, new knowledge store or
+copy of every query result is needed. Preserve the original query's result
+identity, visibility, response bounds and ordinary audit/accounting.
 
 ## 5. Illustrative interaction — not a final tool schema
 
@@ -790,7 +884,7 @@ not claim a new code inspection or an existing ready-made notice subsystem.
 | Step | Required developer action and verification |
 |---|---|
 | N1. Map the boundaries | Identify the logical task/inquiry owner, accepted subject/result associations, availability transitions, result visibility checks, and the runner's ordinary response-composition boundary. Determine whether an existing event/query mechanism can supply the needed change information. |
-| N2. Capture interest with lookup | After validating/resolving the subject, associate the query interest with its ongoing work. Repeated lookups must not create independent identical listeners merely because they occurred in different tool calls. Specify success/failure and initial observed-marker ordering before implementation. |
+| N2. Capture interest with lookup | After validating/resolving the subject, durably register/reuse the interest for its ongoing work and normalized query as part of the successful lookup (R44-R45). Do not rely on the next model checkpoint or worker-local memory. Specify success/failure and initial observed-marker ordering before implementation. |
 | N3. Detect relevant availability | Use the owning accepted-publication information and exact subject associations; distinguish 'became consumable' from provisional creation. Check recipient visibility. Propose the smallest compatible change-marker/event integration before adding persistence; do not scan and summarize all project results for every worker turn. |
 | N4. Compose at a normal boundary | Attach a bounded notice through a defined response/turn hook without replacing the requested tool result, inventing a tool call, corrupting provider call/result pairing, or scheduling an extra model exchange. Integrate the total context/result allowance with P1-F09. Exact notice placement remains an open wire-contract decision. |
 | N5. Separate delivery and consumption | Record only the actual notice-delivery state supported by the runner's evidence. Retrieval of a result is a different action. Reconcile lost acknowledgments/replay with P1-F08 and work continuation with P1-F04; do not mark an update advertised merely because a pending response was constructed. |
@@ -798,10 +892,30 @@ not claim a new code inspection or an existing ready-made notice subsystem.
 
 Keep this a small host capability integrated with existing retrieval and execution.
 No separate manager model, messaging service, notification worker, full query-result
-copy or new knowledge store is authorized. The specific durable/transient state,
-subject-to-file aggregation, lifecycle limits and publication-marker protocol still
-require discussion. Do not implement partially reliable notices and describe them
-as restart-safe before those contracts are specified and tested.
+copy or new knowledge store is authorized. R44-R48 now require durable, work-scoped interests; section 6.5 describes their
+implementation boundary. The exact storage representation, subject-to-file
+aggregation, lifecycle/retention limits, publication-marker and delivery protocol
+still require discussion. Do not describe the complete notice subsystem as
+restart-safe until its remaining contracts are specified and tested.
+
+### 6.5 Durable interests: approved implementation direction
+
+Map these steps to the refactored owners before changing code. The sequence gives
+the approved mechanism and its boundaries, not permission to invent the remaining
+publication, receipt, retention or schema choices.
+
+| Step | Required developer action and verification |
+|---|---|
+| I1. Resolve work ownership | Identify the durable task/inquiry identity and how successive attempts refer to the same logical work. Reuse the current task identity where sufficient. Document any continuation that changes tasks and obtain agreement on that mapping; never key interests by worker slot. |
+| I2. Map minimal durable state | Inspect existing host persistence and its transaction owner. Model the review/work, subject, normalized filters, initial/observed availability and advertised-progress meanings without copying documents. Choose the smallest compatible extension; exact schema, normalization, migration and retention are not selected here. |
+| I3. Integrate successful lookup registration | Resolve and authorize the query, then durably create or reuse its equivalent interest as part of lookup completion. Do not require a model checkpoint or a second subscribe tool. Specify how the listing and observation position satisfy R47 and how persistence failure is surfaced before coding the final protocol. |
+| I4. Restore at normal continuation | Load the same work's interests for an authorized replacement attempt through existing continuation/runtime hooks. Recheck visibility before notices. Preserve waiting/retryable work; stop active advertising only under the logical-work closure authority. |
+| I5. Keep progress meanings separate | Coalesce pending information with the existing normal-turn notice hook. Do not equate queued/composed notice, delivered notice, retrieved result or source inspection. Do not suppress unseen lower-position updates merely because a later result was fetched. The actual delivery acknowledgment is still an open P1-F08 integration contract. |
+| I6. Verify lifecycle and races | Add deterministic cases T62-T69 below at existing query/state/runtime seams. Simulate process replacement using disposable state; use no live model calls. Keep tests requiring the exact marker/receipt protocol explicitly blocked until that protocol is agreed. |
+
+The persistent state change is intentional host bookkeeping even though the
+analysis content is retrieved read-only. It does not create review work, grant
+result acceptance, change canonical coverage, or reopen a completed inquiry.
 
 ## 7. Acceptance scenarios derived from approved behavior
 
@@ -864,7 +978,7 @@ setup and do not activate paid/live model work implicitly.
 | P1-F02-T50 | Work A queries analysis for S42, then an associated consumable result D20 appears. | A receives a bounded availability notice at its next ordinary interaction without a separate subscribe request. |
 | P1-F02-T51 | After the lookup, A next requests source from an unrelated function rather than querying analysis again. | The normal source response/turn can carry the S42 notice; no polling lookup is required and source contents remain unchanged. |
 | P1-F02-T52 | Publish D20 during an in-flight model response, or while A is inactive. | No interruption, additional model call, new task, or automatic reopening occurs. The notice is eligible at the next normal interaction/resumption under the agreed work lifecycle. |
-| P1-F02-T53 | Worker slot W moves from work A to unrelated work B; another slot continues A under its authorized continuation. | Interests are keyed to logical work, not W. B inherits no A notices. The detailed same-work restoration assertion is blocked on the remaining persistence/continuation contract. |
+| P1-F02-T53 | Worker slot W moves from work A to unrelated work B; another slot continues A under its authorized continuation. | Interests are keyed to logical work, not W. B inherits no A notices. Same-work durable restoration is required by R44-R46; exact continuation mapping and delivery assertions remain dependent on their final contracts. |
 | P1-F02-T54 | Publish a result for an untracked subject and a private/pending-acceptance result for S42. | Neither creates a misleading new-available-result notice for A. No restricted record metadata leaks. |
 | P1-F02-T55 | D20 was eligible when detected but is no longer visible at delivery or fetch. | Apply current visibility and owning availability rules; do not disclose restricted content or substitute a different result. |
 | P1-F02-T56 | Advertise D20 while A holds a cursor and has selected D18. | Neither selection nor cursor is silently replaced or reset. A may fetch D20 directly, refresh, or continue without retrieving it. The exact listing-membership behavior remains governed by the still-open pagination contract. |
@@ -873,6 +987,14 @@ setup and do not activate paid/live model work implicitly.
 | P1-F02-T59 | A receives a notice but never fetches its result. | Do not record result consumption, new source-read intervals, coverage, or a satisfied analytical requirement. |
 | P1-F02-T60 | An accepted update makes a bound required input stale, and A ignores the notice. | Owning stale-input/submission checks still apply. Optional refresh is not an override or a finding-validity policy. |
 | P1-F02-T61 | Publication races the first lookup, or notice response delivery fails. | Verify the later-agreed marker/acknowledgment protocol prevents skipped unadvertised updates or false consumption. Exact race assertions are blocked on those explicit remaining decisions. |
+| P1-F02-T62 | Successfully query S42, stop the process before any agent checkpoint, publish a newly consumable result, and resume the same logical work in a replacement attempt. | Durable interest is restored and the update remains eligible for notice at a normal interaction, subject to current visibility. No repeat subscribe request or worker-local state is required. |
+| P1-F02-T63 | Repeat equivalent lookups from the same logical work, including a replacement attempt. | One equivalent interest is reused; no duplicate listeners or per-turn duplicate alerts. The final filter-normalization and observation rules must not discard unadvertised updates. |
+| P1-F02-T64 | Query the same subject under different work owners and materially different filters. Reassign a used worker slot to unrelated work. | Ownership/filter isolation is preserved. The unrelated work inherits no prior interests; no implicit cross-work merge occurs. |
+| P1-F02-T65 | Compare attempt failure followed by authorized continuation, temporary waiting, logical-work completion and logical-work cancellation. | Continuable/waiting work retains its interests; logically completed/cancelled work receives no further advertising or automatic reopening. Map assertions to real lifecycle states rather than inferring closure from an attempt alone. |
+| P1-F02-T66 | Interleave accepted availability with the listing read and durable interest registration. | Each relevant result is represented by the lookup or remains eligible for notice; no observation gap. Exact interleavings and assertions are blocked on the still-open marker/transaction protocol. |
+| P1-F02-T67 | Retrieve D22 directly while D20/D21 were not retrieved; also construct a notice whose delivery is interrupted. | Retrieval/advertising/source-read meanings remain separate; D22 does not mark earlier results read, and a constructed response is not proof of delivery. Exact acknowledgment/replay tests require the agreed delivery protocol. |
+| P1-F02-T68 | Inspect durable interest state and normal resume behavior using disposable fixtures. | State contains only allowed ownership/query/progress metadata, not source, result bodies, conversations or a per-agent publication-history copy. No notification worker, extra model call, review task or coverage write is created. |
+| P1-F02-T69 | Inject interest persistence failure or an uncertain outcome during lookup completion. | The tool must not falsely report durable registration. Reconciliation/retry follows the eventual P1-F07/P1-F08 contract without duplicate equivalent interests. Exact error and acknowledgment behavior remains to be agreed. |
 
 ## 8. Required remaining discussions
 
@@ -884,7 +1006,7 @@ setup and do not activate paid/live model work implicitly.
 | Source search | Exact search modes, filters, match previews and search-limit/continuation semantics. Source-read pagination approval does not finalize search pagination. |
 | Analysis-retrieval contracts | Compact subject-based discovery, exact-result detail retrieval, separate work availability and no auto-wait/task creation are agreed in R29–R36. Exact artifact variants, role visibility, selector/response fields, paging of details/work references, and result-specific acceptance integration remain open; Phase 4 still owns publication. |
 | Changing analysis lists | Ordering, continuation identity, membership under new arrivals, changing acceptance/visibility, consistency markers and expiry remain open. Automatic update notices are approved separately; they do not finalize the dynamic-list pagination algorithm. |
-| Freshness-notice mechanics | Automatic subject interest, normal-boundary notices and optional retrieval are agreed in R37–R43. Exact subject/filter identity, marker source, initial lookup race, response fields and size limits, coalescing, acknowledgment/replay, work-scoped persistence/resumption/retirement and nested file-symbol relevance remain open. Do not invent new tables or a general messaging service. |
+| Freshness-notice mechanics | Automatic notices and durable interest per review/work/subject/normalized query are agreed in R37–R48, including lookup-time registration, restoration, work isolation, and a no-publication-gap invariant. Exact task/inquiry mapping, filter normalization, schema, marker/transaction protocol, response fields/limits, delivery acknowledgment/replay, retention/cleanup and nested file-symbol relevance remain open. Do not invent a table or general messaging service. |
 | Read wire contract | Final selectors, mutually exclusive request variants, response fields, continuation fields and allowed defaults. |
 | Cursor wire contract | Self-contained cursors, HMAC-SHA-256, validation, replay and same-review cross-attempt use are agreed. Exact encoding, canonical authenticated bytes, field/size/version bounds and error contract still need decisions. |
 | Secret provisioning details | Persistent project-local owner-protected storage, serialized first creation, worker loading/restart and no silent replacement are agreed. Exact filename/format, generation parameters, atomic initialization protocol and how prior provisioning is distinguished from loss remain open. |
@@ -912,8 +1034,10 @@ persistent project-local host-secret ownership, exact indexed symbol lookup,
 and subject-based analysis discovery followed by exact-result retrieval are now
 saved as agreed portions of P1-F02. R37–R43 add automatic subject-specific freshness
 notices and optional retrieval, while amending R35's subscription prohibition.
-They do not settle changing-list pagination, notice-state/delivery mechanics,
-final schemas, or Phase 4 acceptance.
+R44-R48 add durable interest registration, equivalent-query reuse, same-work
+restoration, logical-work closure and gap-free lookup/registration requirements.
+They do not settle changing-list pagination, exact interest schema/change markers,
+delivery acknowledgment, final wire contracts, or Phase 4 acceptance.
 The feature is not implementation-ready until its remaining required contracts,
 code mapping, tests and dependencies are discussed and reviewed. No code, migration,
 application test or benchmark has been produced by this documentation update.
@@ -931,7 +1055,8 @@ application test or benchmark has been produced by this documentation update.
 - The user approved replay from a fixed position without a shared advancing
   pointer, using the current limits and deriving continuation from actual bytes.
 - The user asked that approved feature progress be saved to GitHub or local files.
-  This checkpoint is saved locally; GitHub publication has not occurred.
+  Earlier local-only checkpoints are historical. The v0.7 baseline was published
+  in `JennieXLisa/ssr-redesign` before this amendment; Git history preserves it.
 - The user approved HMAC-SHA-256 with a project-local persistent host secret after
   clarifying that the secret authenticates cursors and is not their reading
   position. The approved storage boundary is an owner-protected host file; creation
@@ -979,6 +1104,18 @@ application test or benchmark has been produced by this documentation update.
 - The preceding v0.6 feature, v1.6 register and affected indexes are retained
   unchanged in `history/before-p1-f02-freshness-notices/`. This is documentation
   only; no implementation, application test, or GitHub publication is claimed.
+
+
+- The user approved durable interests stored per ongoing task/inquiry as part of
+  successful analysis lookup, rather than relying on worker memory or the next
+  agent checkpoint. Equivalent work/subject/filter queries reuse one interest;
+  normal same-work continuation restores it and logical closure stops advertising.
+- This v0.8 amendment adds R44-R48, implementation steps I1-I6 and acceptance
+  scenarios T62-T69. It narrows the earlier persistence open item but leaves
+  exact schema, marker/registration ordering, notice delivery acknowledgment,
+  physical retention and continuation mapping open. T66/T67/T69 explicitly retain
+  those implementation dependencies. No application tests or code changes are
+  claimed. The prior text remains in Git history and the preceding local package.
 
 See the [phase specification](../SPECIFICATION.md),
 [phase implementation plan](../IMPLEMENTATION_PLAN.md), and
