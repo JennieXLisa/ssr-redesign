@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P8-F01`, `P7-F02`
 
+**Contract-hardening revision:** apply the concrete corrections in [P8-F02/IMPLEMENTATION_PLAN.md](P8-F02/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Measure whether collaboration actually yields correct findings earlier without losing coverage or spending more than its benefit justifies.

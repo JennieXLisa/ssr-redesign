@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. This is an experiment implementation protocol, not measured evidence of improvement. Read the [feature](../P8-F02-quality-and-cost-evaluation.md), [configuration](../../../contracts/CONFIGURATION.md), P8-F01 deterministic acceptance and the controller's existing evaluation-isolation contracts.
 
+## Contract-hardening integration — Evaluation constrained by enforceable profiles
+
+A baseline comparison can run an archived old release in an isolated evaluation environment under separate authorization; it does not mean the new release supports old-runtime mode. Bind comparable snapshot/source, known budgets and route/tokenizer context limits before comparing latency/quality/cost.
+
+Measure actual accepted-input readiness, settlement delay, prefix-pending duration, no-progress stops, deferred lead quota and incomplete coverage separately. Do not report missing usage as zero or count a 365k rejected request as successful work. No benchmark claim follows from the reference models; live evaluation remains separately authorized and records unsupported capability cases.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Benchmark manifest and separation
 
 Create an immutable BenchmarkCase manifest with permitted source provenance/license, snapshot digest, supported language/index/model capabilities, case identity, known label coverage and withheld scoring artifacts. Include cross-file positive cases, effective-control negatives, business/state/lifetime concerns without classic sinks, unsupported constructs and untagged/no-hit files.
