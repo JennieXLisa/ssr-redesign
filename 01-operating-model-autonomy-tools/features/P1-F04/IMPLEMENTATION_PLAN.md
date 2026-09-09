@@ -2,9 +2,17 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P1-F04-progress-checkpoints.md), [STATE.md](../../../contracts/STATE.md), [TOOLS.md](../../../contracts/TOOLS.md) and [configuration](../../../contracts/CONFIGURATION.md). The design reuses checkpoint storage and recovery; it does not make model reasoning a trusted memory store.
 
+## Contract-hardening integration — 170k checkpoint and dossier algorithm
+
+Implement E/O/M and I_max at the actual ssr.agent.runtime composition boundary. With E=170000, O=16384, M=4096, checkpoint threshold is127092 and maximum input149520. Count system/tool/protocol overhead, not only history. Use a checkpoint-only exchange above the soft threshold with output4096 and at most two attempts, consuming real budgets.
+
+The dossier builder must return measured tokens/UTF-8 bytes and included mandatory-delta manifest. Enforce8192tokens/32768bytes total and4096tokens/16384bytes core. Use exact host manifest references for large mechanical sets. Preserve incomplete tool groups and material contradictions in the defined eviction order. Test 365000 constructed input→zero dispatch, immutable request hash after counting, tokens-only/bytes-only dossier overflow, failed checkpoint retaining its prior head, and three no-progress resumptions stopping.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Locate the existing save and restore boundaries
 
-Map `CheckpointState`, `save_checkpoint`, `load_latest_checkpoint`, the broker's `_checkpoint_state`, ordinary tool filtering, host-checkpoint messages, and `worker_context_recovery` to the actual checkout. Identify the existing checkpoint sequence, body hash, author and task/attempt binding. Preserve old parsers so legacy checkpoints remain readable under their original contracts.
+Map `CheckpointState`, `save_checkpoint`, `load_latest_checkpoint`, the broker's `_checkpoint_state`, ordinary tool filtering, host-checkpoint messages, and `ssr.worker.context_recovery` to the actual checkout. Identify the existing checkpoint sequence, body hash, author and task/attempt binding. Preserve old parsers so legacy checkpoints remain readable under their original contracts.
 
 Currently checkpoint exposure and checkpoint storage are separate decisions. In collaborative mode remove the host-only exposure restriction, but call the same schema/validator/save owner from ordinary and host-requested turns. Do not create `save_agent_memory` beside `checkpoint_state`. A normal save must return `terminal:false`; `yield_work` remains an explicit P6-F02 action.
 
