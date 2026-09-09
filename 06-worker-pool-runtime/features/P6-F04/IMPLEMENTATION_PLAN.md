@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P6-F04-completion-and-reconciliation.md), [STATE.md](../../../contracts/STATE.md), P4-F01 receipt acceptance and P5-F03 unresolved reassessment. An empty dispatch queue, a generated report or exhausted budget is not review completion.
 
+## Contract-hardening integration — Total completion and settling predicates
+
+A review closes only after all canonical/required collaboration/candidate obligations are disposed, no live execution or mandatory receipt/wake/material propagation remains, and accounting has no unsafe uncertainty. COMPLETE_WITH_LIMITATIONS is distinct from COMPLETE: explicit INCONCLUSIVE/unsupported analytical scope counts there, not as supported safety. Failed missing canonical review remains BLOCKED/FAILED until its recovery or authoritative disposition.
+
+Read the exact investigation/falsification mapping in state-transitions.json; DISMISS creates no stranded successor, NEED_CONTEXT stays required open, and INCONCLUSIVE does not spawn endlessly. Optional undelivered notices on terminal work are not closure blockers. Serialize closure against last availability/lead creation under the coordinator and reject further new work on closed review generation. Test queue-empty with prefix pending, prepared yield, incomplete staged synthesis, unfunded required task and all terminal outcome combinations.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. One completion authority
 
 Locate the existing ReviewService/coordinator completion, export gates, required runtime/transcript acceptance queries and task summaries. Extract a collaborative completion query/validator under that owner. Public status, supervisor decisions and final transition must use it rather than independently count task rows in the controller.
