@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only; no release, application install or live migration is performed by this change. Read the [feature](../P8-F03-delivery-and-release.md), [DELIVERY.md](../../../DELIVERY.md), [BASELINE.md](../../../BASELINE.md), P7-F03 versioning and P8-F01 acceptance.
 
+## Contract-hardening integration — Manifest, validation and Codex handoff over the actual tree
+
+Use the regenerated MANIFEST.json and TRACEABILITY.json including all34 dedicated feature plans, the implementation index and hardening contracts/schemas/scripts. The manifest excludes its own bytes and named generated validation outputs only; do not claim a self-referential own-commit hash. Validate content hashes and every active link from the final tracked checkout.
+
+Record structural tests, executable reference-contract tests and GitHub publication separately from application/migration/gateway tests. PUBLISH_HANDOFF/VALIDATION_REPORT must not retain a false unpublished flag or hashes from v2. Point Codex to the exact final commit and CODEX_HANDOFF.md, with R0 baseline reconciliation and actual integration gates. No runtime deployment or provider spend is authorized by documentation publication.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Separate documentation, code and live authority
 
 The documentation repository contains the selected design and implementation guidance. It is not the running harness, not proof that its modules exist in the installed package, and not authorization to mutate live reviews. An implementing task must select actual source/controller worktrees and permit code changes. Live provider spend, controller restart, package installation and real database migration remain separately authorized actions.
@@ -42,7 +50,7 @@ Do not hide missing functions behind broad 'TODO integrate' paths while marking 
 
 ## 5. Continuous cross-repository compatibility
 
-Use the four baseline/new harness-controller combinations for supported legacy behavior, not only both changed repos together. Record which combinations support collaborative mode and which reject it by negotiation. Preserve parent engine-import boundaries, exact-task command semantics, authenticated job generations, source-free DTOs and lazy historical transcript fetching.
+Use the matching new harness/controller pair and explicit incompatible-pair refusals. Historical data/report parsing is independently read-only, not a runtime compatibility pair. Preserve parent engine-import boundaries, exact-task command semantics, authenticated job generations, source-free DTOs and lazy historical transcript fetching.
 
 Run new public query/command tests against installed wheels as well as development source. Controller tests must verify packaged frontend static assets and their hash manifest, not merely the source TypeScript build directory. A sibling editable checkout cannot silently satisfy a missing wheel module.
 
@@ -74,7 +82,7 @@ Rollback is not an automatic package downgrade when old code cannot read the new
 
 ## 9. Release gating tests
 
-Create a deliberately incomplete feature build without real turn receipts: capability remains disabled despite schema presence. Package a stale/omitted private module and prove clean installed tests detect it. Supply an old controller to the new harness and verify supported legacy behavior; unsupported collaboration fails clearly.
+Create a deliberately incomplete feature build without real turn receipts: capability remains disabled despite schema presence. Package a stale/omitted private module and prove clean installed tests detect it. Supply an old controller to the new harness and verify CONTRACT_MISMATCH before mutation without a legacy fallback.
 
 Inject migration failure and verify no new-mode-ready advertisement. Restore matched/mismatched cursor-key backups and inspect explicit continuation behavior. Simulate unknown live writer status and assert deployment/recovery refuses unsafe mutation.
 

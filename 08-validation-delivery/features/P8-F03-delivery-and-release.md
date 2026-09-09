@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P8-F01`, `P8-F02`, `P7-F03`
 
+**Contract-hardening revision:** apply the concrete corrections in [P8-F03/IMPLEMENTATION_PLAN.md](P8-F03/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Give developer agents an executable sequence of bounded changes, each with tests and retained authorities, instead of a huge rewrite or an endless collection of half-enabled modes.
@@ -21,7 +23,7 @@ Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths loc
 
 **P8-F03-R02.** Complete common interfaces and tests before enabling dependent behavior. A feature may be coded behind disabled capability, but do not advertise it while its source/acceptance/receipt/gate path is incomplete.
 
-**P8-F03-R03.** Keep changes one cohesive owner at a time with paired compatibility tests; preserve legacy behavior and exact historical contracts. Do not mix unrelated refactor, bug fix and new policy without a documented prerequisite reason.
+**P8-F03-R03.** Keep changes one cohesive owner at a time with paired compatibility tests; preserve exact historical records while cutting over to the single new runtime contract. Do not mix unrelated refactor, bug fix and new policy without a documented prerequisite reason.
 
 **P8-F03-R04.** For each slice report moved/extended owners, exact public/schema changes, tests run/not run, baseline issues, failure-injection results and remaining release gates.
 
@@ -68,7 +70,7 @@ These are tests to implement and execute, not test results from document authori
 | Test | Fixture or action | Required observable outcome |
 |---|---|---|
 | P8-F03-T01 | A slice lacks receipt integration | Capability remains disabled, not declared complete. |
-| P8-F03-T02 | Both repos change together | All four baseline/refactored pair checks recorded. |
+| P8-F03-T02 | Both repos change together | Matching new pair and zero-mutation mismatch refusals recorded. |
 | P8-F03-T03 | Wheel retains stale module | Clean packaging test detects it. |
 | P8-F03-T04 | Unexpected local changes | Preserved and reported. |
 | P8-F03-T05 | Implementation finished but live gate not run | Status distinguishes the two. |
