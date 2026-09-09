@@ -1,6 +1,14 @@
 # P6-F02 — Execution lifecycle and yield: implementation plan
 
-Updated: 2026-09-09. Documentation only. **Implementation blocked by [H0 contract hardening](../../../CONTRACT_HARDENING.md).** Read the [feature](../P6-F02-execution-lifecycle-and-yield.md), [STATE.md](../../../contracts/STATE.md), [YIELD_SETTLEMENT.md](../../../contracts/YIELD_SETTLEMENT.md), P1-F04 checkpoints and P3-F03 answer wakeups. This amendment removes the previous permission to claim a yielded successor before mandatory predecessor settlement.
+Updated: 2026-09-09. Documentation only. **Use the corrected [hardening contracts](../../../CONTRACT_HARDENING.md); real integration tests are mandatory.** Read the [feature](../P6-F02-execution-lifecycle-and-yield.md), [STATE.md](../../../contracts/STATE.md), [YIELD_SETTLEMENT.md](../../../contracts/YIELD_SETTLEMENT.md), P1-F04 checkpoints and P3-F03 answer wakeups. This amendment removes the previous permission to claim a yielded successor before mandatory predecessor settlement.
+
+## Contract-hardening integration — State migration and exact yielded terminal event
+
+Use state-transitions.json as the exhaustive task/review/agent/intent matrix and MIGRATION_PLAN.md for DDL/SQL/recovery coverage. AGENT_TERMINAL statusCOMPLETED with termination_reasonYIELDED closes only the actual execution; it references yield_intent_id and never completes the logical task. A prefix receipt alone cannot satisfy this terminal settlement.
+
+Generic expired-task recovery inspects prepared intents and original writer/receipt state before changing task eligibility. Permanent invalid mandatory receipts produce an explicit BLOCKED intent/required-work recovery outcome, not a successful PENDING continuation. Reconcile cancellation under the exact captured control fence. Run the real current scheduler/finalizer with transcript sealing deliberately blocked, then all YS interleavings.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
 
 ## 1. One transition authority, three distinct milestones
 
@@ -55,7 +63,7 @@ Once PENDING is legitimately published, normal admission checks resource, policy
 
 Retain authenticated targeted cancellation and control-generation checks. A disconnected frontend is not cancellation. If cancellation wins during settlement, host recovery finalizes the old execution/history but cannot requeue the cancelled work. Guarded updates may not overwrite a successor or independently committed terminal task state.
 
-Expired/interrupted-task recovery first inspects yield intents. Resume the exact finalization if its proofs allow it; do not infer successful settlement from silence, elapsed time, a checkpoint or task status. No new model attempt is required just to import an already sealed transcript receipt. Permanently invalid receipt/writer outcomes require the specified failure/recovery table; until H06 closes, the feature is not enableable.
+Expired/interrupted-task recovery first inspects yield intents. Resume the exact finalization if its proofs allow it; do not infer successful settlement from silence, elapsed time, a checkpoint or task status. No new model attempt is required just to import an already sealed transcript receipt. Permanently invalid receipt/writer outcomes require the specified failure/recovery table; until the STATE_MACHINE/MIGRATION_PLAN integration tests pass, the feature is not enableable.
 
 Crash after preparation, transcript seal, project receipt reconciliation and continuation publication must each have a deterministic replay path. Recover accepted domain work rather than rerunning inference. Any late callback is fenced to its original attempt/reservations and cannot alter the successor's checkpoint, lease, counters or current inputs.
 
