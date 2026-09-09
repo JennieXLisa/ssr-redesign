@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. This document specifies tests to implement; it does not report that application tests passed. Read the [feature](../P8-F01-deterministic-acceptance.md), [delivery slices](../../../DELIVERY.md), [STATE.md](../../../contracts/STATE.md) and every feature's detailed plan.
 
+## Contract-hardening integration — Executable hardening contracts before runtime acceptance
+
+Run tools/build_hardening_schemas.py reproducibility, tools/test_contract_hardening.py and tools/validate_hardening.py in this repository. They exercise schema closure/ABI,170k arithmetic, prefix/input hashes,10k staged decisions, Python callsite fixtures, quota replay and state ordering; they are not harness application tests.
+
+Port each named YS/PR/IR/CB/SY/SM/CI/LB/CO/MP case to its actual runtime owner and run real claim/finalization/receipt/transport/migration races. In particular block predecessor transcript seal and attempt real claim; require zero oversized provider calls; stage a large canonical file through final atomic publication. Preserve exact test collection and installed artifact identities.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Create a requirement-to-test inventory
 
 Retain the approved P1-F01/P1-F02 requirement/test ledgers and all feature-specific scenarios. Build a machine-readable mapping from requirement ID to owning feature, implementation symbol, test node ID, fixture, boundary exercised and status. New completion tests supplement earlier requirements rather than replace them with a smaller count.
@@ -67,7 +75,7 @@ Target-owned instructions/configurations are untrusted data. A synthetic malicio
 
 ## 8. Public and package verification
 
-Run tests through installed wheel/sdist imports in clean temporary environments, not only editable source. Inspect module origins and DTO identity. Include all four supported legacy harness/controller pairs and new/new collaborative negotiation. Parent child-wire parsing must not import the engine prematurely.
+Run tests through installed wheel/sdist imports in clean temporary environments, not only editable source. Inspect module origins and DTO identity. Include matching collaborative negotiation and zero-mutation rejection of mismatched pairs. Parent child-wire parsing must not import the engine prematurely.
 
 Frontend tests must assert request counts and stale-response isolation: collapsed historical attempts do not fetch capture history, changing reviews ignores late old responses, stream reconnect refreshes authority, and new notices do not auto-download source. Verify built assets and hash manifests are actually included in the controller package.
 
