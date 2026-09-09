@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P7-F02-public-sdk-and-controller.md), [SDK contract](../../../contracts/SDK.md), [baseline](../../../BASELINE.md), P6-F01 admission and P6-F04 completion. The controller consumes harness authority; it must not recreate candidate/readiness/coverage logic.
 
+## Contract-hardening integration — Frozen SDK signatures, DTOs and paired contract proof
+
+Implement the exact methods/constructor annotations/defaults in contracts/reference/public-api.pyi and schemas/sdk-abi.json. DTO field order, nullability, bounds and closed enums come from hardening-v1.schema.json; use immutable slots/keyword-only dataclasses and reject unknown keys/bool-as-int. Export facade and concrete DTO identities must match the same frozen bundle in both packages.
+
+Use actual CommandContext and ProjectQueryContext boundaries, exact admission tokens and public child dispatch. The matching new pair is the only executable pair; CONTRACT_MISMATCH happens before mutation for any missing/wrong ABI/schema/state/prefix/counter capability. Inspect signatures and compare serialized fixtures in installed wheel tests. Add pagination-domain/visibility tests and source-free Error/Issue projection checks; no client-side inferred task transitions.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Map current public and controller boundaries
 
 Inspect actual public exports/signatures/DTO contract versions in ssr.application and ssr.query, controller compatibility checks, registration/query contexts, child_wire, child_dispatch, supervisor/admission, explorer/API projections and frontend request state. Preserve intended facade class identity and delayed harness imports inside the authenticated coordinator child.
@@ -54,11 +62,11 @@ Preserve lazy historical transcript capture lookup: collapsed attempts do not in
 
 Show pending acceptance, queued follow-up, dependency wait, backend pressure and budget blockers with different text/actions derived from typed codes. Do not offer an action unsupported by negotiated capabilities. An unknown future enum yields an explicit unsupported-version state, not false success or an unhandled crash.
 
-## 7. Packaging and backwards compatibility
+## 7. Packaging and exact new-pair compatibility
 
 Build the harness wheel and controller backend/frontend packages in clean environments. Verify public import paths and DTO class identity from installed artifacts, not editable sibling checkouts. Ensure package discovery includes new private modules without accidentally packaging old and new shadowing paths.
 
-Run all four baseline/refactored pairs for supported legacy behavior: old/old, new harness/old controller, old harness/new controller, new/new. Collaborative mode is only enabled in the capable new/new pair. New controller against old harness must report unavailable collaboration cleanly; it cannot probe private methods as fallback.
+Run the exact new/new pair and mismatch-refusal tests; old/old and mixed old/new executing pair support are not required. New controller against old harness must report unavailable collaboration cleanly; it cannot probe private methods as fallback.
 
 Frontend build must regenerate packaged static assets and the existing hash manifest where source changes. Typecheck, lint, component tests and production build use the repo's verified scripts, not invented commands. No live installed controller is restarted during these checks.
 
@@ -72,6 +80,6 @@ Exercise UI A→B selection with delayed A responses, reconnect event gaps, expa
 
 ## 9. Delivery sequence and exit
 
-Ship harness public DTO/services and fixtures first, then negotiated controller wire/dispatch and supervisor routing, then safe explorer/API projections, then frontend state/rendering and packaged assets. Keep dormant unsupported UI controls disabled until negotiation succeeds. Finish with all four compatibility pairs and clean artifact tests.
+Ship harness public DTO/services and fixtures first, then negotiated controller wire/dispatch and supervisor routing, then safe explorer/API projections, then frontend state/rendering and packaged assets. Keep dormant unsupported UI controls disabled until negotiation succeeds. Finish with the exact matching new pair and mismatch refusals and clean artifact tests.
 
 Completion evidence includes public signature/contract maps, frame/request fixtures, capacity/claim traces, import-boundary tests, frontend race/lazy-loading assertions and installed artifact hashes. No controller project SQL, CLI-output parsing, broad fallback to private helpers, UI-computed finding gates or automatic source/transcript fetch is permitted.

@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P7-F01`, `P6-F01`
 
+**Contract-hardening revision:** apply the concrete corrections in [P7-F02/IMPLEMENTATION_PLAN.md](P7-F02/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Expose collaborative work and early valid findings through the controller without allowing it to reproduce harness state or bypass strict compatibility negotiation.
@@ -17,7 +19,7 @@ Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths loc
 
 ## Detailed requirements
 
-**P7-F02-R01.** Add explicit CollaborativeReviewService/CollaborativeQueryService surfaces and versioned DTOs; preserve legacy method signatures and enum values. New capability is separately negotiated, not silently inferred from package version.
+**P7-F02-R01.** Add explicit CollaborativeReviewService/CollaborativeQueryService surfaces and versioned DTOs; freeze the exact new method signatures, DTOs and enums; old signatures are not an execution requirement. New capability is separately negotiated, not silently inferred from package version.
 
 **P7-F02-R02.** The controller continues to use only supported SDK methods for project state/commands. It may persist its own job/evaluation data but cannot query harness ssr.db or private helpers.
 
@@ -55,7 +57,7 @@ Show original work plus independent leads, requests/answers and blocking reasons
 
 ### Step 5: Run four compatibility pairs
 
-Baseline/baseline, refactored-harness/baseline-controller, baseline-harness/refactored-controller and refactored/refactored. New feature mode correctly refuses absent capability while old mode remains usable.
+Test the single matching new harness/controller pair plus explicit rejection of every mismatched schema/ABI/capability. Historical readers, if shipped, have separate read-only fixtures.
 
 ## Failure, concurrency, and recovery
 
@@ -67,7 +69,7 @@ These are tests to implement and execute, not test results from document authori
 
 | Test | Fixture or action | Required observable outcome |
 |---|---|---|
-| P7-F02-T01 | Old controller with new additive harness | Legacy mode continues under supported pair. |
+| P7-F02-T01 | Old controller with collaborative-only harness | CONTRACT_MISMATCH before mutation; no legacy fallback. |
 | P7-F02-T02 | New controller with old harness | Collaborative mode unavailable explicitly. |
 | P7-F02-T03 | Mixed backends in slice | Capacity vector respected. |
 | P7-F02-T04 | New lead during running slice | Eligible refill without unrelated plan invalidation. |
