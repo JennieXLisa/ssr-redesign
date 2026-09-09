@@ -2,6 +2,16 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P4-F02-coverage-adoption-and-file-synthesis.md), [STATE.md](../../../contracts/STATE.md) and P4-F01. The new route reuses complete compatible analysis; it must not redefine partial contextual answers as complete coverage.
 
+## Contract-hardening integration — Large-file synthesis through manifests and staged decisions
+
+Replace the provider-visible full contribution/disposition arrays with an immutable SynthesisManifest header and paginated typed items. Derive full inherited units/evidence/dependencies/origins mechanically, retain graph/policy/input hashes and explicit reconciliation obligation keys. Do not ask the model to reproduce every accepted unit selection.
+
+Implement stage_file_synthesis with1–32 entries and65536-byte total cap, operation replay and expected_revision CAS. Large origin/evidence lists use128-reference set pages; decision corrections append with exact supersedes_digest. Every stage has prefix provenance. Seal only through the small SynthesisSeal envelope, which stays below8192bytes independently of unit count. Stream full host validation and preserve atomic canonical publication; no partial complete-file state.
+
+Test10000 required decisions, all decisions changed, multi-page origin sets, interrupted stage acknowledgment, withdrawn child before seal, missing obligation/page/receipt, and final seal at maximum field lengths. Existing full semantic validators and coverage/adoption race tests remain mandatory; raising the terminal byte limit is not the fix.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Extract one complete-unit validator
 
 Locate symbol-review result parsing, required inventory membership/dispositions, complete documentation checks, dependency-consumption manifest validation, evidence preparation, producer receipts and canonical child settlement. Factor a reusable validator/preparation boundary without weakening its existing rules. Ordinary symbol submission and host adoption call this same authority.
@@ -70,7 +80,7 @@ Race a normal scheduler claim against adoption and a normal result acceptance ag
 
 Build a file with two normal children, one adopted child and one failed required child. File completion remains blocked; after valid resolution, publication commits all coverage atomically. Inject one invalid child during preparation/commit and assert rollback. Verify already registered lead origins are not duplicated by parent synthesis.
 
-Change policy/input generation or withdraw the artifact between validation and commit. Adoption must recheck. Repeat after restart and compare stored receipts/coverage counts. Legacy distributed-publication tests continue to use unchanged legacy contributions.
+Change policy/input generation or withdraw the artifact between validation and commit. Adoption must recheck. Repeat after restart and compare stored receipts/coverage counts. Retain prior distributed-publication fixtures to characterize reusable validators; the new runtime does not execute a second legacy synthesis route.
 
 ## 8. Delivery and exit
 
