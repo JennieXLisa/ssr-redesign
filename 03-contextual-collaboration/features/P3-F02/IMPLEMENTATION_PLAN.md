@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P3-F02-active-reviewer-inbox.md), [state](../../../contracts/STATE.md), P1-F02 notice delivery and P3-F01 routing. A contextual request is an input addition to logical work, not a message sent to a reusable worker slot.
 
+## Contract-hardening integration — Delivered inbox deltas versus token replacement
+
+Represent each accepted running-reviewer update as a new immutable input revision and required-delta manifest. Build an ordinary model request containing a bounded delta description and exact references; bind its token/hash and mark the delta observed only after the real matching valid response. Do not mark an update delivered just because an inbox row or replacement token exists.
+
+If a mandatory delta cannot fit the 170k policy, checkpoint/yield or block rather than silently evict it. Preserve incomplete provider tool groups. Pending notices are optional, inbox material invalidations are not. Test a full context preventing delta attachment, stale producer response, multiple queued revisions and exact input-token rejection after a material update.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Reuse the runner's safe interaction boundary
 
 Locate ordinary request composition, final context trimming, request/response identity recording and work input revision ownership. Add an inbox projection hook at that boundary. Do not interrupt an in-flight provider stream, start a notification-only model call, mutate provider continuation state from another thread or append arbitrary system instructions from the requester.
