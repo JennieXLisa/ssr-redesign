@@ -1,6 +1,6 @@
 # P3-F03 — Accepted answers and inquiry continuation
 
-Version: 1.0 · Authored: 2026-09-09  
+Version: 1.1 · Updated: 2026-09-09
 Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P3-F01`, `P3-F02`, `P4-F01`, `P6-F02`
@@ -23,9 +23,9 @@ Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths loc
 
 **P3-F03-R02.** An answer becomes usable only after its own semantic, source and required turn-level receipts pass. Private partial prose or merely finished task status is insufficient. No forced wait for whole-file publication.
 
-**P3-F03-R03.** An explicit yield atomically binds the current checkpoint and unresolved blocking requests before relinquishing the slot. A query or nonblocking context request alone never yields work.
+**P3-F03-R03.** An explicit yield atomically records a durable preparation binding the current checkpoint and registered blocking requests while retaining RUNNING and the original lease. Continuation state is published only after mandatory predecessor settlement. A query or nonblocking context request alone never yields work.
 
-**P3-F03-R04.** When an answer, contradiction or explicit unresolved disposition enables a meaningful next action, the host makes the consumer task PENDING once. It need not wait for all other answers unless the registered prerequisite expression requires them.
+**P3-F03-R04.** An answer, contradiction or explicit unresolved disposition may enable continuation according to the registered prerequisite predicate. During prepared yield/settlement, the host records that disposition without making the consumer PENDING. After mandatory predecessor settlement, the finalizer or a generation-checked wake transaction may publish PENDING idempotently. No answer event may reopen terminal work.
 
 **P3-F03-R05.** Consumer resumes with exact new answer refs, previous checkpoint and outstanding questions. The logical work ID stays fixed; a new execution attempt has independent lease, accounting and source-read credit.
 
@@ -45,11 +45,15 @@ Use source-free analysis schema and exact input revision. Register evidence with
 
 ### Step 2: Commit request resolution and wake eligibility
 
-The publication/availability transaction records request-answer association and a durable task-wake intent. The task owner revalidates generation and converts WAITING_DEPENDENCY to PENDING idempotently.
+The publication/availability transaction records request-answer association and a durable task-wake intent. For a consumer already in WAITING_DEPENDENCY, the task owner verifies predecessor settlement and the current wait generation before converting it to PENDING idempotently. For a consumer still RUNNING with a prepared yield, record the wake information only; the settlement finalizer performs the later continuation decision.
 
-### Step 3: Make yield race-safe
+### Step 3: Prepare yield, settle the predecessor, then publish continuation
 
-Within one transaction recheck whether any required answer already became available. If yes, return CONTINUE or yield-to-PENDING instead of sleeping forever on an already-satisfied event.
+The initial orchestration transaction validates the exact active attempt, input revision, checkpoint and registered dependency revisions, then records a durable yield intent and wait predicate. The task remains RUNNING with its original lease. This transaction must not publish PENDING or WAITING_DEPENDENCY, clear the lease, or permit a successor claim.
+
+After preparation commits, the runner stops ordinary inference and new model-initiated effects while retaining exact-attempt host finalization authority. Once the predecessor satisfies the mandatory settlement barrier in [YIELD_SETTLEMENT.md](../../contracts/YIELD_SETTLEMENT.md), a separate guarded orchestration transaction rechecks cancellation, ownership, input identity and current accepted answer dispositions. It publishes PENDING when the registered predicate enables continuation, otherwise WAITING_DEPENDENCY, and clears the original lease atomically with that publication.
+
+Answers arriving during preparation or settlement retain their durable associations/wake intents but cannot requeue the consumer. The finalizer rechecks them before publishing continuation. If WAITING_DEPENDENCY is published first, a subsequent qualifying answer may cause one idempotent, generation-checked transition to PENDING.
 
 ### Step 4: Build compact continuation
 

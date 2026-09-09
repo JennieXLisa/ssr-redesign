@@ -1,6 +1,6 @@
 # P6-F02 — Execution lifecycle, yield, and restart
 
-Version: 1.0 · Authored: 2026-09-09  
+Version: 1.1 · Updated: 2026-09-09
 Document status: DRAFT COMPLETE — delegated engineering detail; not an implementation claim.  
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P1-F04`, `P3-F03`, `P1-F08`
@@ -23,7 +23,7 @@ Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths loc
 
 **P6-F02-R02.** Normal checkpoint/yield is not an operational model failure and does not consume failure-retry allowance. It still creates actual attempt/resource receipts and counts toward no-progress continuation limits.
 
-**P6-F02-R03.** yield_work validates checkpoint and unresolved dependencies atomically before RUNNING→WAITING_DEPENDENCY or PENDING. Release reservations only according to actual usage and safe request/finalization settlement.
+**P6-F02-R03.** yield_work atomically validates the current attempt, input revision, checkpoint and registered dependencies and records a durable yield preparation. The task remains RUNNING with its original lease; the tool does not directly transition it to WAITING_DEPENDENCY or PENDING. After the exact predecessor satisfies the mandatory settlement barrier, the orchestration/finalization owner rechecks cancellation and dependencies and atomically publishes the continuation state, binds its inputs and clears the old lease. Release reservations only according to actual usage and safe execution/resource settlement. An available worker slot does not permit an early successor claim.
 
 **P6-F02-R04.** An answer event racing with yield is rechecked so work cannot wait forever on an already-satisfied request. Duplicate wakeups converge on one pending task and one later claim.
 
@@ -43,13 +43,13 @@ The shared [tool contracts](../../contracts/TOOLS.md), [state and storage contra
 
 Append schema/application/SDK updates for new state under mode rules. Preserve illegal-transition tests and legacy stored-state behavior.
 
-### Step 2: Implement yield acceptance
+### Step 2: Implement durable yield preparation
 
-Save/verify checkpoint, atomically inspect dependencies and record normal-continuation cause. Do not release a slot merely because a model said it was waiting in prose.
+Save and verify the checkpoint, atomically inspect the registered dependencies and record the durable yield intent and normal-continuation cause while preserving RUNNING and the original lease. This preparation must not publish a continuation state or make the task claimable merely because a model said it was waiting in prose.
 
-### Step 3: Wire settlement and recovery
+### Step 3: Settle the predecessor and publish continuation
 
-Keep current finalization transaction cluster and independent transcript handling. Make normal continuation receipts distinguishable from infrastructure interruption.
+Keep the existing finalization transaction cluster and independent transcript handling. After the mandatory settlement barrier is verified, the finalization/orchestration owner rechecks cancellation and dependencies and publishes WAITING_DEPENDENCY or PENDING while clearing the old lease in one short project-database transaction. Transcript I/O remains outside that transaction. Make normal continuation receipts distinguishable from infrastructure interruption.
 
 ### Step 4: Test deterministic races
 
@@ -65,12 +65,14 @@ These are tests to implement and execute, not test results from document authori
 
 | Test | Fixture or action | Required observable outcome |
 |---|---|---|
-| P6-F02-T01 | All W analysts yield for queued helpers | W slots become available for helpers. |
-| P6-F02-T02 | Answer arrives just before yield commit | Task remains runnable or immediately pending. |
-| P6-F02-T03 | Old finalizer runs after new claim | Successor untouched. |
+| P6-F02-T01 | All W analysts prepare yield for queued helpers | Each task remains non-claimable during predecessor settlement; safely released execution slots become available for helpers without another model call solely to finalize yield. |
+| P6-F02-T02 | Answer arrives before or during yield preparation/settlement | Task remains RUNNING and non-claimable until mandatory predecessor settlement; final publication rechecks the answer and publishes PENDING exactly once when its predicate is satisfied. |
+| P6-F02-T03 | Old finalizer runs after a successor is claimed following mandatory predecessor settlement | Any later predecessor callback leaves successor state untouched. |
 | P6-F02-T04 | Normal continuation | No failure-retry charge; actual usage charged. |
 | P6-F02-T05 | Unknown live writer | No forced reclaim from silence alone. |
 | P6-F02-T06 | Review cancellation | No new claims or late unauthorized writes. |
+
+Use YS-T01–YS-T18 in [YIELD_SETTLEMENT.md](../../contracts/YIELD_SETTLEMENT.md) for the detailed claim, answer, cancellation and recovery interleavings; these summary rows do not define competing semantics.
 
 ## Do not overengineer or expand scope
 

@@ -6,7 +6,7 @@ Recorded:2026-09-09. Scope: the full design repository, generated contracts and 
 
 | Check | Result and scope |
 |---|---|
-| `python tools/validate_docs.py` | PASS: 127 active Markdown documents; 34 features; eight specification/plan pairs; 779 local links; 96 tables; 30 input-schema fixtures |
+| `python tools/validate_docs.py` | PASS: 127 active Markdown documents; 34 features; eight specification/plan pairs; 781 local links; 96 tables; 30 input-schema fixtures |
 | Earlier approval preservation | PASS: 113 approved requirements,156 approved scenarios and39 historical checkpoint files retain the validator's required original text/bytes |
 | `python tools/test_contract_hardening.py` | PASS:60 unittest methods, including parameterized negative cases; exact generated schema/ABI,170k arithmetic, prefix/input/capture associations,10,000 staged decisions, quota rollback/replay, state fencing and Python IR pilot |
 | Schema generation | `tools/build_hardening_schemas.py` generates55 closed object definitions, eight exact SDK methods, the ABI stub, total state/outcome matrices and combined tool inputs; repeated generation is byte-identical |

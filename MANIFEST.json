@@ -10,7 +10,7 @@
     ".maintenance/",
     ".github/workflows/apply-hardening*"
   ],
-  "content_set_sha256": "ab60d56be5cdd331d8bf197d183b8ab639b52f54b499d9f9b4fe9ce085f12092",
+  "content_set_sha256": "0eff42e4abd115124407f7748fcab34c8ce8ccf8c7113d6b1a235401a24d612d",
   "files": {
     ".github/workflows/validate-design.yml": {
       "bytes": 1641,
@@ -197,8 +197,8 @@
       "sha256": "5e80a0fe577935348ed10483dc02574c0a2963ded677237e49e6c07d841189e5"
     },
     "03-contextual-collaboration/features/P3-F03-answers-and-continuations.md": {
-      "bytes": 6080,
-      "sha256": "6da73cdabc4e9d8f92651cca680e01d25638732789c4ceda92c7a48937e965b7"
+      "bytes": 7726,
+      "sha256": "814423981a4ecbd841ec47353c1bf8b83b8201156f757fcef0c4f0d238c313eb"
     },
     "03-contextual-collaboration/features/P3-F03/IMPLEMENTATION_PLAN.md": {
       "bytes": 11190,
@@ -313,8 +313,8 @@
       "sha256": "35dac874054a8a94be8eb181f238f6d55badac669a1b98456ca0f2ab2056f994"
     },
     "06-worker-pool-runtime/features/P6-F02-execution-lifecycle-and-yield.md": {
-      "bytes": 5783,
-      "sha256": "7c84300aff82653c11e4df4411ba584ae0d5e4ead5d3132e31bf5c084f53e2c5"
+      "bytes": 7343,
+      "sha256": "c6235e2fc9e235566ba0b84c51e3e325ce51d039ead5be83c0f523831907f566"
     },
     "06-worker-pool-runtime/features/P6-F02/IMPLEMENTATION_PLAN.md": {
       "bytes": 10405,
@@ -466,7 +466,7 @@
     },
     "VALIDATION_REPORT.md": {
       "bytes": 3961,
-      "sha256": "0ee2d59faa397d06d3d64acced9825fd55d832fed6f56bf78eaa9858fc3c43f1"
+      "sha256": "369b779bf6c824532294fd5ff0dcee0fa4ac367afd8f8265502569a186f2e8b2"
     },
     "contracts/CALLSITE_IR.md": {
       "bytes": 9201,
