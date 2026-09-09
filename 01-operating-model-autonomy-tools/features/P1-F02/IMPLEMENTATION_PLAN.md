@@ -4,9 +4,17 @@ Updated: 2026-09-09. Status: developer implementation guidance; runtime implemen
 
 Read with the [feature specification](../P1-F02-indexed-navigation-and-retrieval.md), [approved requirements](APPROVED_REQUIREMENTS.md), [approved test scenarios](APPROVED_TESTS.md), [baseline map](../../../BASELINE.md), and shared [tools](../../../contracts/TOOLS.md), [state](../../../contracts/STATE.md) and [configuration](../../../contracts/CONFIGURATION.md). This is the feature's build plan, not an instruction to reconstruct an implementation from the five-step overview. Helper names below are proposed private interfaces, not existing public SDK methods.
 
+## Contract-hardening integration — Input/cursor distinction and final request bounds
+
+At source/list/search formatting, compute candidate response groups under the remaining measured request budget, not just max_tool_result_bytes. Preserve each unreturned match/cursor and leave notice batches pending when they do not fit. Run CONTEXT_BUDGET CB-T05/T06/T08 through the real provider projector with tool schemas included. Source/search/list cursors retain their current HMAC domains; do not let a SOURCE cursor satisfy an attempt-bound input token.
+
+Route document_query interest reservation through RESOURCE_BOUNDS LB-R02 before success; exact repeated query/operation must recover at original H without consuming another interest slot. At nonterminal publication and notice request assembly, use RequestBinding and RuntimePrefix schemas; a prepared request does not mean its token/deltas were observed. Test a mandatory delta omitted by formatting and a later notice arriving after token counting. The previous navigation tests remain required.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Change map and implementation slices
 
-The inspected refactor keeps execution authorization and dispatch in `ssr.tools`; result construction in `ssr.tooling.source_handlers`, `metadata_handlers` and `distributed_handlers`; source integrity in `ssr.source`; and final model-request composition in `ssr.agent` with policy/event helpers. Verify these locations in the actual authorized checkout. Preserve existing facade class identities and legacy contract hashes.
+The inspected refactor keeps execution authorization and dispatch in `ssr.tools`; result construction in `ssr.tools.source_handlers`, `metadata_handlers` and `distributed_handlers`; source integrity in `ssr.source`; and final model-request composition in `ssr.agent` with policy/event helpers. Verify these locations in the actual authorized checkout. Preserve existing facade class identities and legacy contract hashes.
 
 Implement four slices in this order: A, source selectors and byte-accurate pagination; B, index/catalogue/relationship queries and text search; C, exact artifacts and publication-bounded discovery; D, durable interests and notice delivery. A/B can be tested independently. Do not enable a successful C lookup-with-interest until its registration transaction exists. D requires completed-exchange metadata from the runner and availability ownership from P4-F01; missing prerequisites are release blockers, not permission to simulate reliable delivery.
 

@@ -6,6 +6,8 @@ Version: 1.1 · Updated: 2026-09-09
 
 Document status: specified design, not implemented or application-tested behavior. Decision basis: prior explicit agreements plus [delegated engineering choices](../../ENGINEERING_DECISIONS.md). Dependencies: P1-F01, P1-F03, P1-F07, P1-F08, P1-F09, and the artifact-availability owners identified in the detailed plan.
 
+**Contract-hardening revision:** apply the concrete corrections in [P1-F02/IMPLEMENTATION_PLAN.md](P1-F02/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 Provide a path from known or discoverable indexed subjects to exact source and accepted analysis. Implement the agreed source/search cursors, fresh-result notices and relationship/catalogue queries without creating another knowledge or source system.
