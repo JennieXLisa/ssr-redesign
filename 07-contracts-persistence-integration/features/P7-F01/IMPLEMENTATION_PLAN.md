@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P7-F01-contracts-and-persistence.md), [STATE.md](../../../contracts/STATE.md), [TOOLS.md](../../../contracts/TOOLS.md), [role projections](../../../contracts/ROLE_PROJECTIONS.md) and [baseline map](../../../BASELINE.md). Logical record names below are design names; allocate actual migrations from the selected checkout, not from historical schema numbers.
 
+## Contract-hardening integration — Full schema/transition migration bundle
+
+Follow MIGRATION_PLAN.md: inventory sqlite_schema dependencies; require exclusive quiescence; back up both stores; rebuild constrained tables with named-column copies; recreate dependent views/triggers/indexes; validate original hashes/FKs/canonical fingerprints; activate only after both independently migrated stores match. No enum-only patch or writable_schema surgery.
+
+Add exact input/prefix/yield/settlement/synthesis/quota records through existing stores and transaction owners. The new role/state domains must appear consistently in SQL, Python, event reducers, driver, recovery, public DTOs and export. Generate machine-readable ABI/state schema hashes from the checked contract files. Test every allowed/forbidden pair and actual old-data migration fixtures, including active-old rejection and rollback after project success/transcript failure.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Build the integration ledger
 
 For every new logical record/API, list: existing owning module/table or proposed extension, key identity, source sensitivity, writer, readers, unique constraints, transaction owner, event consequence and recovery function. Do this against actual sqlite_master/migration files and public exports. Reuse compatible structures; a table per feature is not required.
