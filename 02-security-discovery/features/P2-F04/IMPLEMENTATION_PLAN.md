@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only; no analyzer or reviewed target was executed. Read the [feature](../P2-F04-trusted-analyzers.md), [configuration](../../../contracts/CONFIGURATION.md) and [state](../../../contracts/STATE.md).
 
+## Contract-hardening integration — Analyzer capability and context boundaries
+
+Keep trusted analyzer output as bounded observations whose executable/rule/source/IR identities are recorded. Missing callsite-ir support cannot be filled with a target-loaded plugin or implicit import evaluation. Validate every returned original range and partial/unsupported result before publication.
+
+The host process resource allowance, publication-pending quota and model context limit apply independently. Analyzer absence does not block canonical manual review. Test oversized output paging, partial scans, a malicious target configuration, unsupported language IR and an analyzer report becoming available while the consuming agent's mandatory input revision changes.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Capability dispatch before model allocation
 
 Introduce a small host capability registry above existing index/query services. Each entry declares supported question kind, required indexed inputs, output contract, producer identity/version, limitations and resource policy. A declaration lookup or exact stored binding query should execute through the index, not consume a model task. Control sufficiency, ownership or exploitability questions remain semantic unless a capability explicitly establishes that property.
