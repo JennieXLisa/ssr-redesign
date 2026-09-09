@@ -1,0 +1,33 @@
+name: Publish verified design hardening
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.maintenance/**'
+      - '.github/workflows/apply-hardening.yml'
+permissions:
+  contents: write
+concurrency:
+  group: publish-design-hardening
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'JennieXLisa/ssr-redesign' && startsWith(github.event.head_commit.message, 'docs: apply verified contract-hardening bundle')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Install documentation schema validator
+        run: python -m pip install 'jsonschema==4.23.0'
+      - name: Apply exact checked documentation and publish feature commits
+        run: python .maintenance/apply.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: hardening-publication-${{ github.sha }}
+          path: /tmp/ssr-hardening-publication/
+          retention-days: 7
+          if-no-files-found: warn
