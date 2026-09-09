@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P4-F01-accepted-artifacts-and-publication.md), [STATE.md](../../../contracts/STATE.md), P1-F03 normalization and P1-F08 operation recovery. This is the common acceptance boundary for early collaboration, not a second knowledge database.
 
+## Contract-hardening integration — Real prefix publication contract
+
+Implement the closed runtime and transcript prefix receipt bodies, canonical chain framing, unique parent/end boundaries and input-observation checks in PREFIX_RECEIPTS.md. Main-ledger runtime events stay source-free; captured provider/source bytes stay in transcript.db. A completed response may seal a prefix while its attempt remains active; capture status remains appendable.
+
+The publish transaction consumes a verified prefix or stores a bounded ACCEPTANCE_PENDING artifact. It commits artifact availability, review sequence, exact subject associations and wake intents together only after proof. Required capture failure never becomes an available answer. Later unrelated timeout preserves earlier valid prefix-backed artifacts; covered-prefix corruption withdraws dependent material. Test every crash boundary and same-response source-read non-credit.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Producer and artifact matrix
 
 Map existing symbol/file/link/investigation/falsification payload stores and validators. Add registry adapters for canonical unit results, contextual answers, host query answers, analyzer observations and independent lead registrations. Each artifact points at one existing typed payload/result identity and hash. Do not copy source or result bodies into the registry.
