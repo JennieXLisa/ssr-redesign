@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P2-F02-prioritized-discovery.md), [configuration](../../../contracts/CONFIGURATION.md) and [state](../../../contracts/STATE.md). Priority affects work order, not the validity or severity of a security claim.
 
+## Contract-hardening integration — Discovery admission under finite root budgets
+
+Ranking an existing canonical unit changes its priority, not its coverage identity or resource entitlement. Optional focused roots must reserve real root/review capacities before task creation; reuse the existing work-conserving pool and required-work budget protection. Do not infer analytical success from an operation-count or lexical match.
+
+Record rule/model/IR generation and unsupported support gaps alongside priority reasons. At full focused/lead quota keep canonical coverage runnable, preserve already registered leads, and emit explicit LIMIT_REACHED/required-work blockers. Test no-hit repositories, many repeated lexical observations, IR unsupported-language fixtures, counter replay and required coverage dispatch under optional discovery pressure.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Inputs and retained responsibilities
 
 Consume the snapshot manifest, completed inventory segments, operation observations, registered entrypoint/control relationships and existing work/dependency state. Canonical unit creation remains with the coverage planner. Task eligibility/admission remains with P6-F01; this feature emits priority reasons and optional inquiry seeds, not active worker reservations.
