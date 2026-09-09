@@ -5,13 +5,15 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P1-F03`, `P1-F04`, `P1-F07`, `P1-F08`
 
+**Contract-hardening revision:** apply the concrete corrections in [P1-F05/IMPLEMENTATION_PLAN.md](P1-F05/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 An analyst can attempt a result, learn what is missing, and return to research instead of being trapped in a shrinking terminal JSON repair loop.
 
 ## Existing implementation and ownership
 
-Reuse agent loop, agent_policy repair classification, typed submit tools, existing final validators and source-read preconditions. Preserve old terminal-repair paths only for legacy mode.
+Reuse agent loop, agent_policy repair classification, typed submit tools, existing final validators and source-read preconditions. Preserve reusable validation and accounting, not an old-mode repair workflow.
 
 Consult [BASELINE.md](../../BASELINE.md) before editing code. Verified paths locate current responsibilities; proposed new private helper names are not mandates for new services. Preserve existing public facades and accepted historical results.
 

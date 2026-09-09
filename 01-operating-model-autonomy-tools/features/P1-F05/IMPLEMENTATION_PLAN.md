@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation, not executed runtime work. Read the [feature](../P1-F05-submission-and-return-to-analysis.md), [tool outcomes](../../../contracts/TOOLS.md), [role projections](../../../contracts/ROLE_PROJECTIONS.md) and [state](../../../contracts/STATE.md).
 
+## Contract-hardening integration — Bounded repair and nonterminal investigation progress
+
+Apply the same final-request context gate to original submission, repair, checkpoint and return-to-analysis exchanges. Truncated tool arguments never create a semantic operation or prefix; retain usage and reduce context or select staged output before another attempt. Two checkpoint exchanges and the per-root no-progress counter prevent unchanged retry loops.
+
+An investigator needing context uses record_investigation_progress with exact checkpoint/request revisions, not terminal NEED_CONTEXT. Return MORE_ANALYSIS guidance for NEED_CONTEXT supplied to a terminal tool, with no task completion. Valid terminal outcomes use STATE_MACHINE.md's exact mapping. Mandatory new input becomes authoritative for submission only after its actual request binding is OBSERVED; optional notice receipt is not that binding.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Refactor the policy branch, not the whole provider loop
 
 Locate the existing AgentRunner terminal-tool branch, terminal-repair counters/tool filtering, `agent_policy`, `agent_contract`, error taxonomy and worker finalization entry points. The inspected refactor retains one mutable turn loop in `ssr.agent`; extracted helpers do not own provider conversation order. Keep that single loop.
