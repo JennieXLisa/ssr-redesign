@@ -1,6 +1,14 @@
 # P3-F03 — Answers and continuations: implementation plan
 
-Updated: 2026-09-09. Documentation only. **Implementation blocked by [H0 contract hardening](../../../CONTRACT_HARDENING.md).** Read the [feature](../P3-F03-answers-and-continuations.md), [STATE.md](../../../contracts/STATE.md), [yield settlement contract](../../../contracts/YIELD_SETTLEMENT.md), P4-F01 publication and P6-F02 finalization. This amendment replaces the unsafe early requeue in the previous section 4; it does not claim an implementation or runtime test.
+Updated: 2026-09-09. Documentation only. **Use the corrected [hardening contracts](../../../CONTRACT_HARDENING.md); real integration tests are mandatory.** Read the [feature](../P3-F03-answers-and-continuations.md), [STATE.md](../../../contracts/STATE.md), [yield settlement contract](../../../contracts/YIELD_SETTLEMENT.md), P4-F01 publication and P6-F02 finalization. This amendment replaces the unsafe early requeue in the previous section 4; it does not claim an implementation or runtime test.
+
+## Contract-hardening integration — Executable answer/proof and total continuation contracts
+
+Use ContextAnswer/ContextResult with exact requested facet coverage and artifact hashes; close prefix proof through runtime-prefix-v1 and transcript-prefix-v1. A terminal context worker seals its accepted answer reference, while a canonical reviewer can publish that same typed answer nonterminally and continue.
+
+Implement the YIELD_SETTLEMENT state ordering with state-transitions.json's task/agent/yield-intent domains. Use the finalizer's exact current wait-generation CAS and settled predecessor fence for both normal and exact-task claims. Run the existing YS scenarios plus context facet/unknown schemas and two-database prefix reconciliation. The Python reference state tests are specifications, not a substitute for real orchestration/service.py race tests.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
 
 ## 1. Validate an answer for the exact question revision
 
@@ -12,7 +20,7 @@ Prepare source-free analysis and verified references through P1-F03. Preserve pr
 
 ## 2. Independent acceptance during an active review
 
-Create an immutable contextual-answer artifact from the validated payload. Its producer receipt must authenticate the completed exchange that requested publication; acceptance must not depend on that operation's own acknowledgment. Required transcript mode needs a genuine versioned prefix/turn contract, not a forged full-attempt completion. **H03 must close before this nonterminal publication path is enabled.**
+Create an immutable contextual-answer artifact from the validated payload. Its producer receipt must authenticate the completed exchange that requested publication; acceptance must not depend on that operation's own acknowledgment. Required transcript mode needs a genuine versioned prefix/turn contract, not a forged full-attempt completion. **Implement and test the exact PREFIX_RECEIPTS.md contract before enabling this nonterminal publication path.**
 
 Absent required receipts, keep ACCEPTANCE_PENDING with explicit blockers. Once the receipt owner verifies all prerequisites, P4-F01's short availability transaction marks the artifact AVAILABLE and emits its review sequence event. Do not expose pending content through request status.
 
