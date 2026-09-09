@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P5-F02-falsification-and-current-findings.md), [STATE.md](../../../contracts/STATE.md), P5-F01 readiness and P5-F03 validity changes.
 
+## Contract-hardening integration — Exact falsifier and current-finding completion rules
+
+UPHELD creates an independent verdict artifact; only the host's current argument/material/receipt gate promotes the revision to CONFIRMED. REFUTED ends that revision without a finding; INCONCLUSIVE creates an explicit limitation and no automatic stronger-model loop. Terminal task publication waits for actual final receipts in every case.
+
+A new material challenge moves current validity to REVALIDATION_REQUIRED atomically with its accepted availability, preserving historical verdicts. One coordinated state-contract row drives claim, candidate, query and export behavior; do not interpret an empty successor queue as a current finding. Test every verdict, exact argument mismatch, stale input token, prefix/terminal proof gap and later counterevidence.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Create one falsifier for an exact ready argument
 
 Use the shared argument-ready predicate from CandidateService, not review-wide FALSIFYING state. Required inputs are current candidate family/revision, complete argument digest, accepted material/evidence references, assumptions, counterevidence and required investigation/producer receipts. Readiness is rechecked at plan, claim and commit.
