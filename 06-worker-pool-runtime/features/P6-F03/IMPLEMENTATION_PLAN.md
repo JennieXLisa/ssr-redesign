@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only; no provider spend or throughput test was performed. Read the [feature](../P6-F03-budgets-backpressure-and-limits.md), [configuration](../../../contracts/CONFIGURATION.md), [state](../../../contracts/STATE.md), P6-F01 admission and P1-F08 recovery.
 
+## Contract-hardening integration — Enforceable final-request and metadata budgets
+
+Implement CONTEXT_BUDGET.md at the single actual dispatch point: E170000, O16384 including reasoning, M4096, I_max149520 and checkpoint threshold127092 on the named profile. Counter identity and exact serialized request hash are mandatory; unknown count or changed post-count request denies dispatch. The same gate covers ordinary, repair, checkpoint, resume and batch follow-up requests.
+
+Implement RESOURCE_BOUNDS.md's root/review/consumer/pending quotas with operation receipts, multi-dimension rollback and no-progress settlement. Lifetime lead/request counts are not refunded by dismissal; live counters release only on unique terminal association transitions. Existing receipt recovery stays admissible at full pending quota. Test boundary counts,365k constructed input, second-quota rollback, unchanged retries, unknown usage reservations and full-pool queued leads.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Inventory dimensions and existing owners
 
 Trace model concurrency, backend/shared-resource capacity, per-file limits, request/attempt wall deadlines, command/review/work token and currency limits, tool rows/result bytes, source-delivery bytes, search-scanned bytes, and host matcher/analyzer memory/process limits. Record the existing owner and unit for each dimension. A byte counter cannot substitute for a token budget, and a model slot cannot substitute for a host-memory reservation.
