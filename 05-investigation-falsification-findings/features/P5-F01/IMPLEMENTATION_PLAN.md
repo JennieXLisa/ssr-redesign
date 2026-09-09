@@ -2,6 +2,14 @@
 
 Updated: 2026-09-09. Documentation only. Read the [feature](../P5-F01-candidate-investigation.md), [role projections](../../../contracts/ROLE_PROJECTIONS.md), [STATE.md](../../../contracts/STATE.md) and P6-F01 admission.
 
+## Contract-hardening integration — Normative investigation outcome mapping
+
+Use the exact four-row table in STATE_MACHINE.md and state-transitions.json. SUPPORT_FOR_FALSIFICATION creates one exact-revision falsifier intent only when the argument artifact and required terminal proof are available. DISMISS_WITH_EVIDENCE ends this revision with its scoped evidence and no successor. INCONCLUSIVE ends it with an explicit limitation and no automatic retry. All three terminal tasks reach COMPLETED only after predecessor settlement.
+
+NEED_CONTEXT is exclusively record_investigation_progress with checkpoint and registered request IDs, followed by explicit yield_work. It is not terminal submit_investigation. A malformed terminal NEED_CONTEXT returns MORE_ANALYSIS guidance and creates no completed task. Preserve candidate maturity separately from the new disposition axis; no path/control facts are filled to move an enum. Test each outcome→artifact→candidate→task→successor→completion tuple and distinguish provider timeout/refusal from analytical uncertainty.
+
+Normative source: [hardening contract index](../../../CONTRACT_HARDENING.md). Preserve the existing feature procedure below except where this explicit correction replaces it; implement the linked exact schemas, not a local incompatible approximation.
+
 ## 1. Separate three gates in the existing candidate authority
 
 Extract reusable argument validation from CandidateService/investigation/falsification paths without creating another candidate state store. Define `can_start_investigation`, `argument_ready_for_falsification` and `current_finding_valid` as separate predicates with shared subchecks and structured blocker lists.
@@ -30,15 +38,15 @@ Preserve existing path/state/lifecycle segment contracts and exact source refere
 
 Normalize compact model input through P1-F03 into the full internal result. Aggregate independent safe validation issues through P1-F07 and return to research on analytical gaps. Host metadata may supply execution IDs, not missing controls-reviewed flags, severity or proof conclusions.
 
-A coherent result can establish several facets at once. Compute the supported maturity progression from validated facets and emit the required audited transitions within the host service; do not force another model exchange solely to increment the next enum. Legacy mode retains its original transition semantics.
+A coherent result can establish several facets at once. Compute the supported maturity progression from validated facets and emit the required audited transitions within the host service; do not force another model exchange solely to increment the next enum. Old transition receipts remain historical; the new runtime uses the exhaustive collaborative state matrix.
 
-## 5. Apply explicit analytical outcomes
+## 5. Apply exact analytical outcomes
 
-SUPPORT_FOR_FALSIFICATION: require complete argument and current accepted material; publish the investigation artifact and create/idempotently enable one fresh falsification task for the exact argument revision once all receipts are valid.
+The machine-readable table in contracts/schemas/state-transitions.json is authoritative. SUPPORT_FOR_FALSIFICATION yields an accepted complete argument, READY_FOR_FALSIFICATION and one exact-revision falsifier successor after required proof. DISMISS_WITH_EVIDENCE yields a scoped DISMISSED disposition and no successor. INCONCLUSIVE yields a limitation disposition and no automatic successor. These three terminal results complete the investigation task only after terminal settlement.
 
-DISMISS_WITH_EVIDENCE: retain the disproving/limiting source and audited disposition; this is not a transport failure. NEED_CONTEXT: preserve checkpoint/question state and let explicit dependency/yield behavior control continuation. INCONCLUSIVE: retain honest uncertainty and required limitation disposition; do not manufacture dismissal or support.
+NEED_CONTEXT is a nonterminal InvestigationProgress operation with a valid checkpoint and registered context request IDs. It leaves the task RUNNING until explicit yield is prepared/settled, then publishes WAITING_DEPENDENCY or PENDING. A terminal submit_investigation containing NEED_CONTEXT returns MORE_ANALYSIS guidance without effect. Malformed input/refusal/timeout remains operational failure, not an invented analytical disposition.
 
-A malformed result is rejected input, not automatically INCONCLUSIVE. Provider refusal/timeout is an operational outcome unless a real accepted analytical disposition exists.
+Candidate disposition is distinct from maturity; use the existing source/argument validators and preserve historical revision identities. The completion owner counts INCONCLUSIVE as a limitation only after all required work/receipt obligations settle.
 
 ## 6. Commit and concurrency
 

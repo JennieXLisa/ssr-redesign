@@ -5,6 +5,8 @@ Document status: DRAFT COMPLETE — delegated engineering detail; not an impleme
 Decision basis: previously agreed behavior where applicable, plus [delegated choices](../../ENGINEERING_DECISIONS.md).  
 Dependencies: `P1-F05`, `P3-F03`, `P4-F01`, `P6-F01`
 
+**Contract-hardening revision:** apply the concrete corrections in [P5-F01/IMPLEMENTATION_PLAN.md](P5-F01/IMPLEMENTATION_PLAN.md) and the [hardening index](../../CONTRACT_HARDENING.md). Earlier summary wording is not a substitute for the exact input, receipt, state, synthesis, context and cutover contracts.
+
 ## Purpose and concrete outcome
 
 A source-grounded candidate can receive investigation while unrelated review work continues; admission must not require the finished argument the investigator is supposed to develop.
@@ -43,7 +45,7 @@ Separate argument completeness from final upheld-verdict validation while keepin
 
 ### Step 2: Build collaborative admission
 
-Replace phase-only eligibility in planner/claim/submit/query and SQL guards for new mode. Preserve legacy eligibility via pinned mode predicates.
+Replace phase-only eligibility in planner/claim/submit/query and SQL guards for new mode. Reject historical-mode execution; use the collaborative readiness predicate on all new paths.
 
 ### Step 3: Integrate evidence and dependencies
 
