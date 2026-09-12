@@ -109,6 +109,14 @@ Keep provenance separately in PostgreSQL: associate the snapshot ID with its man
 
 This layout changes only the harness representation, not the researcher's repositories. Local working-file precedence, recursive fetch opt-in, public HTTPS restrictions, snapshot-only link resolution, and LFS/other explicit exclusions remain unchanged. Incorporating submodules does not import excluded content or authorize external link traversal.
 
+## Approved lifecycle separation
+
+**S1-IN-R21 — Separate snapshot capture from indexing.** Track snapshot-capture status separately from indexing-run status. A snapshot can be successfully captured while indexing has not started, is running, or has failed. Successful capture does not mean indexing is complete. An indexing failure or interruption must not change the identity, captured contents, or successful capture status of the completed snapshot.
+
+Start structural indexing and applicable scanning only after the completed snapshot exists, as required by S1-IN-R14. Retrying or resuming indexing uses that same snapshot ID and managed Git commit, retaining compatible progress under S1-IN-R07/R10. Do not reclone, recapture, fetch newer source, or consult the original working directory merely because indexing failed. Report capture and indexing outcomes separately so the researcher can identify which operation needs attention.
+
+This settles lifecycle separation and snapshot reuse, not the exact status enums, transition guards, database schema, or retry algorithm. Those mechanisms remain to be specified together. Indexing completion continues to require S1-IN-R12; separating status does not permit a partial index to be labeled complete.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -149,12 +157,14 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T32 | Perform two captures with different working contents for the same SSR project. | Both snapshot commits reside in that project's managed Git repository; each snapshot retrieves its own captured contents without replacing the earlier snapshot. |
 | S1-IN-T33 | Capture fetched submodules and nested submodules, then make the origin repositories and temporary clones unavailable. | Included contents remain accessible at their original project-relative paths using only the managed snapshot; no included path depends on a separate submodule repository. PostgreSQL retains the snapshot-commit association and submodule provenance. |
 | S1-IN-T34 | Capture modified populated local submodules alongside excluded/missing source and unresolved LFS pointers. | Included working-file contents appear directly in the managed tree without nested Git metadata or changes to the input checkout. Provenance distinguishes captured working files from upstream revisions; existing exclusions and snapshot-only link restrictions remain in force. |
+| S1-IN-T35 | Complete snapshot capture, then observe indexing before it starts, while running, and after an induced failure. | Capture remains successful with the same snapshot ID and commit; indexing has its own outcome. Neither capture success nor the partial index is reported as completed indexing. |
+| S1-IN-T36 | After capture and partial indexing, interrupt processing and make the original directory or remote unavailable; then resume indexing. | Resume against the same managed snapshot and retain compatible progress, without cloning, recapturing, fetching, or reading the original source. Indexing completion still requires all remaining processing under S1-IN-R12. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
 - Isolation from ambient authentication and controls for safely cloning untrusted repositories, including URL validation and redirect enforcement. Remote protocol scope is settled by S1-IN-R19; private-repository authentication is outside scope under S1-IN-R17; LFS content retrieval is excluded under S1-IN-R18.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
-- Exact PostgreSQL records and provenance fields, snapshot finalization, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership. The managed repository and included-submodule layout is settled by S1-IN-R20.
+- Exact PostgreSQL records and provenance fields, snapshot finalization, capture/indexing status enums and transitions, durable progress, retry policy, CLI/API fields, and modular implementation ownership. The managed repository and included-submodule layout is settled by S1-IN-R20; capture/indexing lifecycle separation is settled by S1-IN-R21.
 
 Do not silently choose these mechanisms while implementing the approved requirements. Complete this group's design and implementation steps collaboratively before assigning it as executable development work.
