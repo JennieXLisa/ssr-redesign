@@ -8,7 +8,7 @@ This document covers one requirement group, not the whole indexing stage. SSR is
 
 Capture the researcher's selected source in harness-managed immutable Git storage. Process every included file according to its type, preserving progress and explicitly reporting limitations. Resource pressure must not silently narrow the research scope or produce false completion.
 
-Git retains source contents; PostgreSQL is the agreed long-term store for indexing records. No model calls or vulnerability investigations are started by intake or indexing.
+Git retains source contents; PostgreSQLSQL is the agreed long-term store for indexing records. No model calls or vulnerability investigations are started by intake or indexing.
 
 ## Approved intake requirements
 
@@ -52,6 +52,12 @@ Exact language extractors, classification rules, scanner capability coverage, an
 
 An explicitly unresolved call target is a resolution result, not proof that the file was skipped. Conversely, a parser or scanner timeout is not a successful no-match result. Binary metadata completion does not claim binary analysis, and unsupported text retrieval does not claim language-semantic support.
 
+## Approved symbolic-link boundary
+
+**S1-IN-R13 — Snapshot-only link resolution.** Preserve an included symbolic link as a link with its recorded target. Navigation may resolve it only to included contents within the same captured project's Git snapshot. Do not follow it into the host filesystem, another project, or uncaptured source; do not fetch or import a target merely because a link names it. A path inside the original working directory is not sufficient if its target was excluded from the snapshot. Index a captured target file once rather than creating duplicate file/symbol records through link aliases. Report external, broken, or excluded targets without claiming their contents were indexed.
+
+A correctly recorded link whose target is outside the captured scope does not create a requirement to import that target or prevent completion by itself. Failures to capture or process an included record remain subject to S1-IN-R11 and S1-IN-R12. Resolution mechanics remain open below; they must preserve this boundary.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -70,10 +76,13 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T10 | Force a supported parser or applicable scanner to fail persistently. | Failure remains visible; the run does not report complete processing. |
 | S1-IN-T11 | Process a call whose target cannot be resolved. | Keep its occurrence and explicit unresolved result; do not confuse it with an unprocessed file. |
 | S1-IN-T12 | Start another investigation over the same snapshot and analysis configuration. | Reuse compatible completed indexing; a new conversation alone does not trigger rescanning. |
+| S1-IN-T13 | Include a relative symbolic link to a captured source file and later change the working copy. | Preserve the link; navigation returns the captured target bytes; aliases do not duplicate target indexing. |
+| S1-IN-T14 | Include a symbolic link to a file outside the project or in another project. | Preserve and report the link; do not read, capture, scan, or return the external target's contents. |
+| S1-IN-T15 | Include a broken link or a link to a target excluded by the selected intake policy. | Report the absent/excluded target; no live-filesystem fallback, implicit inclusion, or false target-indexing claim. |
 
 ## Decisions still requiring discussion
 
-- Symbolic links, external targets, and cycles.
+- Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
 - Local files changing during capture and the snapshot-consistency check.
 - Nested submodules and existing populated submodules in local working directories.
 - Authentication, Git LFS, and controls for safely cloning untrusted repositories.
