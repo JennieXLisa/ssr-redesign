@@ -77,7 +77,7 @@ This governs fetched submodules. Already populated local submodule working files
 
 Do not fetch, reset, update, or change an already populated submodule's checkout to match a parent-pinned revision. The local working-file rule takes precedence for that existing source. When submodules are missing, downloading them still requires the recursive fetch opt-in in S1-IN-R04 and S1-IN-R15; fetched revisions remain parent-pinned. Perform those downloads in harness-managed storage without populating or altering the researcher's checkout. Enabling fetching does not replace already-present working files with committed versions.
 
-Without fetch opt-in, capture the already-present source, report missing submodules as excluded, and continue without repeated prompts or claims that absent contents were indexed. Snapshot-only symbolic-link restrictions continue to apply; local-submodule inclusion does not authorize following external source links. Exact storage representation and provenance fields remain part of the implementation design.
+Without fetch opt-in, capture the already-present source, report missing submodules as excluded, and continue without repeated prompts or claims that absent contents were indexed. Snapshot-only symbolic-link restrictions continue to apply; local-submodule inclusion does not authorize following external source links. The self-contained storage representation is specified in S1-IN-R20; exact provenance fields remain part of the implementation design.
 
 ## Approved remote-access scope
 
@@ -98,6 +98,16 @@ This is an explicit scope exclusion, not a processing failure or an intake/index
 **S1-IN-R19 — HTTPS-only Git retrieval.** Accept public, unauthenticated HTTPS Git repository URLs from any Git host, not only GitHub. Reject SSH URLs and SCP-style Git addresses, plain HTTP, git://, file://, and other non-HTTPS remote forms with an actionable explanation. Do not silently rewrite the supplied transport or fall back to another protocol. Remote transfers must remain HTTPS; do not follow a redirect that downgrades to another protocol. Local directory paths continue to use working-file capture under S1-IN-R01/R03, not Git URL cloning.
 
 For each opted-in submodule download, resolve a relative repository URL against its immediate parent's remote using Git's repository-relative URL semantics, then apply the same HTTPS-only and public-access requirements to the effective URL. Apply this at every nested level. If a required download has no acceptable HTTPS URL, report an intake blocker rather than silently skipping it, converting an SSH address to HTTPS, or claiming complete intake. Already-populated local submodules remain governed by S1-IN-R16; without fetch opt-in, do not contact excluded submodule remotes.
+
+## Approved self-contained snapshot layout
+
+**S1-IN-R20 — One managed repository per project; self-contained snapshots.** Use one harness-managed Git repository per SSR project. Each capture produces a separate snapshot commit identifying its immutable source tree. A later capture must not replace the source identified by an earlier snapshot. Keep the managed storage separate from the researcher's source directory.
+
+Incorporate included submodule contents, including nested ones, as ordinary directories at their original project-relative paths inside that snapshot tree. Preserve file contents, modes, and symbolic links under the existing capture rules. Do not leave an included submodule represented only by a Git link that requires a separate repository to retrieve its files. Exclude nested Git metadata. Indexing, scanning, and source retrieval must be able to use the completed managed snapshot without the original checkout, source remote, or separately maintained submodule repositories.
+
+Keep provenance separately in PostgreSQL: associate the snapshot ID with its managed Git commit, input source, capture options, submodule origins/revision information, and exclusions. Distinguish the managed snapshot commit from upstream repository commits. For populated local submodules, retain the fact that working files were captured; an observed local HEAD or parent-pinned revision must not be presented as proof that modified captured files equal that commit. Exact field types and the capture/publication transaction sequence remain to be specified.
+
+This layout changes only the harness representation, not the researcher's repositories. Local working-file precedence, recursive fetch opt-in, public HTTPS restrictions, snapshot-only link resolution, and LFS/other explicit exclusions remain unchanged. Incorporating submodules does not import excluded content or authorize external link traversal.
 
 ## Derived acceptance scenarios
 
@@ -136,12 +146,15 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T29 | Supply public HTTPS Git remotes on different hosts, including a host other than GitHub. | Accept the transport without a GitHub-only restriction; clone anonymously at the selected revision. |
 | S1-IN-T30 | Supply SSH/SCP-style, HTTP, git://, or file:// remote forms, or an HTTPS remote redirecting to HTTP. | Reject the unsupported transport or downgrade with an explanation; do not rewrite it, use a fallback protocol, or invoke credentials. Local directory capture remains available. |
 | S1-IN-T31 | Opt into nested submodule downloads using relative URLs and an explicit non-HTTPS URL. | Resolve each relative URL against its immediate parent's remote and allow only effective public HTTPS URLs; reject the non-HTTPS required download as a blocker without silent omission or conversion. |
+| S1-IN-T32 | Perform two captures with different working contents for the same SSR project. | Both snapshot commits reside in that project's managed Git repository; each snapshot retrieves its own captured contents without replacing the earlier snapshot. |
+| S1-IN-T33 | Capture fetched submodules and nested submodules, then make the origin repositories and temporary clones unavailable. | Included contents remain accessible at their original project-relative paths using only the managed snapshot; no included path depends on a separate submodule repository. PostgreSQL retains the snapshot-commit association and submodule provenance. |
+| S1-IN-T34 | Capture modified populated local submodules alongside excluded/missing source and unresolved LFS pointers. | Included working-file contents appear directly in the managed tree without nested Git metadata or changes to the input checkout. Provenance distinguishes captured working files from upstream revisions; existing exclusions and snapshot-only link restrictions remain in force. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
 - Isolation from ambient authentication and controls for safely cloning untrusted repositories, including URL validation and redirect enforcement. Remote protocol scope is settled by S1-IN-R19; private-repository authentication is outside scope under S1-IN-R17; LFS content retrieval is excluded under S1-IN-R18.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
-- PostgreSQL records, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership.
+- Exact PostgreSQL records and provenance fields, snapshot finalization, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership. The managed repository and included-submodule layout is settled by S1-IN-R20.
 
 Do not silently choose these mechanisms while implementing the approved requirements. Complete this group's design and implementation steps collaboratively before assigning it as executable development work.
