@@ -7,13 +7,21 @@ Old code and archived designs are references, not requirements. Do not introduce
 legacy modes, compatibility shims, or old database migrations by default.
 Change only the repository and task authorized by the user.
 
-## Work discipline
+## Delivery and efficiency
 
-- Follow the approved implementation order. Work on one bounded task at a time.
+- Follow the approved implementation order. Implement one bounded task at a time;
+  do not expand into later features.
 - Before coding, briefly identify the outcome, owning package, dependencies,
   and acceptance test. Do not create another planning document for this.
 - Ask about material ambiguity or missing prerequisites; do not guess or expand
   into other features. Routine choices within approved scope need no approval.
+- Read relevant code, contracts, and tests. Revisit unchanged material only
+  to answer a specific unresolved question; do not repeatedly survey the repo.
+- Each iteration must implement a requirement, test a concrete hypothesis,
+  or resolve an identified blocker. Avoid repeated planning and speculative edits.
+- After two unsuccessful fixes to the same failure, stop guessing. Produce
+  a minimal reproduction and change the diagnostic approach before editing again.
+- Use additional agents only for distinct, bounded work, not duplicate exploration.
 
 ## Modular design
 
@@ -34,10 +42,13 @@ Change only the repository and task authorized by the user.
 - Test the real entry-point-to-owner path with disposable data, not only helpers.
   Put reusable fixtures in test support modules, not inside other test cases.
 - Add lightweight size/import-boundary checks with the first executable package.
-  Run relevant tests and configured checks; verify installed imports/resources
-  when packaging changes. Never weaken checks to manufacture a pass.
+  Run configured checks; verify installed imports/resources when packaging changes.
+- Use focused tests while iterating and affected integration checks before
+  completion. Never weaken tests or skip correctness checks to reduce usage.
 - Update callers, exports, tests, and documentation in the same task. Report
   actual results, failures, and unrun checks; distinguish WIP from completion.
+- Finish with demonstrated behavior, test results, and a coherent commit when
+  authorized. If blocked, leave exact evidence and the next action, not more scaffolding.
 - Commit/push only when authorized and verify publication. Stop at the task
   boundary unless continuing the ready queue is explicitly authorized.
 
