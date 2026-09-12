@@ -2,8 +2,9 @@
 
 Clean planning restart — 2026-09-12.
 
-The active branch intentionally contains only this README. No replacement phase
-layout, implementation order, or feature plan has been added yet.
+Start with [AGENTS.md](AGENTS.md) for modular design, package ownership, bounded
+work assignments, and verification rules. No replacement phase layout,
+implementation order, or feature plan has been added yet.
 
 ## Previous design archive
 
