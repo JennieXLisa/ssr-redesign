@@ -37,6 +37,7 @@ Git retains source contents; PostgreSQL is the agreed long-term store for indexi
 | Binary | Capture and record metadata. Binary analysis is outside Stage 1. |
 | Unsupported source | Preserve captured source and text retrieval where applicable; report the unsupported indexing capability. Do not claim structural extraction occurred. |
 | Supported source that fails parsing | Preserve captured source and retrieval where applicable; report the parse failure. Do not substitute an empty successful symbol inventory. |
+| Unresolved Git LFS pointer | Log the affected path and skip the underlying LFS content under S1-IN-R18. Do not parse or scan the pointer as the actual source file. |
 
 Exact language extractors, classification rules, scanner capability coverage, and their individual completion contracts will be specified with the researcher. A declared unsupported capability differs from a processing failure within a supported capability; do not relabel the latter to obtain success.
 
@@ -48,7 +49,7 @@ Exact language extractors, classification rules, scanner capability coverage, an
 
 **S1-IN-R11 — Failure handling.** Retry recoverable failures. Persistent failures remain visible blockers rather than empty successes or endless automatic retry loops. Retry classification, limits, and recovery controls remain open; no numeric policy is selected here.
 
-**S1-IN-R12 — Completion criterion.** Declare indexing complete only when every included file has received all required processing for its supported treatment, without outstanding processing failures. Captured source or a partially populated index does not by itself satisfy completion. Preserve diagnostics and declared capability limitations in the result.
+**S1-IN-R12 — Completion criterion.** Declare indexing complete only when every included file has received all required processing for its supported treatment, without outstanding processing failures. Captured source or a partially populated index does not by itself satisfy completion. Preserve diagnostics and declared capability limitations in the result. Explicit LFS exclusions under S1-IN-R18 do not block completion of the remaining scope, but must remain visible in the completion report.
 
 An explicitly unresolved call target is a resolution result, not proof that the file was skipped. Conversely, a parser or scanner timeout is not a successful no-match result. Binary metadata completion does not claim binary analysis, and unsupported text retrieval does not claim language-semantic support.
 
@@ -86,6 +87,12 @@ The same public-access restriction applies to every opted-in submodule download,
 
 Local-directory capture and already-populated local submodule capture remain unchanged. Do not contact their remotes merely to verify public availability. This requirement restricts remote retrieval, not the researcher's ability to supply existing local source.
 
+## Approved Git LFS exclusion
+
+**S1-IN-R18 — Log and skip unresolved LFS content.** Do not download Git LFS objects or automatically replace LFS pointers with downloaded contents. Log each detected unresolved LFS path with an explicit LFS-skipped reason and continue, without prompting to enable LFS. Apply this rule to remote intake, local input, and included submodules. Do not parse, scan, or present pointer text as the underlying source file or claim that the missing content was indexed.
+
+This is an explicit scope exclusion, not a processing failure or an intake/indexing blocker. Keep the excluded paths and reason visible in the intake and completion reports. It does not permit skipping ordinary large files. Actual file contents already present in a local working directory remain subject to the approved working-file capture and processing rules; no LFS download is needed or attempted for them. The immutable snapshot must not later be silently hydrated or otherwise changed.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -117,11 +124,14 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T23 | Supply a publicly accessible Git URL while repository credentials are also available in the host environment. | Fetch anonymously without invoking credential helpers or using authenticated sessions; preserve the selected revision and snapshot behavior. |
 | S1-IN-T24 | Supply a remote requiring authentication, or opt into a required nested submodule download that requires it. | Report an explicit fetch/access blocker without credential prompts, authenticated fallback, secret disclosure, silent exclusion, or a complete-intake claim. |
 | S1-IN-T25 | Supply existing local source whose configured remote is private or unreachable, with submodule fetching disabled. | Capture eligible local working files without contacting that remote or rejecting the local source because of remote visibility. |
+| S1-IN-T26 | Supply a public remote and included submodules containing unresolved LFS pointers. | Perform no LFS downloads or automatic content replacement; log each affected path as excluded and continue without indexing pointer text as the underlying files. |
+| S1-IN-T27 | Complete all required non-LFS processing with unresolved LFS pointers still present. | Permit completion of the remaining scope while retaining explicit LFS exclusions; do not claim the missing contents were captured or indexed. |
+| S1-IN-T28 | Supply local working files containing both actual LFS-managed contents with local edits and unresolved LFS pointers. | Capture and process the actual eligible working contents unchanged; log and skip unresolved LFS content without downloading, overwriting local files, or later mutating the snapshot. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
-- Supported public Git URL/protocol forms, isolation from ambient authentication, Git LFS, and controls for safely cloning untrusted repositories. Private-repository authentication is outside scope under S1-IN-R17.
+- Supported public Git URL/protocol forms, isolation from ambient authentication, and controls for safely cloning untrusted repositories. Private-repository authentication is outside scope under S1-IN-R17; LFS content retrieval is excluded under S1-IN-R18.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
 - PostgreSQL records, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership.
 
