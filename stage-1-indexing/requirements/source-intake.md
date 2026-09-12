@@ -18,7 +18,7 @@ Git retains source contents; PostgreSQL is the agreed long-term store for indexi
 
 **S1-IN-R03 — Local working files.** Capture current on-disk files by default, including staged and unstaged edits and new untracked files, subject to the inclusion rules below. Deleted files remain absent. Do not silently substitute HEAD or the staging area's contents for the working files. Create the immutable snapshot in harness-managed storage.
 
-**S1-IN-R04 — Submodules.** Do not fetch submodules by default. Provide an explicit opt-in. When fetched, use the revisions pinned by the selected parent commit, not the latest submodule branches. Report unfetched submodules as excluded and continue without repeated prompts. Do not claim their contents were indexed. Nested-submodule and populated-local-submodule details remain open below.
+**S1-IN-R04 — Submodules.** Do not fetch submodules by default. Provide an explicit opt-in. When fetched, use the revisions pinned by the selected parent commit, not the latest submodule branches. Report unfetched submodules as excluded and continue without repeated prompts. Do not claim their contents were indexed. The opt-in includes nested submodules as specified in S1-IN-R15. Populated-local-submodule behavior remains open below.
 
 **S1-IN-R05 — Ignore rules.** Respect .gitignore for untracked files by default, with an explicit option to include ignored files. Keep tracked files even when they match an ignore pattern. Exclude Git metadata and harness-owned storage from the captured target. Report skipped paths and their reasons.
 
@@ -64,6 +64,12 @@ A correctly recorded link whose target is outside the captured scope does not cr
 
 This is a researcher-supplied stability precondition, not a guarantee of atomic capture of a changing local directory. Do not add file watching or ongoing comparison with the working directory. Snapshot-finalization mechanics remain part of the implementation design; incomplete captures must not be presented as completed snapshots.
 
+## Approved nested-submodule inclusion
+
+**S1-IN-R15 — Recursive submodule opt-in.** Opting into submodule fetching also includes nested submodules recursively under the same opt-in. At each level, use the revision pinned by that submodule's immediate parent commit. Do not substitute the latest branch tip or request separate approval for each nested level. Without opt-in, fetch neither top-level nor nested submodules; retain the exclusion reporting required by S1-IN-R04.
+
+This settles recursive inclusion and revision selection for fetched submodules, not the handling of already populated local submodule working files. Fetch/authentication failures remain explicit under the existing failure and completeness requirements; they must not be silently reported as successful full intake.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -87,11 +93,13 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T15 | Include a broken link or a link to a target excluded by the selected intake policy. | Report the absent/excluded target; no live-filesystem fallback, implicit inclusion, or false target-indexing claim. |
 | S1-IN-T16 | Pause snapshot creation before finalization and observe processing dispatch. | No structural indexing or scanner processing starts before the snapshot is complete; the incomplete capture is not reported as a completed snapshot. |
 | S1-IN-T17 | After successful local capture, edit or remove original files, then index, scan, and retrieve source. | All operations use the captured bytes without a live-directory fallback, ongoing comparison, or automatic reindexing. |
+| S1-IN-T18 | Opt into fetching a remote with submodules nested at multiple levels and newer commits on their branches. | Include every nested level using its immediate parent's pinned revision, without separate prompts or branch-tip substitution. |
+| S1-IN-T19 | Supply the same nested-submodule remote without opt-in. | Fetch no submodules at any level; report the excluded top-level submodule entries without inspecting unfetched descendants or claiming their contents were indexed. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
-- Nested submodules and existing populated submodules in local working directories.
+- Existing populated submodules in local working directories.
 - Authentication, Git LFS, and controls for safely cloning untrusted repositories.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
 - PostgreSQL records, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership.
