@@ -24,9 +24,6 @@ Change only the repository and task authorized by the user.
 - Use narrow typed interfaces and explicit dependencies. No circular imports,
   cross-package private-state access, or passing an entire broker/application
   to helpers. Keep package initializers free of operational side effects.
-- Target at most 300 physical lines per handwritten production module. Explain
-  301–500 lines; exceeding 500 requires user approval. Exempt generated output
-  and immutable migrations, not mixed runtime logic. Never game line counts.
 - Split by responsibility, not line ranges. Do not add speculative frameworks
   or duplicate implementations. Package correctly now, not in a later cleanup.
 - Keep transaction ownership explicit. Helpers must not commit independently;
