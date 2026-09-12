@@ -58,6 +58,12 @@ An explicitly unresolved call target is a resolution result, not proof that the 
 
 A correctly recorded link whose target is outside the captured scope does not create a requirement to import that target or prevent completion by itself. Failures to capture or process an included record remain subject to S1-IN-R11 and S1-IN-R12. Resolution mechanics remain open below; they must preserve this boundary.
 
+## Approved capture precondition
+
+**S1-IN-R14 — Stable input during capture; snapshot-first processing.** The researcher keeps local source unchanged until snapshot creation finishes. State this precondition at intake and report when the immutable snapshot is complete. Structural indexing and applicable scanning start only after that completed snapshot exists. They and subsequent source retrieval use its captured contents, never the original working directory. Later changes to or removal of the original directory do not alter the snapshot or automatically trigger recapture or reindexing.
+
+This is a researcher-supplied stability precondition, not a guarantee of atomic capture of a changing local directory. Do not add file watching or ongoing comparison with the working directory. Snapshot-finalization mechanics remain part of the implementation design; incomplete captures must not be presented as completed snapshots.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -79,11 +85,12 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T13 | Include a relative symbolic link to a captured source file and later change the working copy. | Preserve the link; navigation returns the captured target bytes; aliases do not duplicate target indexing. |
 | S1-IN-T14 | Include a symbolic link to a file outside the project or in another project. | Preserve and report the link; do not read, capture, scan, or return the external target's contents. |
 | S1-IN-T15 | Include a broken link or a link to a target excluded by the selected intake policy. | Report the absent/excluded target; no live-filesystem fallback, implicit inclusion, or false target-indexing claim. |
+| S1-IN-T16 | Pause snapshot creation before finalization and observe processing dispatch. | No structural indexing or scanner processing starts before the snapshot is complete; the incomplete capture is not reported as a completed snapshot. |
+| S1-IN-T17 | After successful local capture, edit or remove original files, then index, scan, and retrieve source. | All operations use the captured bytes without a live-directory fallback, ongoing comparison, or automatic reindexing. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
-- Local files changing during capture and the snapshot-consistency check.
 - Nested submodules and existing populated submodules in local working directories.
 - Authentication, Git LFS, and controls for safely cloning untrusted repositories.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
