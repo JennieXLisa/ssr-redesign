@@ -117,6 +117,14 @@ Start structural indexing and applicable scanning only after the completed snaps
 
 This settles lifecycle separation and snapshot reuse, not the exact status enums, transition guards, database schema, or retry algorithm. Those mechanisms remain to be specified together. Indexing completion continues to require S1-IN-R12; separating status does not permit a partial index to be labeled complete.
 
+## Approved partial-query access
+
+**S1-IN-R22 — Query available index results while processing continues.** After snapshot capture completes, allow the researcher to query already-indexed functions and their available associated records while the remaining indexing continues. Return committed results belonging to the selected snapshot and indexing run, with an explicit indication that indexing is incomplete. Source retrieval for an available function must use its exact captured source under S1-IN-R07/R14, not the original working directory.
+
+Clearly mark incomplete query results, particularly caller, callee, reference, and security-signal lists whose processing is not finished. Available function records do not imply that all relationships or flags for those functions have been collected. An empty result from an incomplete index means no matching record is currently available, not proof that no matching function, caller, reference, or signal exists. Additional processing may expand or resolve those results.
+
+Partial-query availability does not narrow the required processing scope, trigger model calls, or satisfy S1-IN-R12. Indexing must continue toward the same full-scope completion criterion, and outstanding failures remain explicit. Exact visibility boundaries, response fields, progress reporting, and pagination consistency remain implementation decisions to specify with the researcher; this requirement does not introduce a second index or source store.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -159,6 +167,9 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T34 | Capture modified populated local submodules alongside excluded/missing source and unresolved LFS pointers. | Included working-file contents appear directly in the managed tree without nested Git metadata or changes to the input checkout. Provenance distinguishes captured working files from upstream revisions; existing exclusions and snapshot-only link restrictions remain in force. |
 | S1-IN-T35 | Complete snapshot capture, then observe indexing before it starts, while running, and after an induced failure. | Capture remains successful with the same snapshot ID and commit; indexing has its own outcome. Neither capture success nor the partial index is reported as completed indexing. |
 | S1-IN-T36 | After capture and partial indexing, interrupt processing and make the original directory or remote unavailable; then resume indexing. | Resume against the same managed snapshot and retain compatible progress, without cloning, recapturing, fetching, or reading the original source. Indexing completion still requires all remaining processing under S1-IN-R12. |
+| S1-IN-T37 | Finish snapshot capture, commit indexing results for some functions, and keep other files pending. | Queries return the available functions and exact captured source with an explicit partial-index indication, using only committed records from the selected snapshot/index run; remaining processing continues. |
+| S1-IN-T38 | Query callers, references, or signals before the files or processing steps that supply them finish, then query after those results are committed. | Earlier lists are explicitly incomplete, even when empty; they do not assert absence. Later queries can return the additional results without changing the source snapshot. |
+| S1-IN-T39 | Serve successful partial queries while required indexing or scanning still has pending work or a persistent failure. | Query success does not mark the indexing run complete, clear the failure, skip remaining work, or automatically start model calls. Completion remains governed by S1-IN-R12. |
 
 ## Decisions still requiring discussion
 
@@ -166,5 +177,6 @@ These scenarios make the approved behavior testable. They are not tests executed
 - Isolation from ambient authentication and controls for safely cloning untrusted repositories, including URL validation and redirect enforcement. Remote protocol scope is settled by S1-IN-R19; private-repository authentication is outside scope under S1-IN-R17; LFS content retrieval is excluded under S1-IN-R18.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
 - Exact PostgreSQL records and provenance fields, snapshot finalization, capture/indexing status enums and transitions, durable progress, retry policy, CLI/API fields, and modular implementation ownership. The managed repository and included-submodule layout is settled by S1-IN-R20; capture/indexing lifecycle separation is settled by S1-IN-R21.
+- Partial-query visibility boundaries, response/progress fields, and pagination consistency while indexing continues. Partial access is approved by S1-IN-R22; incomplete results must not imply exhaustive coverage.
 
 Do not silently choose these mechanisms while implementing the approved requirements. Complete this group's design and implementation steps collaboratively before assigning it as executable development work.
