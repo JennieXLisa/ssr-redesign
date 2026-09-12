@@ -8,7 +8,7 @@ This document covers one requirement group, not the whole indexing stage. SSR is
 
 Capture the researcher's selected source in harness-managed immutable Git storage. Process every included file according to its type, preserving progress and explicitly reporting limitations. Resource pressure must not silently narrow the research scope or produce false completion.
 
-Git retains source contents; PostgreSQLSQL is the agreed long-term store for indexing records. No model calls or vulnerability investigations are started by intake or indexing.
+Git retains source contents; PostgreSQL is the agreed long-term store for indexing records. No model calls or vulnerability investigations are started by intake or indexing.
 
 ## Approved intake requirements
 
