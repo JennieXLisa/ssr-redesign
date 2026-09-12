@@ -12,7 +12,7 @@ Git retains source contents; PostgreSQL is the agreed long-term store for indexi
 
 ## Approved intake requirements
 
-**S1-IN-R01 — Input forms.** Accept a local source directory or a publicly accessible remote Git repository URL under S1-IN-R17. A local directory need not already be a Git repository. Clone a supplied public Git URL into harness-managed storage. Do not modify the researcher's local directory or its Git state.
+**S1-IN-R01 — Input forms.** Accept a local source directory or a publicly accessible HTTPS Git repository URL under S1-IN-R17 and S1-IN-R19. A local directory need not already be a Git repository. Clone a supplied public HTTPS Git URL into harness-managed storage. Do not modify the researcher's local directory or its Git state.
 
 **S1-IN-R02 — Remote revision.** Permit an explicit branch, tag, or commit selection. Without one, select the default branch's current commit at intake. Record the resolved commit and use that fixed source version. Do not automatically pull a moving branch during indexing or investigation.
 
@@ -81,7 +81,7 @@ Without fetch opt-in, capture the already-present source, report missing submodu
 
 ## Approved remote-access scope
 
-**S1-IN-R17 — Public, unauthenticated repositories only.** Remote Git intake supports repositories accessible without authentication. Do not implement private-repository login, credential collection/storage, or authenticated fallback. Do not request or silently use repository-access tokens, credential helpers, SSH identities, or existing authenticated sessions to make a fetch succeed. Supported URL forms and transport-isolation mechanics remain implementation decisions to settle separately.
+**S1-IN-R17 — Public, unauthenticated repositories only.** Remote Git intake supports repositories accessible without authentication. Do not implement private-repository login, credential collection/storage, or authenticated fallback. Do not request or silently use repository-access tokens, credential helpers, SSH identities, or existing authenticated sessions to make a fetch succeed. Supported URL forms are fixed by S1-IN-R19; transport-isolation mechanics remain to be specified.
 
 The same public-access restriction applies to every opted-in submodule download, including nested and missing local submodules. An opted-in fetch that requires authentication is an explicit intake blocker, not permission to acquire credentials, silently omit the requested source, or report complete intake. Without submodule opt-in, preserve the already agreed exclusion behavior; do not probe excluded repositories for access. Report only what the fetch establishes: an inaccessible remote must not automatically be labeled private when its visibility is unknown. Never echo supplied secrets in diagnostics.
 
@@ -92,6 +92,12 @@ Local-directory capture and already-populated local submodule capture remain unc
 **S1-IN-R18 — Log and skip unresolved LFS content.** Do not download Git LFS objects or automatically replace LFS pointers with downloaded contents. Log each detected unresolved LFS path with an explicit LFS-skipped reason and continue, without prompting to enable LFS. Apply this rule to remote intake, local input, and included submodules. Do not parse, scan, or present pointer text as the underlying source file or claim that the missing content was indexed.
 
 This is an explicit scope exclusion, not a processing failure or an intake/indexing blocker. Keep the excluded paths and reason visible in the intake and completion reports. It does not permit skipping ordinary large files. Actual file contents already present in a local working directory remain subject to the approved working-file capture and processing rules; no LFS download is needed or attempted for them. The immutable snapshot must not later be silently hydrated or otherwise changed.
+
+## Approved remote transport
+
+**S1-IN-R19 — HTTPS-only Git retrieval.** Accept public, unauthenticated HTTPS Git repository URLs from any Git host, not only GitHub. Reject SSH URLs and SCP-style Git addresses, plain HTTP, git://, file://, and other non-HTTPS remote forms with an actionable explanation. Do not silently rewrite the supplied transport or fall back to another protocol. Remote transfers must remain HTTPS; do not follow a redirect that downgrades to another protocol. Local directory paths continue to use working-file capture under S1-IN-R01/R03, not Git URL cloning.
+
+For each opted-in submodule download, resolve a relative repository URL against its immediate parent's remote using Git's repository-relative URL semantics, then apply the same HTTPS-only and public-access requirements to the effective URL. Apply this at every nested level. If a required download has no acceptable HTTPS URL, report an intake blocker rather than silently skipping it, converting an SSH address to HTTPS, or claiming complete intake. Already-populated local submodules remain governed by S1-IN-R16; without fetch opt-in, do not contact excluded submodule remotes.
 
 ## Derived acceptance scenarios
 
@@ -127,11 +133,14 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T26 | Supply a public remote and included submodules containing unresolved LFS pointers. | Perform no LFS downloads or automatic content replacement; log each affected path as excluded and continue without indexing pointer text as the underlying files. |
 | S1-IN-T27 | Complete all required non-LFS processing with unresolved LFS pointers still present. | Permit completion of the remaining scope while retaining explicit LFS exclusions; do not claim the missing contents were captured or indexed. |
 | S1-IN-T28 | Supply local working files containing both actual LFS-managed contents with local edits and unresolved LFS pointers. | Capture and process the actual eligible working contents unchanged; log and skip unresolved LFS content without downloading, overwriting local files, or later mutating the snapshot. |
+| S1-IN-T29 | Supply public HTTPS Git remotes on different hosts, including a host other than GitHub. | Accept the transport without a GitHub-only restriction; clone anonymously at the selected revision. |
+| S1-IN-T30 | Supply SSH/SCP-style, HTTP, git://, or file:// remote forms, or an HTTPS remote redirecting to HTTP. | Reject the unsupported transport or downgrade with an explanation; do not rewrite it, use a fallback protocol, or invoke credentials. Local directory capture remains available. |
+| S1-IN-T31 | Opt into nested submodule downloads using relative URLs and an explicit non-HTTPS URL. | Resolve each relative URL against its immediate parent's remote and allow only effective public HTTPS URLs; reject the non-HTTPS required download as a blocker without silent omission or conversion. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
-- Supported public Git URL/protocol forms, isolation from ambient authentication, and controls for safely cloning untrusted repositories. Private-repository authentication is outside scope under S1-IN-R17; LFS content retrieval is excluded under S1-IN-R18.
+- Isolation from ambient authentication and controls for safely cloning untrusted repositories, including URL validation and redirect enforcement. Remote protocol scope is settled by S1-IN-R19; private-repository authentication is outside scope under S1-IN-R17; LFS content retrieval is excluded under S1-IN-R18.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
 - PostgreSQL records, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership.
 
