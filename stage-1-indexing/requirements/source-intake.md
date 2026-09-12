@@ -12,7 +12,7 @@ Git retains source contents; PostgreSQL is the agreed long-term store for indexi
 
 ## Approved intake requirements
 
-**S1-IN-R01 — Input forms.** Accept a local source directory or a remote Git repository URL. A local directory need not already be a Git repository. Clone a supplied Git URL into harness-managed storage. Do not modify the researcher's local directory or its Git state.
+**S1-IN-R01 — Input forms.** Accept a local source directory or a publicly accessible remote Git repository URL under S1-IN-R17. A local directory need not already be a Git repository. Clone a supplied public Git URL into harness-managed storage. Do not modify the researcher's local directory or its Git state.
 
 **S1-IN-R02 — Remote revision.** Permit an explicit branch, tag, or commit selection. Without one, select the default branch's current commit at intake. Record the resolved commit and use that fixed source version. Do not automatically pull a moving branch during indexing or investigation.
 
@@ -78,6 +78,14 @@ Do not fetch, reset, update, or change an already populated submodule's checkout
 
 Without fetch opt-in, capture the already-present source, report missing submodules as excluded, and continue without repeated prompts or claims that absent contents were indexed. Snapshot-only symbolic-link restrictions continue to apply; local-submodule inclusion does not authorize following external source links. Exact storage representation and provenance fields remain part of the implementation design.
 
+## Approved remote-access scope
+
+**S1-IN-R17 — Public, unauthenticated repositories only.** Remote Git intake supports repositories accessible without authentication. Do not implement private-repository login, credential collection/storage, or authenticated fallback. Do not request or silently use repository-access tokens, credential helpers, SSH identities, or existing authenticated sessions to make a fetch succeed. Supported URL forms and transport-isolation mechanics remain implementation decisions to settle separately.
+
+The same public-access restriction applies to every opted-in submodule download, including nested and missing local submodules. An opted-in fetch that requires authentication is an explicit intake blocker, not permission to acquire credentials, silently omit the requested source, or report complete intake. Without submodule opt-in, preserve the already agreed exclusion behavior; do not probe excluded repositories for access. Report only what the fetch establishes: an inaccessible remote must not automatically be labeled private when its visibility is unknown. Never echo supplied secrets in diagnostics.
+
+Local-directory capture and already-populated local submodule capture remain unchanged. Do not contact their remotes merely to verify public availability. This requirement restricts remote retrieval, not the researcher's ability to supply existing local source.
+
 ## Derived acceptance scenarios
 
 These scenarios make the approved behavior testable. They are not tests executed here and do not settle the open implementation mechanisms.
@@ -106,11 +114,14 @@ These scenarios make the approved behavior testable. They are not tests executed
 | S1-IN-T20 | Supply populated local submodules, including nested ones, with local edits, untracked/ignored files, and deletions; do not enable fetching. | Capture eligible current working files under the agreed ignore rules, not parent-pinned or staged-only contents; exclude Git metadata; perform no fetch or checkout mutation. |
 | S1-IN-T21 | Supply a local project containing both populated and missing submodules without fetch opt-in. | Capture populated source; report missing submodules as excluded; perform no downloads, repeated prompts, or false indexing claims. |
 | S1-IN-T22 | Enable recursive fetching for a local project with modified populated submodules and missing submodules. | Preserve populated working-file contents; fetch only missing submodules under S1-IN-R04/R15 into managed storage; leave the researcher's directories and Git state unchanged. |
+| S1-IN-T23 | Supply a publicly accessible Git URL while repository credentials are also available in the host environment. | Fetch anonymously without invoking credential helpers or using authenticated sessions; preserve the selected revision and snapshot behavior. |
+| S1-IN-T24 | Supply a remote requiring authentication, or opt into a required nested submodule download that requires it. | Report an explicit fetch/access blocker without credential prompts, authenticated fallback, secret disclosure, silent exclusion, or a complete-intake claim. |
+| S1-IN-T25 | Supply existing local source whose configured remote is private or unreachable, with submodule fetching disabled. | Capture eligible local working files without contacting that remote or rejecting the local source because of remote visibility. |
 
 ## Decisions still requiring discussion
 
 - Symbolic-link resolution mechanics, including chains/cycles and absolute-target handling within the approved snapshot-only boundary.
-- Authentication, Git LFS, and controls for safely cloning untrusted repositories.
+- Supported public Git URL/protocol forms, isolation from ambient authentication, Git LFS, and controls for safely cloning untrusted repositories. Private-repository authentication is outside scope under S1-IN-R17.
 - Exact ignore precedence, encoding/type classification, and retrieval behavior for non-text files.
 - PostgreSQL records, intake/run states, durable progress, retry policy, CLI/API fields, and modular implementation ownership.
 
