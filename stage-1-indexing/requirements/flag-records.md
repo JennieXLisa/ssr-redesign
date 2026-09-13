@@ -1,6 +1,6 @@
 # Stage 1 — Security-interest flag records
 
-Status: approved behavior from the researcher discussion. This records the agreed observation fields, display grouping, custom-rule support, rule-selection modes, conflicting-ID handling, and identical-rule deduplication; it is not a complete database schema, rule catalogue, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed observation fields, display grouping, custom-rule support, rule-selection modes, conflicting-ID handling, identical-rule deduplication, and pre-scan validation; it is not a complete database schema, rule catalogue, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), and [source-intake.md](source-intake.md). Existing snapshot, provenance, completion, and partial-query requirements apply. Flags are stored in PostgreSQL and link to source retained in the immutable Git snapshot.
 
@@ -41,6 +41,10 @@ The error must identify the rule engine, conflicting ID, and both rule sources w
 
 Different IDs remain separate rules even when their patterns or matches coincide. Different definitions sharing the same engine and ID still fail under S1-FL-R08; do not infer identical definitions merely from identical match output. This requirement governs duplicate selection, not an exactly-once process-execution guarantee after a crash. Existing progress/replay requirements remain in force. Exact definition comparison and persistence keys remain implementation decisions to specify with the researcher.
 
+**S1-FL-R10 — Validate the complete selected ruleset before scanning.** Validate the complete effective selection of built-in/custom Semgrep rules and interesting-name patterns before starting its scanning or name-rule matching. Apply this in both combined and custom-only modes. An invalid selected rule blocks that selection from scanning; do not silently skip it, run only the valid subset, or report successful scanning with no matches. Return an actionable error identifying the rule source/location and the problem so the researcher can correct it. Conflict and identical-duplicate handling remain governed by S1-FL-R08/R09.
+
+Validation failure must not discard already-completed structural indexing. Correcting the rules must retain compatible completed extraction and must not force reparsing solely because the rule selection was invalid or changed. Preserve the snapshot and existing results under the established reuse requirements; a correction does not authorize silently rewriting rules or observations already bound to an existing run under S1-FL-R06/R07. Exact validation checks, error fields, validation timing relative to structural indexing, and the corrected-selection/run association remain to be specified with the researcher. Passing pre-scan validation is not a guarantee that later scanning cannot fail; such failures still follow the existing progress and completion requirements.
+
 ## Illustrative grouped view
 
 ```text
@@ -77,10 +81,14 @@ These are required observations for future tests, not executed test results.
 | S1-FL-T14 | Select rules with distinct IDs that match the same source location. | Do not reject them merely for overlapping matches; preserve independent observations and provenance under S1-FL-R04. |
 | S1-FL-T15 | In combined mode, select identical built-in and custom definitions with the same engine and ID; reverse source order. | Select and execute one effective rule over each applicable input, retain both source references, and produce no duplicate observations merely from repeated inclusion; neither order raises a conflict. |
 | S1-FL-T16 | In custom-only mode, repeat an identical engine/ID/definition across selected files and also select a different ID with the same matching pattern. | Consolidate only the identical same-ID selections and retain all their source references; the different-ID rule remains independent, with no built-in rules added or match multiplicity caused by duplicate selection. |
+| S1-FL-T17 | Select valid rules together with an invalid Semgrep rule or invalid name pattern, in combined and custom-only modes. | Validate the full selection before scanning; report the offending source/location and problem. Do not run a valid subset, silently skip the invalid rule, or report successful scanning. |
+| S1-FL-T18 | After structural extraction has completed, reject an invalid rule selection, correct it, and retry with compatible source/extraction inputs. | Retain the completed structural records and snapshot; validate the corrected selection before scanning without reparsing solely because rules changed. Preserve existing frozen rule selections and observations. |
+| S1-FL-T19 | Accept a valid complete selection, then induce a scanner processing failure. | Pre-scan validation permits scanning but does not conceal a later failure or imply completion; preserve valid structural work and expose the failure under the agreed progress/completeness rules. |
 
 ## Decisions still requiring discussion
 
 - The category catalogue, rule-input format, exact selection options, empty custom-only selection handling, exact identical-definition comparison, and name-matching semantics. Custom-rule support, selection modes, conflicting-ID rejection, and identical-rule deduplication are settled by S1-FL-R06/R07/R08/R09.
+- Exact pre-scan validation checks, actionable error fields, timing relative to structural indexing, and corrected-selection/run association under S1-FL-R10.
 - Exact PostgreSQL fields, enums, keys, per-match provenance, immutable rule storage, and retry/deduplication rules.
 - Scanner-to-source range mapping and association when a result spans multiple owners or structural extraction is unavailable.
 - Exact grouping, ordering, pagination, and query response contracts. No ranking or confidence-score policy is selected here.
