@@ -1,6 +1,6 @@
 # Stage 1 — Function lookup and source retrieval
 
-Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, one-hop caller/callee navigation, file-outline, and file-discovery requirements; it is not an executable API schema, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, one-hop caller/callee navigation, file-outline, file-discovery, and direct function-read reference requirements; it is not a complete executable API schema, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), [flag-records.md](flag-records.md), and [source-intake.md](source-intake.md). PostgreSQL holds searchable records; Git retains the immutable source. Existing snapshot/run identity and partial-query requirements apply.
 
@@ -8,11 +8,11 @@ Read with [function-records.md](function-records.md), [reference-records.md](ref
 
 **S1-NV-R01 — Shared navigation operations.** Provide one lookup and source-retrieval interface for the initial researcher CLI and later model-tool adapters. Both use the same owning operations and source identities, rather than maintaining separate lookup implementations. Stage 1 proves these operations without connecting a model or starting investigations. Exact method names, signatures, response schemas, and package ownership remain to be specified.
 
-**S1-NV-R02 — Find functions by local name.** Support wildcard and regular-expression matching against indexed local function names, with optional path and language filters. Return bounded results containing symbol IDs, qualified names, available signatures, and source locations, not every matching function's complete body. Qualified names provide identifying context; do not introduce a local/qualified-name matching selector. Preserve the wildcard/regex distinction already agreed for name matching. Exact query options, filter syntax, case handling, ordering, and pattern-engine details remain to be specified; this does not create or run a flagging rule merely because a search was requested.
+**S1-NV-R02 — Find functions by local name.** Support wildcard and regular-expression matching against indexed local function names, with optional path and language filters. Return bounded results containing symbol IDs, qualified names, available signatures, and source locations, not every matching function's complete body. Qualified names provide identifying context; do not introduce a local/qualified-name matching selector. Preserve the wildcard/regex distinction already agreed for name matching. Include directly usable source-read references under S1-NV-R12. Exact query options, filter syntax, case handling, ordering, and pattern-engine details remain to be specified; this does not create or run a flagging rule merely because a search was requested.
 
-**S1-NV-R03 — Preserve distinct matches.** Return same-name functions in different files or scopes, and same-name overloads, as distinct entries with their own identities and identifying context. Do not select the first match implicitly or collapse entries by name. The researcher or later model selects a returned symbol ID for the subsequent read. Retain the selected snapshot and indexing-run association; a lookup must not silently switch to a different run or a newer source revision. Anonymous callables remain individually retrievable by their identities under S1-FN-R09; generated navigation labels are not fabricated declared function names.
+**S1-NV-R03 — Preserve distinct matches.** Return same-name functions in different files or scopes, and same-name overloads, as distinct entries with their own identities and identifying context. Do not select the first match implicitly or collapse entries by name. The researcher or later model selects a returned symbol ID and source occurrence for the subsequent read under S1-NV-R12. Retain the selected snapshot and indexing-run association; a lookup must not silently switch to a different run or a newer source revision. Anonymous callables remain individually retrievable by their identities under S1-FN-R09; generated navigation labels are not fabricated declared function names.
 
-**S1-NV-R04 — Read exact function source.** Given the selected function identity, retrieve its corresponding captured source with line numbers and file/location context. Use the recorded source locations and managed Git snapshot, not the original working directory or a moving remote branch. Preserve the distinction between available declarations and definitions under S1-FN-R04/R07; do not fabricate a body for a declaration-only entry. Exact occurrence-selection and response-field conventions remain part of the interface design.
+**S1-NV-R04 — Read exact function source.** Given the selected function identity and occurrence under S1-NV-R12, retrieve its corresponding captured source with line numbers and file/location context, including the signature and body when reading a definition. Use the recorded source locations and managed Git snapshot, not the original working directory or a moving remote branch. Preserve the distinction between available declarations and definitions under S1-FN-R04/R07; do not fabricate a body for a declaration-only entry. Detailed response-field and multiple-occurrence pagination conventions remain part of the interface design.
 
 **S1-NV-R05 — Explicit continuation for large functions.** Support reading a large function through explicit continuation rather than silently truncating its source. Identify which portion was returned and whether more of the selected source remains, with a usable way to continue that same read. Continuation must remain bound to the same selected source identity and snapshot. Completing a sequence of reads must make the entire selected source available without silently omitting intermediate content. A bounded response does not reduce capture or indexing scope. The response budget, continuation representation, and precise range conventions remain to be agreed; no cursor implementation is selected here.
 
@@ -44,14 +44,54 @@ Return bounded entries containing paths, entry/file types, and available languag
 
 Apply the existing snapshot-only symbolic-link boundary and exclusions. Listing a captured link or an excluded-content diagnostic must not traverse outside the snapshot or imply that an absent submodule/LFS target was captured. Exact wildcard path grammar, directory-listing depth, case handling, ordering, response fields, and pagination remain to be specified with the researcher. This adds navigation over the existing snapshot, not a second filesystem index or a file-watching service.
 
+**S1-NV-R12 — Search results carry direct function-read references.** Function-search results must contain the information needed to read a selected function immediately, without another name lookup or reconstructing a source location. Return `index_run_id` in the response context and each item's `symbol_id`, local and qualified names, available signature, and available definition references. Each definition reference includes its `occurrence_id`, captured project-relative `path`, and `start_line`/`end_line` location. A definition reference identifies a concrete source occurrence, not just the enclosing file or a function name.
+
+The initial read uses `read_function(index_run_id=..., symbol_id=..., occurrence_id=...)`. The shared reader validates that the occurrence belongs to that symbol and run, resolves its stored exact ranges in the associated snapshot, and returns the selected function's captured source, including signature and body, with line numbers and explicit continuation when needed. The caller does not need another search, a newly resolved Git revision, or guessed body boundaries. When multiple definition occurrences are recorded, their distinct IDs and locations allow explicit selection; do not silently pick the first occurrence or switch to another function with the same name.
+
+For declaration-only entries, return an empty `definitions` list and retain usable references to available declarations so their source can still be read without fabricating a body. During incomplete indexing, no available definition means none is recorded in the returned view, not proof that no definition exists elsewhere. Preserve the existing coverage indicators and bounded-response requirements. The complete response schema, declaration-reference representation, limits, pagination of multiple occurrences, and continuation format remain to be specified; this requirement approves the search-to-read linkage, not unrelated API defaults.
+
 ## Intended researcher workflow
 
 ```text
 Search local function names with *command*
-    -> Inspect matching IDs, paths, qualified names, and signatures
-    -> Select a function ID
-    -> Read exact snapshot source, continuing explicitly when necessary
+    -> Inspect matching IDs, paths, qualified names, signatures, and definition references
+    -> Select a symbol ID and occurrence ID from the returned index-run context
+    -> Read exact snapshot source directly, continuing explicitly when necessary
     -> Follow recorded references or open recorded callsites
+```
+
+The following abbreviated example illustrates S1-NV-R12; it omits pagination, coverage, and other response fields, and the example IDs do not specify their production format:
+
+```json
+{
+  "index_run_id": "idx_12",
+  "items": [
+    {
+      "symbol_id": "fn_42",
+      "local_name": "execute_command",
+      "qualified_name": "Admin::execute_command",
+      "signature": "int execute_command(const char* command)",
+      "definitions": [
+        {
+          "occurrence_id": "def_7",
+          "path": "src/admin.cpp",
+          "start_line": 42,
+          "end_line": 68
+        }
+      ]
+    }
+  ]
+}
+```
+
+Those returned identifiers feed directly into the reader:
+
+```python
+read_function(
+    index_run_id="idx_12",
+    symbol_id="fn_42",
+    occurrence_id="def_7",
+)
 ```
 
 Reference/callsite information is governed by reference-records.md. Default caller/callee navigation is one hop under S1-NV-R09; further exploration requires another explicit lookup. This workflow does not select ranking or automatic recursive exploration behavior.
@@ -87,15 +127,18 @@ These are required observations for future tests, not executed test results.
 | S1-NV-T17 | Through the CLI and shared owner, list a captured directory and use wildcard path searches to find README, route, and C++ files. | Return bounded paths, entry/file types, and available language/processing status without file contents, a flag prerequisite, model calls, or an automatic whole-tree dump. Selected paths support the existing outline or applicable source reader. |
 | S1-NV-T18 | Discover captured files with pending, failed, or unsupported extraction, alongside documentation, configuration, and binary files. | Files remain discoverable with honest available metadata and processing status; lack of symbols does not hide a file or become an implied successful index. |
 | S1-NV-T19 | After capture, change or remove the original checkout, then list/search paths while external links, missing submodules, and LFS exclusions exist. | Discovery remains bound to the selected snapshot; do not consult live paths, traverse external link targets, or report uncaptured/excluded contents as captured files. Follow-up reads preserve the same boundaries. |
+| S1-NV-T20 | Through the CLI and shared owner, search for a function and pass only returned index-run, symbol, and definition-occurrence identifiers into read_function after the original checkout changes. | The result supplies the path and line context plus all identifiers needed for an immediate read. No second search or guessed range is required; the reader returns the exact captured signature and body with line numbers and continuation when necessary. |
+| S1-NV-T21 | Search symbols with multiple recorded definitions and same-name overloads; read a selected occurrence, then supply an occurrence from another symbol or run. | Each available definition has its own occurrence reference. The valid read opens exactly the selected occurrence, while a mismatched association is rejected rather than selecting another definition, the first name match, or a different snapshot. |
+| S1-NV-T22 | Search a declaration-only entry and an entry whose definition has not yet become available during indexing. | Return no fabricated definition/body. Available declarations retain usable read references. An empty definitions list during partial processing is not presented as proof that no definition exists, and search still returns metadata rather than bodies. |
 
 ## Decisions still requiring discussion
 
-- Exact operation signatures, response fields, error forms, range conventions, and encoding behavior.
+- Exact operation signatures, response fields, error forms, range conventions, and encoding behavior. S1-NV-R12 fixes the direct search-to-read identity linkage; complete schemas remain to be specified.
 - Search filters, case handling, pattern engines, ordering, pagination, and partial-result consistency. Captured-text regex search is approved under S1-NV-R08; its multiline behavior, excerpt bounds, and coverage reporting remain to be specified.
 - Caller/callee response fields, grouping, and candidate/unresolved presentation under S1-NV-R09. One-hop default navigation is settled; no recursive-query feature is approved here.
 - File-outline response fields, ordering, hierarchy representation, and pagination under S1-NV-R10.
 - Directory-listing depth, wildcard path grammar, case handling, ordering, response fields, and pagination under S1-NV-R11.
-- Large-source response budgets, continuation mechanics, and declaration/definition selection.
+- Large-source response budgets and continuation mechanics. S1-NV-R12 requires explicit occurrence references; declaration-reference representation and pagination for multiple occurrences remain to be specified.
 - PostgreSQL query/index design, source-reader and text-search interfaces, and modular ownership.
 
 Specify these mechanisms with the researcher before assigning implementation. Do not add automatic model analysis, restrict navigation to flagged functions, or use large-source limits to silently omit required source.
