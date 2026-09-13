@@ -1,6 +1,6 @@
 # Stage 1 — Function lookup and source retrieval
 
-Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, and captured-text search requirements; it is not an executable API schema, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, and one-hop caller/callee navigation requirements; it is not an executable API schema, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), [flag-records.md](flag-records.md), and [source-intake.md](source-intake.md). PostgreSQL holds searchable records; Git retains the immutable source. Existing snapshot/run identity and partial-query requirements apply.
 
@@ -26,6 +26,12 @@ Return bounded results identifying the file, source line/location, a short match
 
 Use the shared navigation owner under S1-NV-R01. Exact regex engine/dialect, case and multiline behavior, filter syntax, excerpt bounds, pagination, search-coverage reporting, and implementation backend remain to be specified with the researcher. This requirement does not select a new search service or duplicate the canonical source store.
 
+**S1-NV-R09 — One-hop caller and callee navigation by default.** Given a selected function identity, return its immediate recorded callers or callees through the shared navigation owner. A default lookup covers one relationship hop, not recursive expansion of the repository's call graph. For a recorded chain A -> B -> C, a caller lookup for C identifies B, not A as an immediate caller; a callee lookup for A identifies B, not C as an immediate callee. The researcher or later model can explicitly follow another returned function identity to continue exploring.
+
+Return bounded results with the related function's identity and name where established, file context, the exact callsite location, and the recorded resolution status. Locations must allow the individual callsite and its argument expressions to be read from the same immutable snapshot. Multiple calls from one function to another remain individually accessible; grouping by function must not discard their distinct occurrences. Do not return every related function body or recursively expand neighbors merely because the lookup was requested.
+
+Derive both directions from the same call occurrences and resolution records under S1-RF-R06. Preserve pending, ambiguous, and unresolved information rather than inventing a target identity or treating a candidate as an established caller/callee. Non-call references remain distinguishable; passing a function as an argument does not by itself make the enclosing function its caller. Apply the existing snapshot/run association and partial-coverage indicators, including when other files can still contribute callers. This requirement settles the default traversal behavior, not exact response schemas, candidate presentation, grouping, pagination, or an optional recursive-query API.
+
 ## Intended researcher workflow
 
 ```text
@@ -36,7 +42,7 @@ Search local function names with *command*
     -> Follow recorded references or open recorded callsites
 ```
 
-Reference/callsite information is governed by reference-records.md. This workflow does not define additional traversal depth, ranking, or automatic exploration behavior.
+Reference/callsite information is governed by reference-records.md. Default caller/callee navigation is one hop under S1-NV-R09; further exploration requires another explicit lookup. This workflow does not select ranking or automatic recursive exploration behavior.
 
 Text search provides another entry point: search for a route string, configuration key, or SQL fragment; inspect matching excerpts and locations; then read surrounding source or navigate to a known enclosing function. It does not require a function-name match or an existing flag.
 
@@ -56,11 +62,15 @@ These are required observations for future tests, not executed test results.
 | S1-NV-T08 | Search for a route string, configuration key, and SQL fragment across captured code, documentation, and configuration, with and without path/language filters. | Return bounded matching excerpts with file and line locations, respecting the selected filters rather than returning whole files; locations open the matching captured text through the shared reader. |
 | S1-NV-T09 | Search captured text containing matches inside a known function, at module level, in comments/strings, and in a file without successful structural extraction. | Keep text matches regardless of flags or available function metadata. Attach the enclosing function only when known; do not fabricate owners or treat comment/string matches as executable behavior. Disclose relevant incomplete indexing. |
 | S1-NV-T10 | After capture, modify or remove the working directory, then search and read matching text while link/LFS exclusions are present. | Results and follow-up reads use the same captured bytes; no live-source or external-link fallback and no LFS-pointer substitution for missing content. The query neither creates flags nor starts a model investigation. |
+| S1-NV-T11 | Through the initial CLI and shared owner, query callers/callees for a recorded cross-file chain A -> B -> C, then explicitly follow B. | Each default lookup returns only immediate neighbors with IDs/names, file/callsite locations, and resolution status. Reaching the next hop requires another lookup; no transitive neighbor is mislabeled as immediate and no graph/body dump occurs. |
+| S1-NV-T12 | Record two calls from B to C at different locations, query in both directions, and open each callsite after the original working source changes. | Both views derive from the same occurrences. Each distinct call and its argument expressions remain accessible from the pinned snapshot even if the display groups them under one function. |
+| S1-NV-T13 | Query during unfinished cross-file resolution with ambiguous/unresolved call occurrences and a function passed as a callback argument. | Results retain their resolution and partial-coverage distinctions; no candidate becomes an established target and no argument reference alone becomes a call edge. Empty partial caller lists do not imply that no callers exist. |
 
 ## Decisions still requiring discussion
 
 - Exact operation signatures, response fields, error forms, range conventions, and encoding behavior.
 - Search filters, case handling, pattern engines, ordering, pagination, and partial-result consistency. Captured-text regex search is approved under S1-NV-R08; its multiline behavior, excerpt bounds, and coverage reporting remain to be specified.
+- Caller/callee response fields, grouping, and candidate/unresolved presentation under S1-NV-R09. One-hop default navigation is settled; no recursive-query feature is approved here.
 - Large-source response budgets, continuation mechanics, and declaration/definition selection.
 - PostgreSQL query/index design, source-reader and text-search interfaces, and modular ownership.
 
