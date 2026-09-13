@@ -1,6 +1,6 @@
 # Stage 1 — Security-interest flag records
 
-Status: approved behavior from the researcher discussion. This records the agreed observation fields and display grouping; it is not a complete database schema, rule catalogue, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed observation fields, display grouping, and custom-rule support; it is not a complete database schema, rule catalogue, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), and [source-intake.md](source-intake.md). Existing snapshot, provenance, completion, and partial-query requirements apply. Flags are stored in PostgreSQL and link to source retained in the immutable Git snapshot.
 
@@ -24,6 +24,10 @@ Read with [function-records.md](function-records.md), [reference-records.md](ref
 **S1-FL-R04 — Keep independent matches separate.** Preserve independently produced observations even when they concern the same function or operation. A function-name rule matching `execute_command` and a Semgrep rule matching an operation in its body are separate observations with their own reasons, locations, and provenance. Do not merge them into a fabricated stronger verdict or count them as separate confirmed vulnerabilities. Exact retry/deduplication keys remain to be specified; replaying the same publication is distinct from receiving an independent rule match.
 
 **S1-FL-R05 — Group for display without losing evidence.** Query results may group related observations under the function or other indexed owner while retaining access to each individual match. Grouping is presentation, not replacement of the underlying records. Support bounded retrieval and the previously agreed category/path/function filtering rather than inserting every flag into a model's context. Keep the distinction between pending flagging and completed applicable flagging with no matches under S1-IX-R05. A displayed group does not imply that all applicable rules or other indexing steps have finished.
+
+**S1-FL-R06 — Built-in and researcher-supplied reconnaissance rules.** Provide a maintained built-in reconnaissance ruleset and support researcher-supplied Semgrep rules and interesting-name patterns alongside it in Stage 1. A researcher must be able to add a project-specific name such as `dispatch_admin_command` or a custom code-pattern rule without changing harness source code. Custom-rule matches follow the same observation, exact-location, ownership, provenance, and partial-completeness requirements as built-in matches; neither becomes a vulnerability verdict or an automatic investigation task.
+
+Each indexing run records its exact selected rules and associated versions/configuration. Retain the selected rule definitions or immutable references sufficient to identify their exact contents, rather than relying only on a mutable file path or rule name. Changing a custom rule file or the built-in ruleset must not silently change the rules bound to an existing run or rewrite earlier observations. The storage representation, rule-input format, name-pattern semantics, default/custom selection, and duplicate-ID or override behavior remain to be specified with the researcher.
 
 ## Illustrative grouped view
 
@@ -50,11 +54,14 @@ These are required observations for future tests, not executed test results.
 | S1-FL-T03 | Match an operation inside a lambda nested within another function. | Link the operation's flag to the lambda and its exact source location; keep the enclosing scope navigable rather than substituting the outer function as the sole owner. |
 | S1-FL-T04 | Retrieve a flag after the original working source changes or disappears. | Its location opens the immutable captured source and retains the correct run/rule configuration; no live-source substitution occurs. |
 | S1-FL-T05 | Query available flags while another required flagging component is unfinished, then query after completion. | Return bounded committed observations with explicit completeness information; distinguish incomplete empty results from completed applicable processing with no matches. |
+| S1-FL-T06 | Select built-in rules together with a researcher-supplied name pattern matching `dispatch_admin_command`. | Produce applicable built-in and custom observations without editing harness code; retain each match's selected rule, reason, source location, and owner. |
+| S1-FL-T07 | Supply a custom Semgrep code-pattern rule alongside selected built-in rules. | Ingest its matches through the same observation and query contract, preserving independent provenance and completeness reporting without automatic investigation or vulnerability claims. |
+| S1-FL-T08 | After a run's rules are recorded, edit a custom rule file or update the built-in ruleset. | The existing run retains its exact selected rule contents and prior observations; results do not silently change because the external rule source changed. |
 
 ## Decisions still requiring discussion
 
-- The category catalogue, rule selection, researcher customization, and name-matching semantics.
-- Exact PostgreSQL fields, enums, keys, per-match provenance, and retry/deduplication rules.
+- The category catalogue, rule-input format, default/custom selection, duplicate-ID or override behavior, and name-matching semantics. Custom-rule support is settled by S1-FL-R06.
+- Exact PostgreSQL fields, enums, keys, per-match provenance, immutable rule storage, and retry/deduplication rules.
 - Scanner-to-source range mapping and association when a result spans multiple owners or structural extraction is unavailable.
 - Exact grouping, ordering, pagination, and query response contracts. No ranking or confidence-score policy is selected here.
 
