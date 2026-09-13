@@ -1,6 +1,6 @@
 # Stage 1 — Source-reading API
 
-Status: operation signatures, the SourcePage fields, and whole-response byte budgeting below are approved. Numeric budgets, detailed range fields, token encoding, and other remaining items are not yet frozen. This is a partial API contract, not implemented functionality or an executed test report.
+Status: operation signatures, the SourcePage fields, whole-response byte budgeting, and the 50 KB default below are approved. Permitted budget bounds, detailed range fields, token encoding, and other remaining items are not yet frozen. This is a partial API contract, not implemented functionality or an executed test report.
 
 ## Scope and traceability
 
@@ -34,7 +34,7 @@ These signatures specify shared operations, not HTTP endpoints or production stu
 | `index_run_id` | Identifies the selected index run and its associated immutable snapshot. |
 | `symbol_id` | Identifies the function selected from that run. |
 | `occurrence_id` | Identifies the particular declaration or definition to read. Validate its association with the supplied symbol and run; do not choose a different occurrence implicitly. |
-| `max_bytes` | Optional initial whole-response byte budget under S1-NV-R21. `None` uses the configured source-response budget. Numeric defaults, permitted bounds, and the exact serialization profile remain to be agreed. |
+| `max_bytes` | Optional initial whole-response byte budget under S1-NV-R21. `None` uses the configured source-response budget, whose shipped default is **50,000 bytes (50 KB)** under S1-NV-R22. Permitted bounds and the exact serialization profile remain to be agreed. |
 | `continuation` | Self-contained token returned by the reader. It supplies the pinned source identities, specific next section, and read budget needed to continue. No additional IDs, caller-computed offsets, or reader session are required. |
 
 The initial read selects the occurrence's full recorded source. For a definition, that includes its signature and body; for a declaration, it is the available declaration text, without an invented body. A response budget controls how much of that selected source fits in a page, not the total source available to read.
@@ -69,13 +69,21 @@ Line numbers are presentation metadata. A CLI or model-tool formatter may displa
 
 When choosing a new source section, account for the required metadata and continuation overhead before deciding how much source fits. Check the complete serialized response size before returning it. Preserve whole lines and valid character boundaries under S1-NV-R15. Do not satisfy the budget by dropping required fields, hiding coverage, omitting a needed continuation, or silently discarding source. Successive pages must still expose the entire selected source under the existing continuation rules. The budget does not reduce capture or indexing scope.
 
-Issued continuations retain their fixed section and effective budget under S1-NV-R13/R14/R20; whole-response accounting does not authorize resizing an already-issued section. The concrete serialization/encoding profile, framing boundary for each adapter, numeric defaults/bounds, overhead reservation for changing coverage metadata, and too-small-budget/error-response behavior remain to be specified before implementation. Both the byte bound and repeatable source-section requirements must be preserved by that design.
+Issued continuations retain their fixed section and effective budget under S1-NV-R13/R14/R20; whole-response accounting does not authorize resizing an already-issued section. The default is specified in S1-NV-R22. The concrete serialization/encoding profile, framing boundary for each adapter, permitted budget bounds, overhead reservation for changing coverage metadata, and too-small-budget/error-response behavior remain to be specified before implementation. Both the byte bound and repeatable source-section requirements must be preserved by that design.
+
+## Default source-response budget
+
+**S1-NV-R22 — 50 KB default, configurable on the initial read.** Ship with a source-response budget of exactly **50,000 bytes (50 KB, decimal)**. When `read_function` omits `max_bytes` or passes `None`, use the configured default; without a configuration override, that value is `50_000`. The budget covers the complete serialized SourcePage under S1-NV-R21, including source, metadata, coverage, and the continuation token, not 50 KB of source plus additional overhead.
+
+Keep the default configurable and allow an explicit valid `max_bytes` on the initial read to override it. The 50 KB value is a default, not a hard maximum or a minimum. This approval does not choose the permitted override bounds or the too-small-budget policy. Large functions remain fully available through continuation; the default must not become a capture, indexing, or total-function-size limit.
+
+Continuations retain the effective budget and fixed source section established for their read under S1-NV-R20. Changing the configured default affects subsequent initial reads, not already-issued continuations. Do not add a size override to `continue_read` or silently resize an issued section.
 
 ## Reader implementation obligations
 
 1. Validate the inputs through the shared error contract, including the selected run/symbol/occurrence association. A continuation must also identify an allowed section of that same occurrence; possession of a token does not replace source-access checks.
 2. Select the recorded interval from the pinned Git file contents. Do not read the original working directory, resolve a moving branch, guess a body boundary, or perform another name search.
-3. For an initial read, apply the effective whole-response byte budget under S1-NV-R21, allowing for required metadata and serialization while retaining whole lines where possible. Split an oversized line only at valid character boundaries and report the fragment's position. For continuation, honor its already-fixed section and validate it against the canonical records.
+3. For an initial read, resolve the default or explicit budget under S1-NV-R22 and apply whole-response accounting under S1-NV-R21, allowing for required metadata and serialization while retaining whole lines where possible. Split an oversized line only at valid character boundaries and report the fragment's position. For continuation, honor its already-fixed section and validate it against the canonical records.
 4. Return SourcePage and a self-contained next continuation when source remains, checking the complete serialized size against the effective budget. Do not maintain a mutable shared read position or PostgreSQL cursor session. Replays must not advance another reader or skip code.
 
 Source-read failures use `errors[]` under S1-ER-R01–R06, with the known failure location, explanation, correction or diagnostic action, and retry classification. Do not turn an invalid reference or missing source object into an empty successful page. Exact error codes, validation constraints, and too-small-budget handling remain part of the unfinished API details.
@@ -110,12 +118,14 @@ These are required future tests, not executed test results.
 | S1-NV-T48 | Reach the last page of a function while unrelated extraction, resolution, or flagging remains unfinished. | next_continuation is null for the finished source read, while coverage retains the selected run's actual incomplete status and per-step counts. Reading source does not change indexing completion. |
 | S1-NV-T49 | Read source containing multibyte characters and characters requiring serialization escaping, with metadata and a continuation large enough that counting source bytes alone would exceed a valid response budget. | The complete serialized SourcePage fits the effective budget, including source, metadata, coverage, continuation, and enclosing syntax. Select less source as needed without breaking characters, dropping required fields, or losing the continuation. |
 | S1-NV-T50 | Follow all source pages under a valid whole-response budget, then replay an issued continuation while indexing coverage changes. | Every successful serialized page respects its effective budget. The read sequence exposes all selected source without gaps; replay returns the same issued source section and ranges rather than resizing it to accommodate metadata changes. The final page reports no continuation only when its selected source is exhausted. |
+| S1-NV-T51 | With the shipped configuration, read a large function first with max_bytes omitted and then explicitly set to None; follow each sequence's continuations. | Both initial reads resolve a 50,000-byte whole-response budget. Every successful serialized page fits that budget, includes required metadata, and preserves access to the remaining source through continuation without reducing indexed scope. |
+| S1-NV-T52 | Set a different valid configured default, perform an initial read, then perform another initial read with an explicit valid max_bytes; replay a token issued under the original default. | None uses the configured value and the explicit argument overrides it. The 50 KB default is not treated as a hard maximum. The earlier token retains its effective budget and fixed section, without a continuation-size override. |
 
 ## Details still requiring agreement
 
-- Numeric response-budget defaults and permitted bounds; concrete serialization/encoding and adapter-framing boundaries under S1-NV-R21; overhead reservation for repeatable sections with changing metadata; too-small-budget and error-response behavior.
+- Permitted response-budget bounds; concrete serialization/encoding and adapter-framing boundaries under S1-NV-R21; overhead reservation for repeatable sections with changing metadata; too-small-budget and error-response behavior. The shipped default is fixed at 50,000 bytes by S1-NV-R22.
 - Exact range-object fields, within-line units, encoding behavior, and line-end display conventions under the agreed original-byte coordinates.
 - Token payload/encoding, integrity validation, lifetime/error behavior, and complete machine-readable request/response schemas.
 - Closed operation/error mappings and the concrete package, Git-reader, and database interfaces.
 
-The operation shape and whole-response budgeting boundary are settled. Do not add a continuation size override, stored cursor sessions, automatic source draining, or unrelated navigation features while filling in these remaining details.
+The operation shape, whole-response budgeting boundary, and 50 KB default are settled. Do not add a continuation size override, stored cursor sessions, automatic source draining, or unrelated navigation features while filling in these remaining details.
