@@ -1,6 +1,6 @@
 # Stage 1 — Function lookup and source retrieval
 
-Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, and one-hop caller/callee navigation requirements; it is not an executable API schema, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, one-hop caller/callee navigation, and file-outline requirements; it is not an executable API schema, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), [flag-records.md](flag-records.md), and [source-intake.md](source-intake.md). PostgreSQL holds searchable records; Git retains the immutable source. Existing snapshot/run identity and partial-query requirements apply.
 
@@ -32,6 +32,12 @@ Return bounded results with the related function's identity and name where estab
 
 Derive both directions from the same call occurrences and resolution records under S1-RF-R06. Preserve pending, ambiguous, and unresolved information rather than inventing a target identity or treating a candidate as an established caller/callee. Non-call references remain distinguishable; passing a function as an argument does not by itself make the enclosing function its caller. Apply the existing snapshot/run association and partial-coverage indicators, including when other files can still contribute callers. This requirement settles the default traversal behavior, not exact response schemas, candidate presentation, grouping, pagination, or an optional recursive-query API.
 
+**S1-NV-R10 — File outlines without source bodies.** Given a captured file path within the selected snapshot and indexing run, return its indexed classes, functions/methods, and anonymous callables through the shared navigation owner. Include their recorded identities, names or anonymous navigation labels, available signatures, nesting/enclosing-scope relationships, and exact source locations. Preserve distinct entries for overloads, same-name members, and multiple lambdas; do not flatten away ownership or present generated labels as declared names. The outline describes the selected file's indexed structure, not inferred application behavior.
+
+Return bounded metadata rather than loading or returning the outlined bodies or generating model summaries. The researcher or later model can select an entry or source location and read it through the existing function/file-range operations. Keep those selections bound to the same source identities and snapshot. Outline access must not depend on a security flag or completion of unrelated reference resolution or scanning.
+
+When extraction is unfinished, clearly mark the available outline as partial. An empty partial outline does not establish that the file contains no classes or functions. Preserve reported extraction failures and unsupported-language limitations rather than presenting them as a successful empty outline; captured text remains readable under S1-NV-R06. A complete file outline does not imply complete caller lists, flagging, or whole-run indexing. Exact response fields, ordering, hierarchy representation, and pagination remain to be specified with the researcher.
+
 ## Intended researcher workflow
 
 ```text
@@ -45,6 +51,8 @@ Search local function names with *command*
 Reference/callsite information is governed by reference-records.md. Default caller/callee navigation is one hop under S1-NV-R09; further exploration requires another explicit lookup. This workflow does not select ranking or automatic recursive exploration behavior.
 
 Text search provides another entry point: search for a route string, configuration key, or SQL fragment; inspect matching excerpts and locations; then read surrounding source or navigate to a known enclosing function. It does not require a function-name match or an existing flag.
+
+A file outline provides a structural entry point: select a captured file, inspect its indexed classes and callables without their bodies, then read a selected entry or source range under S1-NV-R10.
 
 ## Derived acceptance scenarios
 
@@ -65,12 +73,16 @@ These are required observations for future tests, not executed test results.
 | S1-NV-T11 | Through the initial CLI and shared owner, query callers/callees for a recorded cross-file chain A -> B -> C, then explicitly follow B. | Each default lookup returns only immediate neighbors with IDs/names, file/callsite locations, and resolution status. Reaching the next hop requires another lookup; no transitive neighbor is mislabeled as immediate and no graph/body dump occurs. |
 | S1-NV-T12 | Record two calls from B to C at different locations, query in both directions, and open each callsite after the original working source changes. | Both views derive from the same occurrences. Each distinct call and its argument expressions remain accessible from the pinned snapshot even if the display groups them under one function. |
 | S1-NV-T13 | Query during unfinished cross-file resolution with ambiguous/unresolved call occurrences and a function passed as a callback argument. | Results retain their resolution and partial-coverage distinctions; no candidate becomes an established target and no argument reference alone becomes a call edge. Empty partial caller lists do not imply that no callers exist. |
+| S1-NV-T14 | Through the CLI and shared owner, request an outline for a file containing classes, methods, nested functions, overloads, and multiple lambdas. | Return bounded identities, names/labels, available signatures, nesting, and exact locations without loading or returning their bodies or making model calls. Distinct entries and enclosing scopes remain navigable. |
+| S1-NV-T15 | Select an unflagged callable from a file outline after the original working source changes or disappears. | The existing reader opens that entry's exact captured source using the outline's identity and location; no live-source fallback, implicit first-match selection, or flag prerequisite occurs. |
+| S1-NV-T16 | Query outlines during unfinished extraction, after successful extraction with no callable entries, and for failed or unsupported extraction. | Distinguish partial, completed-empty, failed, and unsupported outcomes. Keep captured text accessible; neither a partial empty outline nor a complete file outline implies complete relationships, flags, or whole-run processing. |
 
 ## Decisions still requiring discussion
 
 - Exact operation signatures, response fields, error forms, range conventions, and encoding behavior.
 - Search filters, case handling, pattern engines, ordering, pagination, and partial-result consistency. Captured-text regex search is approved under S1-NV-R08; its multiline behavior, excerpt bounds, and coverage reporting remain to be specified.
 - Caller/callee response fields, grouping, and candidate/unresolved presentation under S1-NV-R09. One-hop default navigation is settled; no recursive-query feature is approved here.
+- File-outline response fields, ordering, hierarchy representation, and pagination under S1-NV-R10.
 - Large-source response budgets, continuation mechanics, and declaration/definition selection.
 - PostgreSQL query/index design, source-reader and text-search interfaces, and modular ownership.
 
