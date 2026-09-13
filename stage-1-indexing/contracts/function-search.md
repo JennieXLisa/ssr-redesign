@@ -1,6 +1,6 @@
 # Stage 1 — Function-search API
 
-Status: signature, result fields, direct read references, and page-size bounds approved by the researcher. The `coverage` object and the remaining details listed below are not yet frozen. This document is a partial API contract, not a claim of implemented or tested functionality.
+Status: signature, result fields, direct read references, page-size bounds, and compact run-wide coverage approved by the researcher. The remaining details listed below are not yet frozen. This document is a partial API contract, not a claim of implemented or tested functionality.
 
 ## Scope and traceability
 
@@ -57,9 +57,48 @@ The page limit bounds the number of function items in one response, not the tota
 | `snapshot_id` | The snapshot associated with that run. |
 | `items` | This page's function results, no more than `limit`. |
 | `next_cursor` | A continuation string, or `null` when no further matching results are currently available after this page. |
-| `coverage` | Relevant extraction/resolution progress and failures. Its exact fields, status values, and calculation are the next design decision; an unspecified object is not an implementation-ready contract. |
+| `coverage` | Compact whole-run completion and per-step file counts under S1-NV-R19, including extraction, resolution, and flagging. |
 
 `next_cursor: null` reports the end of currently available pagination, not the end of indexing. Apply the live-refresh behavior in S1-NV-R17: a newly indexed match before the last ordering position may require a fresh search to be seen. For exhaustive enumeration of recorded matches, start a fresh search after the selected run is complete and unchanged.
+
+### Coverage
+
+**S1-NV-R19 — Compact run-wide coverage.** Return the following `coverage` object on every successful function-search page, including empty pages. Its scope is the whole selected indexing run, not the current page, matching functions, or files selected by the query filters. The numbers below are illustrative, not fixed totals or performance targets.
+
+```json
+{
+  "coverage": {
+    "index_complete": false,
+    "extraction": {
+      "total_files": 1000,
+      "completed_files": 800,
+      "failed_files": 2
+    },
+    "resolution": {
+      "total_files": 1000,
+      "completed_files": 0,
+      "failed_files": 0
+    },
+    "flagging": {
+      "total_files": 1000,
+      "completed_files": 650,
+      "failed_files": 1
+    }
+  }
+}
+```
+
+| Field | Type and meaning |
+|---|---|
+| `index_complete` | Boolean. True only when the selected run satisfies the full indexing-completion criterion in S1-IN-R12; successful capture, query success, or the end of pagination is insufficient. |
+| `extraction`, `resolution`, `flagging` | Required objects, each containing the three file counters below for that processing step. |
+| `total_files` | Nonnegative integer: files requiring this step under the run's selected scope and applicable treatment. Step totals need not be equal. |
+| `completed_files` | Nonnegative integer: required files whose step has completed successfully, with its results published under S1-IX-R02. |
+| `failed_files` | Nonnegative integer: required files currently recorded as failed for this step, not the historical number of failed attempts. |
+
+For each step, completed and failed files are disjoint and their sum cannot exceed `total_files`. The remainder is pending or running work. Inapplicable steps and explicitly excluded contents do not inflate that step's total or successful-file count; a failed applicable step cannot be relabeled inapplicable to obtain completion. A step with no required files reports zero for all three counters.
+
+Use the existing per-file/per-step progress records. Do not attach per-file progress lists or failure dumps to every search page; detailed failures remain separately inspectable. A completed function extraction does not imply completed relationship resolution or flagging. These counters describe processing completeness, not how much source a model has reviewed or proof that every runtime relationship has been resolved.
 
 ### Function item
 
@@ -122,10 +161,11 @@ These are required future tests, not executed test results.
 | S1-NV-T38 | Search same-name overloads and declaration-only entries; use a returned definition or declaration reference to read source. | All approved item and occurrence fields are present, unavailable signatures are null, identities remain distinct, and direct reads return the selected captured source without another search or fabricated bodies. |
 | S1-NV-T39 | Reach the final currently available page while indexing is unfinished, then restart after processing completes. | Keep `next_cursor` distinct from coverage. Live pagination discloses incomplete results; the fresh completed-run traversal enumerates the recorded matches under S1-NV-R17. |
 | S1-NV-T40 | Submit an invalid regex with an out-of-range limit. | Return both independent problems in `errors[]` with correction guidance; do not execute the invalid search or return an empty successful page. |
+| S1-NV-T41 | Query an unchanged partial run using different patterns, path/language filters, and page limits, including an empty result. | Every successful page carries the approved compact coverage object. Counts describe the same whole run rather than filtered files or matching items, and no per-file diagnostic dump is embedded. |
+| S1-NV-T42 | Use a run with different applicable file totals by step, completed files, current failures, and pending/running work; then finish all required processing. | Counters are nonnegative, completed/failed counts are disjoint, and the remainder represents unfinished work. Inapplicable/excluded content does not inflate totals; a zero-applicability step has zero counters. `index_complete` remains false until the full completion criterion is satisfied, independently of query success or `next_cursor`. |
 
 ## Details still requiring agreement
 
-- Exact `coverage` fields, states, counts, and scope relative to query filters.
 - Closed kind/language vocabularies, remaining field constraints, and complete machine-readable schemas.
 - Pattern engine/dialect, path-glob semantics, and exact live-pagination ordering keys for a symbol with multiple occurrences.
 - Cursor payload/validation and behavior when continuation arguments differ from the recorded query.
