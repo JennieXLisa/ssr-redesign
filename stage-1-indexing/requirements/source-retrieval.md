@@ -1,6 +1,6 @@
 # Stage 1 — Function lookup and source retrieval
 
-Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, one-hop caller/callee navigation, and file-outline requirements; it is not an executable API schema, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed lookup, reading, captured-text search, one-hop caller/callee navigation, file-outline, and file-discovery requirements; it is not an executable API schema, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), [flag-records.md](flag-records.md), and [source-intake.md](source-intake.md). PostgreSQL holds searchable records; Git retains the immutable source. Existing snapshot/run identity and partial-query requirements apply.
 
@@ -38,6 +38,12 @@ Return bounded metadata rather than loading or returning the outlined bodies or 
 
 When extraction is unfinished, clearly mark the available outline as partial. An empty partial outline does not establish that the file contains no classes or functions. Preserve reported extraction failures and unsupported-language limitations rather than presenting them as a successful empty outline; captured text remains readable under S1-NV-R06. A complete file outline does not imply complete caller lists, flagging, or whole-run indexing. Exact response fields, ordering, hierarchy representation, and pagination remain to be specified with the researcher.
 
+**S1-NV-R11 — Directory listing and wildcard file-path discovery.** Provide directory listing and wildcard file-path search within the selected completed snapshot through the shared navigation owner. Support finding captured paths such as README files, files under routes directories, or C++ source files without first knowing a function name or locating a security flag. Search project-relative paths, not the researcher's live filesystem. Discovery includes captured documentation, configuration, unsupported source, and binary-file metadata as well as supported source. Do not omit an included file merely because structural extraction is unfinished, failed, or inapplicable.
+
+Return bounded entries containing paths, entry/file types, and available language and processing status, not file contents or an automatic dump of the entire repository tree. Preserve unknown or pending metadata as such. A discovered file does not imply successful extraction, resolution, or flagging. Selecting a path must support the existing outline or applicable source-reading operations against the same snapshot; no model calls, source execution, or additional capture is triggered by discovery.
+
+Apply the existing snapshot-only symbolic-link boundary and exclusions. Listing a captured link or an excluded-content diagnostic must not traverse outside the snapshot or imply that an absent submodule/LFS target was captured. Exact wildcard path grammar, directory-listing depth, case handling, ordering, response fields, and pagination remain to be specified with the researcher. This adds navigation over the existing snapshot, not a second filesystem index or a file-watching service.
+
 ## Intended researcher workflow
 
 ```text
@@ -53,6 +59,8 @@ Reference/callsite information is governed by reference-records.md. Default call
 Text search provides another entry point: search for a route string, configuration key, or SQL fragment; inspect matching excerpts and locations; then read surrounding source or navigate to a known enclosing function. It does not require a function-name match or an existing flag.
 
 A file outline provides a structural entry point: select a captured file, inspect its indexed classes and callables without their bodies, then read a selected entry or source range under S1-NV-R10.
+
+Directory listing and wildcard path search under S1-NV-R11 let the researcher find the captured file before requesting its outline or reading its text. Examples of the intended searches are `README*`, `**/routes/*`, and `**/*.cpp`; the precise wildcard grammar remains an interface-design decision.
 
 ## Derived acceptance scenarios
 
@@ -76,6 +84,9 @@ These are required observations for future tests, not executed test results.
 | S1-NV-T14 | Through the CLI and shared owner, request an outline for a file containing classes, methods, nested functions, overloads, and multiple lambdas. | Return bounded identities, names/labels, available signatures, nesting, and exact locations without loading or returning their bodies or making model calls. Distinct entries and enclosing scopes remain navigable. |
 | S1-NV-T15 | Select an unflagged callable from a file outline after the original working source changes or disappears. | The existing reader opens that entry's exact captured source using the outline's identity and location; no live-source fallback, implicit first-match selection, or flag prerequisite occurs. |
 | S1-NV-T16 | Query outlines during unfinished extraction, after successful extraction with no callable entries, and for failed or unsupported extraction. | Distinguish partial, completed-empty, failed, and unsupported outcomes. Keep captured text accessible; neither a partial empty outline nor a complete file outline implies complete relationships, flags, or whole-run processing. |
+| S1-NV-T17 | Through the CLI and shared owner, list a captured directory and use wildcard path searches to find README, route, and C++ files. | Return bounded paths, entry/file types, and available language/processing status without file contents, a flag prerequisite, model calls, or an automatic whole-tree dump. Selected paths support the existing outline or applicable source reader. |
+| S1-NV-T18 | Discover captured files with pending, failed, or unsupported extraction, alongside documentation, configuration, and binary files. | Files remain discoverable with honest available metadata and processing status; lack of symbols does not hide a file or become an implied successful index. |
+| S1-NV-T19 | After capture, change or remove the original checkout, then list/search paths while external links, missing submodules, and LFS exclusions exist. | Discovery remains bound to the selected snapshot; do not consult live paths, traverse external link targets, or report uncaptured/excluded contents as captured files. Follow-up reads preserve the same boundaries. |
 
 ## Decisions still requiring discussion
 
@@ -83,6 +94,7 @@ These are required observations for future tests, not executed test results.
 - Search filters, case handling, pattern engines, ordering, pagination, and partial-result consistency. Captured-text regex search is approved under S1-NV-R08; its multiline behavior, excerpt bounds, and coverage reporting remain to be specified.
 - Caller/callee response fields, grouping, and candidate/unresolved presentation under S1-NV-R09. One-hop default navigation is settled; no recursive-query feature is approved here.
 - File-outline response fields, ordering, hierarchy representation, and pagination under S1-NV-R10.
+- Directory-listing depth, wildcard path grammar, case handling, ordering, response fields, and pagination under S1-NV-R11.
 - Large-source response budgets, continuation mechanics, and declaration/definition selection.
 - PostgreSQL query/index design, source-reader and text-search interfaces, and modular ownership.
 
