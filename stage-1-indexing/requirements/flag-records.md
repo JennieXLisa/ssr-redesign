@@ -1,6 +1,6 @@
 # Stage 1 — Security-interest flag records
 
-Status: approved behavior from the researcher discussion. This records the agreed observation fields, display grouping, and custom-rule support; it is not a complete database schema, rule catalogue, implementation plan, or test-results report.
+Status: approved behavior from the researcher discussion. This records the agreed observation fields, display grouping, custom-rule support, and rule-selection modes; it is not a complete database schema, rule catalogue, implementation plan, or test-results report.
 
 Read with [function-records.md](function-records.md), [reference-records.md](reference-records.md), [indexing-progress.md](indexing-progress.md), and [source-intake.md](source-intake.md). Existing snapshot, provenance, completion, and partial-query requirements apply. Flags are stored in PostgreSQL and link to source retained in the immutable Git snapshot.
 
@@ -27,7 +27,11 @@ Read with [function-records.md](function-records.md), [reference-records.md](ref
 
 **S1-FL-R06 — Built-in and researcher-supplied reconnaissance rules.** Provide a maintained built-in reconnaissance ruleset and support researcher-supplied Semgrep rules and interesting-name patterns alongside it in Stage 1. A researcher must be able to add a project-specific name such as `dispatch_admin_command` or a custom code-pattern rule without changing harness source code. Custom-rule matches follow the same observation, exact-location, ownership, provenance, and partial-completeness requirements as built-in matches; neither becomes a vulnerability verdict or an automatic investigation task.
 
-Each indexing run records its exact selected rules and associated versions/configuration. Retain the selected rule definitions or immutable references sufficient to identify their exact contents, rather than relying only on a mutable file path or rule name. Changing a custom rule file or the built-in ruleset must not silently change the rules bound to an existing run or rewrite earlier observations. The storage representation, rule-input format, name-pattern semantics, default/custom selection, and duplicate-ID or override behavior remain to be specified with the researcher.
+Each indexing run records its exact selected rules and associated versions/configuration. Retain the selected rule definitions or immutable references sufficient to identify their exact contents, rather than relying only on a mutable file path or rule name. Changing a custom rule file or the built-in ruleset must not silently change the rules bound to an existing run or rewrite earlier observations. Default/custom selection is specified in S1-FL-R07. The storage representation, rule-input format, name-pattern semantics, and duplicate-ID or override behavior remain to be specified with the researcher.
+
+**S1-FL-R07 — Default combined mode and explicit custom-only mode.** By default, run the built-in reconnaissance rules together with any researcher-supplied Semgrep rules and interesting-name patterns. Without custom rules, this default uses the built-ins. Provide an explicit custom-only mode that uses only the researcher-selected custom rules and name patterns, without silently adding built-in rules of either kind.
+
+Record the selected mode alongside the exact effective rules bound to the indexing run under S1-FL-R06. Make that selection visible in flag-query results and progress/completion reports, including empty results. Custom-only completion means the selected custom rule processing finished; it does not claim that the built-in catalogue ran. Partial-processing indicators remain required in both modes. Rule selection does not change source capture or structural/reference-indexing scope, and required processing for the selected rules must not be silently skipped. A later selection must not rewrite an existing run's recorded mode, rules, or observations. Exact option names, empty custom-only selection handling, and duplicate-ID or override behavior remain open.
 
 ## Illustrative grouped view
 
@@ -57,10 +61,13 @@ These are required observations for future tests, not executed test results.
 | S1-FL-T06 | Select built-in rules together with a researcher-supplied name pattern matching `dispatch_admin_command`. | Produce applicable built-in and custom observations without editing harness code; retain each match's selected rule, reason, source location, and owner. |
 | S1-FL-T07 | Supply a custom Semgrep code-pattern rule alongside selected built-in rules. | Ingest its matches through the same observation and query contract, preserving independent provenance and completeness reporting without automatic investigation or vulnerability claims. |
 | S1-FL-T08 | After a run's rules are recorded, edit a custom rule file or update the built-in ruleset. | The existing run retains its exact selected rule contents and prior observations; results do not silently change because the external rule source changed. |
+| S1-FL-T09 | Use default selection first without custom rules, then with a custom name pattern and Semgrep rule in a separate run. | The default runs built-ins alone in the first run and built-ins plus the supplied rules in the second; each records its exact effective selection and retains independent match provenance. |
+| S1-FL-T10 | Select custom-only with source matching both built-in-only rules and the supplied custom rules. | Run only the selected custom name/Semgrep rules; do not silently invoke built-ins. Capture and structural/reference processing retain their agreed scope. |
+| S1-FL-T11 | Query partial and completed custom-only results, including no matches, then select combined mode for a later run. | Reports identify each run's selection and processing completeness; custom-only never implies built-in coverage, and the earlier run's mode, rules, and observations remain unchanged. |
 
 ## Decisions still requiring discussion
 
-- The category catalogue, rule-input format, default/custom selection, duplicate-ID or override behavior, and name-matching semantics. Custom-rule support is settled by S1-FL-R06.
+- The category catalogue, rule-input format, exact selection options, empty custom-only selection handling, duplicate-ID or override behavior, and name-matching semantics. Custom-rule support and the two selection modes are settled by S1-FL-R06/R07.
 - Exact PostgreSQL fields, enums, keys, per-match provenance, immutable rule storage, and retry/deduplication rules.
 - Scanner-to-source range mapping and association when a result spans multiple owners or structural extraction is unavailable.
 - Exact grouping, ordering, pagination, and query response contracts. No ranking or confidence-score policy is selected here.
