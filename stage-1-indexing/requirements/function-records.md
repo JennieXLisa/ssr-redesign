@@ -8,7 +8,7 @@ Read with [source-intake.md](source-intake.md) and [indexing-progress.md](indexi
 
 **S1-FN-R01 — Identity and source association.** Give each function entry a unique symbol identity, its indexing-run association, snapshot/file references, and language. A name alone is not an identity. Lookups must distinguish entries with the same local name in different scopes or files and must not mix snapshots or indexing runs. The identity algorithm and any cross-run identity guarantees remain to be specified.
 
-**S1-FN-R02 — Names, kind, and ownership.** Record the local and qualified names, the applicable kind such as function, method, or constructor, and the enclosing class, module, or function where applicable. Preserve nested scope rather than reducing all entries to a flat collection of names. The complete kind vocabulary and treatment of anonymous constructs remain implementation-design questions, not silently selected conventions.
+**S1-FN-R02 — Names, kind, and ownership.** Record the local and qualified names where declared, the applicable kind such as function, method, or constructor, and the enclosing class, module, or function where applicable. Preserve nested scope rather than reducing all entries to a flat collection of names. Anonymous callables follow S1-FN-R09; do not present a generated navigation label as a declared name. The complete kind vocabulary and language-specific mapping remain implementation-design questions, not silently selected conventions.
 
 **S1-FN-R03 — Signature information.** Record signature text, parameter names, available parameter type information, and return type where known. Preserve source locations for default-value expressions. Distinguish types declared in source from types inferred by a semantic backend. Missing information remains explicitly unknown; parsing a language does not authorize inventing its semantic types. Exact representations and unavailable-field conventions will be agreed with the schema.
 
@@ -22,6 +22,10 @@ Read with [source-intake.md](source-intake.md) and [indexing-progress.md](indexi
 
 **S1-FN-R08 — Linked records, not embedded growing lists.** Store references, callsites, and security signals separately and link them to function entries. Queries assemble the requested view of a function, its declarations/definition, callers/callees, reference occurrences, and flags, using bounded results and the existing partial-coverage indicators. Do not require a model-generated function summary, a vulnerability score, or a duplicate complete function body in PostgreSQL. Retrieve the body from Git when requested; storing the agreed signature metadata does not change that source-storage boundary.
 
+**S1-FN-R09 — Anonymous functions and lambdas.** Index anonymous functions and lambdas as callable entries with their own symbol identities, enclosing scopes, and exact captured source/body ranges where applicable. Apply the same available signature, property, provenance, and partial-query requirements as for named callables. Provide a readable source-based navigation label, for example `lambda@src/worker.cpp:42:9`, while distinguishing that label from a name declared in source. The label is not a substitute for the symbol identity and does not imply stable identity across changed snapshots.
+
+A flagged operation within an anonymous callable's own body must link to that callable and the operation's exact location, not solely to a larger enclosing function. Preserve the enclosing-scope relationship so navigation can reach both without misattributing the operation. Anonymous callables must remain individually retrievable, including when several occur on one line or within nested scopes. Exact per-language construct mapping and display-label/range conventions remain to be specified; no inferred invocation or vulnerability verdict follows merely from indexing the callable.
+
 ## Derived acceptance scenarios
 
 These are required observations for future tests, not tests executed here.
@@ -34,11 +38,13 @@ These are required observations for future tests, not tests executed here.
 | S1-FN-T04 | Index declarations with and without definitions, then alter or remove the original working directory. | Available declaration/definition/body locations retrieve the captured source; absent bodies are not fabricated and no live-source fallback is used. |
 | S1-FN-T05 | Provide a C/C++ header declaration, a matching definition in another file, same-name overloads, and an unresolved candidate association. | Established declarations/definitions are linked; overloads stay distinct; uncertain associations are not merged by name alone. |
 | S1-FN-T06 | Add references and flags after a function record becomes queryable. | Linked records can become available without embedding growing lists or duplicating the function body; queries disclose unfinished relationship/flag processing. |
+| S1-FN-T07 | Index anonymous functions and lambdas, including multiple callables on one line and nested callables. | Each has a distinct symbol identity, enclosing scope, exact captured ranges, and a readable source-based label; generated labels are not presented as declared names. Each callable is individually retrievable. |
+| S1-FN-T08 | Place a flagged operation inside a lambda nested in another callable. | The signal links to the lambda whose own body contains the operation and to the exact operation location; its enclosing scope remains navigable, and the outer function is not substituted as the sole owner. |
 
 ## Decisions still requiring discussion
 
 - Exact PostgreSQL tables, field types, nullability, enums, constraints, and identifiers.
-- Source-range conventions, signature representation, anonymous constructs, and language-specific property mapping.
+- Source-range conventions, signature representation, anonymous-callable language mappings/display labels, and language-specific property mapping. Inclusion and body ownership of anonymous callables are settled by S1-FN-R09.
 - Semantic backends, declaration/definition identity proofs, enrichment conflict handling, and safe publication while indexing continues.
 - Reference/callsite record shapes, resolution records, pagination, and the shared CLI/model-tool query contract.
 
