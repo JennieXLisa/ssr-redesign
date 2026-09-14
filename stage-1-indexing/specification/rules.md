@@ -1,0 +1,49 @@
+# Reconnaissance rules and scanner integration
+
+Implements S1-FL-R01–R12, S1-IX-R01/R03/R05 and full-scope processing. A match identifies a place worth looking at; it is not a vulnerability, taint path, safety verdict or automatically scheduled investigation.
+
+## Catalogue and rule inputs
+
+Ship these category slugs: `command_execution`, `file_path`, `memory_size`, `parsing_deserialization`, `authentication_authorization`, `network`, `sql_database`, `template_expression`, `cryptography_secrets`, `entry_dispatch`. SQL is its own category and includes ordinary prepared/parameterized/ORM operations, not just concatenated strings. Categories are extensible strings matching `[a-z][a-z0-9_]{0,63}`; do not use a PostgreSQL enum that requires a migration for each custom category.
+
+A name-rule YAML file has `schema_version: 1` and a `rules` list. Each rule has `id`, `mode` (`wildcard` or `regex`), `pattern`, `case_sensitive`, `categories` (nonempty unique list), and `reason`. No `field` selector: match local names only. An anonymous generated display label is not a declared local name. Name patterns match the declared callable name; references to arbitrary strings/comments do not create name flags.
+
+Semgrep input retains the ordinary Semgrep `rules` structure. Require custom reconnaissance metadata `metadata.ssr.categories` and `metadata.ssr.reason`; `message` may supply the reason only when explicitly copied into that metadata during validation. Preserve original metadata and source locations. Support local files/directories explicitly selected by the researcher; expand directories deterministically to `.yaml/.yml` files. Do not discover or load rule files from target source automatically. Stage 1 accepts Semgrep search rules and `pattern-regex`; reject taint/extract/supply-chain/secret-validation rules as unsupported selected rule types rather than silently invoking a different product.
+
+## Validation and immutable selection
+
+1. Read rule files once as UTF-8 into an immutable manifest. Parse with a safe YAML loader that rejects duplicate mapping keys, executable tags and cyclic aliases. Retain source file and line locations for errors and provenance.
+2. Validate all definitions and compile all name patterns. `mode` is mandatory; case sensitivity is a boolean, not a truthy string. Validate category syntax, IDs and required metadata. Validate Semgrep rules offline by running the full frozen selection against bundled minimal syntax fixtures for every selected analyzer language, using the same scan/JSON flags and strict error inspection. No captured target source is scanned during this validation. Do not use a validator mode that fetches registry lint rules; the process runner denies such network access.
+3. Key effective rules by `(engine, id)`, where engines are `name` and `semgrep`. Canonical definition comparison recursively sorts mapping keys, preserves list order and exact scalar values, and excludes only the separately stored source-location/provenance envelope. Do not strip meaningful metadata, severity, messages or patterns. YAML spelling/comments do not change a parsed definition; duplicate YAML keys are invalid.
+4. Same key and identical canonical definition: one effective rule and all contributing source references. Same key and different definition: report both locations as a conflict. Different IDs remain independent even with identical patterns. Never use file order as an override policy.
+5. Combined mode selects built-ins plus supplied custom rules; custom-only selects no built-in name or Semgrep rules. Empty custom-only is an invalid selection with an actionable explanation. Freeze the mode, canonical definitions, tool versions, source references and manifest digest. No automatic registry updates or mutable rule paths in a running dataset.
+
+Do not start matching/scanning for an invalid effective selection. Validation is performed before creating new flagging work; existing extraction/resolution datasets are unaffected. A corrected selection creates a new fingerprint/run association and reuses compatible completed datasets. Validation success does not hide later runtime scanner failures.
+
+## Name pattern semantics
+
+Use `regex` VERSION1 Unicode matching. Regex name rules use search semantics: `command` finds that substring; anchors control whole-name matching. `case_sensitive=False` enables IGNORECASE/FULLCASE according to VERSION1. Wildcards use the installed `wcmatch.fnmatch` whole-string matcher with documented `*`, `?`, character-class and escaping behavior, with IGNORECASE only when selected; disable brace expansion, extglob and automatic pattern splitting. A plain wildcard pattern `execute_command` therefore matches only that local name. Record matcher versions; do not approximate the regex in SQL or use a platform's filename case normalization.
+
+Name regex evaluation runs in a killable worker with a configurable timeout (10 seconds per file's name pass by default). A timeout is NAME_MATCH_FAILED and blocks that applicable file step; it is not no matches. The researcher can correct the rule or increase its processing setting. Frozen semantic rule definitions do not change during that recovery. Do not implement a new regex engine.
+
+## Semgrep execution contract
+
+Use Semgrep CE in a separately locked environment. Invoke `scan`, local `--config`, `--json`, `--oss-only`, `--no-rewrite-rule-ids`, `--metrics=off`, `--disable-version-check`, `--disable-nosem`, `--no-git-ignore`, `--no-exclude-minified-files`, `--max-target-bytes=0`, `--timeout=0`, `--timeout-threshold=0`, `--max-memory=0`, and `--jobs=1` inside a heavy-worker slot. No autofix, build, login, live secret validation, cloud upload, `--config auto`, or diff/baseline-only scan. W01's capability probe must verify the installed executable accepts these options; record exact argv/version. [S10]
+
+Do not let a target `.semgrepignore`, global ignore setting, or scanner default reduce the approved file scope. Materialize an isolated scanner input tree containing only the selected batch's eligible regular files under a controlled root; do not copy target `.semgrepignore` control files into that scanning root. Such files remain captured and text-retrievable through Git. Use an explicit empty harness-controlled `.semgrepignore` at the root to replace default ignore patterns. Supply explicit file operands, preserving relative paths, and reconcile every expected applicable file against scanner JSON `paths` and diagnostics. A zero exit code alone is insufficient evidence of full file processing.
+
+Default batch size is 32 files per language, configurable for throughput and argument-length constraints. A file is never cut into independent scanner fragments to satisfy a size threshold. For extensionless or language-overridden source, pass explicit file paths with the installed CLI's supported language-selection behavior and verify it in the adapter fixture. Do not pretend a renamed proxy file is the original path; preserve an explicit mapping if a proxy extension is required.
+
+If a batch fails with incomplete or untrustworthy per-file completion information, retry its uncommitted files in single-file invocations to isolate the failure. Preserve already committed file results; do not count failed-batch observations twice. An expected file absent from scanned paths is SCANNER_FILE_NOT_PROCESSED unless the frozen applicability matrix explicitly says no rule applies. Semgrep parse/runtime errors block that file's applicable component. Output excerpts are not authoritative source: store original ranges and reread Git when requested.
+
+## Scanner capability matrix
+
+Use native Semgrep code patterns for Python, JavaScript, TypeScript, PHP, C, C++, Java and Bash where the pinned CE executable supports them. Lua and Zsh use name rules plus explicitly labeled generic/regex Semgrep observations; do not claim native syntax/dataflow support for those engines. If a native pattern is unavailable in the pinned tool, the tool environment must be corrected or the specification revised visibly; do not silently mark a promised native component inapplicable.
+
+Built-in rules must include at least one positive and one negative fixture per rule. Native API patterns cover process calls, file calls, parsers, networking, SQL APIs and relevant crypto/dispatch operations available in that language. Broad names cover all catalogue categories and all structurally supported languages. API/framework coverage is finite and listed in the shipped manifest; the category name alone is not a claim to recognize every possible API. A new custom rule can add project-specific wrappers without editing harness code.
+
+## Flag publication and ownership
+
+Flag identity is deterministic from flagging dataset, engine/rule key, file ID, exact range, category and match ordinal. Retry of the same rule does not multiply observations. Independent rules remain independent. A match spanning multiple callables keeps its source range and a null single owner plus related owner IDs in a separate relation; do not assign the first overlapping function as sole owner. For supported source, publish matches only after that file's structural bundle is available; the planner normally delays its scanner job until then. Any earlier raw output is staging only. Unsupported/generic text without an applicable callable inventory retains a null owner and exact range. Do not mutate a successful flag publication later to repair guessed ownership.
+
+When displaying a function group, page the individual observations and retain every rule/reason/location. For a lambda-body operation, associate the innermost executable callable. Querying flags does not start the scanner. Completed flagging with zero matches is distinct from pending/failed flagging or no applicable rule. The whole-run coverage calculation counts required files, not number of matches or individual rules.

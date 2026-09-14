@@ -1,0 +1,346 @@
+schema_version: 1
+rules:
+- id: ssr.name.command_execution.1
+  mode: wildcard
+  pattern: '*command*'
+  case_sensitive: false
+  categories:
+  - command_execution
+  reason: Local callable name matches '*command*'; inspect this command execution
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.command_execution.2
+  mode: wildcard
+  pattern: '*exec*'
+  case_sensitive: false
+  categories:
+  - command_execution
+  reason: Local callable name matches '*exec*'; inspect this command execution research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.command_execution.3
+  mode: wildcard
+  pattern: '*spawn*'
+  case_sensitive: false
+  categories:
+  - command_execution
+  reason: Local callable name matches '*spawn*'; inspect this command execution research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.command_execution.4
+  mode: wildcard
+  pattern: '*shell*'
+  case_sensitive: false
+  categories:
+  - command_execution
+  reason: Local callable name matches '*shell*'; inspect this command execution research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.file_path.1
+  mode: wildcard
+  pattern: '*file*'
+  case_sensitive: false
+  categories:
+  - file_path
+  reason: Local callable name matches '*file*'; inspect this file path research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.file_path.2
+  mode: wildcard
+  pattern: '*path*'
+  case_sensitive: false
+  categories:
+  - file_path
+  reason: Local callable name matches '*path*'; inspect this file path research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.file_path.3
+  mode: wildcard
+  pattern: '*extract*'
+  case_sensitive: false
+  categories:
+  - file_path
+  reason: Local callable name matches '*extract*'; inspect this file path research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.file_path.4
+  mode: wildcard
+  pattern: '*archive*'
+  case_sensitive: false
+  categories:
+  - file_path
+  reason: Local callable name matches '*archive*'; inspect this file path research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.memory_size.1
+  mode: wildcard
+  pattern: '*alloc*'
+  case_sensitive: false
+  categories:
+  - memory_size
+  reason: Local callable name matches '*alloc*'; inspect this memory size research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.memory_size.2
+  mode: wildcard
+  pattern: '*mem*'
+  case_sensitive: false
+  categories:
+  - memory_size
+  reason: Local callable name matches '*mem*'; inspect this memory size research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.memory_size.3
+  mode: wildcard
+  pattern: '*copy*'
+  case_sensitive: false
+  categories:
+  - memory_size
+  reason: Local callable name matches '*copy*'; inspect this memory size research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.memory_size.4
+  mode: wildcard
+  pattern: '*buffer*'
+  case_sensitive: false
+  categories:
+  - memory_size
+  reason: Local callable name matches '*buffer*'; inspect this memory size research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.memory_size.5
+  mode: wildcard
+  pattern: '*size*'
+  case_sensitive: false
+  categories:
+  - memory_size
+  reason: Local callable name matches '*size*'; inspect this memory size research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.parsing_deserialization.1
+  mode: wildcard
+  pattern: '*parse*'
+  case_sensitive: false
+  categories:
+  - parsing_deserialization
+  reason: Local callable name matches '*parse*'; inspect this parsing deserialization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.parsing_deserialization.2
+  mode: wildcard
+  pattern: '*deserialize*'
+  case_sensitive: false
+  categories:
+  - parsing_deserialization
+  reason: Local callable name matches '*deserialize*'; inspect this parsing deserialization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.parsing_deserialization.3
+  mode: wildcard
+  pattern: '*decode*'
+  case_sensitive: false
+  categories:
+  - parsing_deserialization
+  reason: Local callable name matches '*decode*'; inspect this parsing deserialization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.authentication_authorization.1
+  mode: wildcard
+  pattern: '*auth*'
+  case_sensitive: false
+  categories:
+  - authentication_authorization
+  reason: Local callable name matches '*auth*'; inspect this authentication authorization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.authentication_authorization.2
+  mode: wildcard
+  pattern: '*login*'
+  case_sensitive: false
+  categories:
+  - authentication_authorization
+  reason: Local callable name matches '*login*'; inspect this authentication authorization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.authentication_authorization.3
+  mode: wildcard
+  pattern: '*permission*'
+  case_sensitive: false
+  categories:
+  - authentication_authorization
+  reason: Local callable name matches '*permission*'; inspect this authentication
+    authorization research location. The name alone does not establish its behavior.
+- id: ssr.name.authentication_authorization.4
+  mode: wildcard
+  pattern: '*tenant*'
+  case_sensitive: false
+  categories:
+  - authentication_authorization
+  reason: Local callable name matches '*tenant*'; inspect this authentication authorization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.authentication_authorization.5
+  mode: wildcard
+  pattern: '*owner*'
+  case_sensitive: false
+  categories:
+  - authentication_authorization
+  reason: Local callable name matches '*owner*'; inspect this authentication authorization
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.network.1
+  mode: wildcard
+  pattern: '*request*'
+  case_sensitive: false
+  categories:
+  - network
+  reason: Local callable name matches '*request*'; inspect this network research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.network.2
+  mode: wildcard
+  pattern: '*socket*'
+  case_sensitive: false
+  categories:
+  - network
+  reason: Local callable name matches '*socket*'; inspect this network research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.network.3
+  mode: wildcard
+  pattern: '*connect*'
+  case_sensitive: false
+  categories:
+  - network
+  reason: Local callable name matches '*connect*'; inspect this network research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.network.4
+  mode: wildcard
+  pattern: '*url*'
+  case_sensitive: false
+  categories:
+  - network
+  reason: Local callable name matches '*url*'; inspect this network research location.
+    The name alone does not establish its behavior.
+- id: ssr.name.sql_database.1
+  mode: wildcard
+  pattern: '*sql*'
+  case_sensitive: false
+  categories:
+  - sql_database
+  reason: Local callable name matches '*sql*'; inspect this sql database research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.sql_database.2
+  mode: wildcard
+  pattern: '*query*'
+  case_sensitive: false
+  categories:
+  - sql_database
+  reason: Local callable name matches '*query*'; inspect this sql database research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.sql_database.3
+  mode: wildcard
+  pattern: '*database*'
+  case_sensitive: false
+  categories:
+  - sql_database
+  reason: Local callable name matches '*database*'; inspect this sql database research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.sql_database.4
+  mode: wildcard
+  pattern: '*transaction*'
+  case_sensitive: false
+  categories:
+  - sql_database
+  reason: Local callable name matches '*transaction*'; inspect this sql database research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.sql_database.5
+  mode: wildcard
+  pattern: '*prepare*'
+  case_sensitive: false
+  categories:
+  - sql_database
+  reason: Local callable name matches '*prepare*'; inspect this sql database research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.template_expression.1
+  mode: wildcard
+  pattern: '*template*'
+  case_sensitive: false
+  categories:
+  - template_expression
+  reason: Local callable name matches '*template*'; inspect this template expression
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.template_expression.2
+  mode: wildcard
+  pattern: '*render*'
+  case_sensitive: false
+  categories:
+  - template_expression
+  reason: Local callable name matches '*render*'; inspect this template expression
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.template_expression.3
+  mode: wildcard
+  pattern: '*evaluate*'
+  case_sensitive: false
+  categories:
+  - template_expression
+  reason: Local callable name matches '*evaluate*'; inspect this template expression
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.cryptography_secrets.1
+  mode: wildcard
+  pattern: '*crypt*'
+  case_sensitive: false
+  categories:
+  - cryptography_secrets
+  reason: Local callable name matches '*crypt*'; inspect this cryptography secrets
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.cryptography_secrets.2
+  mode: wildcard
+  pattern: '*secret*'
+  case_sensitive: false
+  categories:
+  - cryptography_secrets
+  reason: Local callable name matches '*secret*'; inspect this cryptography secrets
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.cryptography_secrets.3
+  mode: wildcard
+  pattern: '*credential*'
+  case_sensitive: false
+  categories:
+  - cryptography_secrets
+  reason: Local callable name matches '*credential*'; inspect this cryptography secrets
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.cryptography_secrets.4
+  mode: wildcard
+  pattern: '*signature*'
+  case_sensitive: false
+  categories:
+  - cryptography_secrets
+  reason: Local callable name matches '*signature*'; inspect this cryptography secrets
+    research location. The name alone does not establish its behavior.
+- id: ssr.name.cryptography_secrets.5
+  mode: wildcard
+  pattern: '*key*'
+  case_sensitive: false
+  categories:
+  - cryptography_secrets
+  reason: Local callable name matches '*key*'; inspect this cryptography secrets research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.entry_dispatch.1
+  mode: wildcard
+  pattern: '*route*'
+  case_sensitive: false
+  categories:
+  - entry_dispatch
+  reason: Local callable name matches '*route*'; inspect this entry dispatch research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.entry_dispatch.2
+  mode: wildcard
+  pattern: '*dispatch*'
+  case_sensitive: false
+  categories:
+  - entry_dispatch
+  reason: Local callable name matches '*dispatch*'; inspect this entry dispatch research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.entry_dispatch.3
+  mode: wildcard
+  pattern: '*handler*'
+  case_sensitive: false
+  categories:
+  - entry_dispatch
+  reason: Local callable name matches '*handler*'; inspect this entry dispatch research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.entry_dispatch.4
+  mode: wildcard
+  pattern: '*callback*'
+  case_sensitive: false
+  categories:
+  - entry_dispatch
+  reason: Local callable name matches '*callback*'; inspect this entry dispatch research
+    location. The name alone does not establish its behavior.
+- id: ssr.name.entry_dispatch.5
+  mode: wildcard
+  pattern: '*rpc*'
+  case_sensitive: false
+  categories:
+  - entry_dispatch
+  reason: Local callable name matches '*rpc*'; inspect this entry dispatch research
+    location. The name alone does not establish its behavior.

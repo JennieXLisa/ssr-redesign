@@ -1,0 +1,49 @@
+# Immutable source intake and publication recipe
+
+Implements S1-IN-R01–R22. Input forms and exclusions are already approved. This document fixes how to enforce them without executing reviewed source or modifying the researcher's checkout.
+
+## Public operations
+
+`create_project(label: str) -> ProjectReceipt` allocates managed storage. `capture_source(project_id, source, *, revision=None, fetch_submodules=False, include_ignored=False) -> CaptureReceipt` performs intake. Classify `source` as an existing local directory or an explicit HTTPS URL; reject other URL schemes and file-like non-directories. A remote revision is a branch, tag or full commit; local-directory input captures working files, so reject a local `revision` argument rather than quietly ignoring it. `get_capture(snapshot_id)` reports capture status independently of indexing.
+
+Receipt fields: `project_id`, `snapshot_id`, `state`, `source_kind`, sanitized `source_locator`, `requested_revision`, `resolved_upstream_commit`, `managed_commit`, `tree_oid`, `included_files`, `excluded_entries`, `diagnostic_count`. Unavailable fields are null. The manifest records options, excluded paths/reasons, submodule mount origins and revisions, and whether bytes came from working files or a fetched commit. A managed commit is never reported as an upstream commit.
+
+## Local directory algorithm
+
+1. Allocate snapshot UUID and a CAPTURING record, temporary private spool and empty temporary Git index. State the stable-input precondition once; do not install a watcher. Enumerate with `lstat`, never by following directory symlinks. Reject sockets, FIFOs and devices with an explicit unsupported-entry diagnostic requiring scope correction; do not hang reading them.
+2. Obtain the tracked-file/gitlink inventory through read-only Git metadata access when present. Disable optional locks, fsmonitor, hooks, credential helpers, external diff/textconv/filter facilities and config includes. For linked worktrees/submodules, metadata may be read from the declared Git directory, but that does not authorize importing source from outside the selected root.
+3. Apply `.gitignore` only to untracked paths. Use Git's ignore evaluator with an isolated empty managed Git directory and the selected root as work tree, so global excludes and the source's `.git/info/exclude` cannot silently change the research scope. Tracked paths remain included. The explicit include-ignored switch bypasses these ignore exclusions, never the Git-metadata, managed-storage or symlink boundary. Do not add basename exclusions such as vendor/build/generated.
+4. Read eligible regular files as raw bytes through no-follow traversal rooted at the selected directory. Preserve executable-bit semantics as Git mode 100755/100644, symlinks as 120000 containing their raw link target. Do not normalize newlines, invoke Git clean filters, execute generators or apply formatters. Snapshot code always comes from working-file bytes, never the staging content or HEAD substitute.
+5. For populated submodules, recurse over their current files using their own tracked/ignore inventory; flatten them into ordinary snapshot directories at the original mount path. Exclude `.git` files/directories. Retain local HEAD and parent pin as provenance, explicitly not proof of byte equality. With fetch opt-in, fetch only missing submodules into managed temporary storage; never populate or reset the source checkout.
+6. For a missing local submodule, its current immediate parent's HEAD tree supplies the pinned revision; use that parent's captured `.gitmodules` for the URL. If the path has no established parent-commit pin, fail the opted-in download with SUBMODULE_PIN_UNAVAILABLE instead of guessing HEAD or a branch tip. A populated child still uses working bytes. Without opt-in, record only the missing entry as excluded and do not inspect unavailable descendants.
+7. Detect unresolved LFS pointer records by the LFS pointer format and attributes where present. Preserve their identity for the manifest, log LFS_SKIPPED, and do not hydrate/scan them as underlying source. Materialized local LFS content is ordinary eligible working content. Do not invoke LFS filters while writing managed objects.
+
+If local files change during capture, the researcher violated the declared stability precondition; do not claim atomic filesystem capture. Ordinary detected I/O changes/failures invalidate that capture. Do not build a file-watching or automatic recapture subsystem.
+
+## Remote algorithm and isolation
+
+Use a private temporary HOME/XDG directory and a minimal environment, not the user's Git configuration. Set `GIT_CONFIG_NOSYSTEM=1`, an empty global config, `GIT_TERMINAL_PROMPT=0`, disabled askpass, `GIT_ALLOW_PROTOCOL=https`, no credential helpers, no cookies/client certificates, `http.emptyAuth=false`, `http.delegation=none`, `http.sslVerify=true` and `http.followRedirects=false`. Clear inherited proxy, SSH-agent, Kerberos-cache and Git override variables. Do not pass URL credentials or auth headers. Reject userinfo/query/fragment credential-like URL input; redact it in errors. [S8]
+
+Resolve the hostname, reject non-public addresses, and pin the approved address set through `http.curloptResolve` for that hostname/port. Do not allow an uncontrolled proxy to defeat this check. HTTPS redirects are not followed in this edition: report REDIRECT_REQUIRES_RESUBMISSION with a safely displayed destination, which must be independently validated on resubmission. This is deliberately simpler than a custom redirecting Git transport and prevents protocol downgrades. Apply the same checks at every fetched submodule level.
+
+Clone with no checkout, no recursive submodules and no LFS processing. Do not use a shallow-history assumption that prevents selecting the requested commit. Resolve the requested ref with `rev-parse --verify <validated-ref>^{commit}`; reject ambiguity between a branch and tag rather than silently choosing. With no revision, resolve the remote default branch's fetched commit. Read its tree and raw blobs, not an automatically filtered checkout. Unavailable requested commits produce an explicit error; do not fall back to a newer commit. [S8–S9]
+
+Opted-in submodules are resolved recursively from each immediate fetched parent commit's `.gitmodules` and gitlink entry. Resolve relative URLs using Git repository-relative semantics against that parent's remote. Fetch each pinned commit anonymously over accepted HTTPS. A required fetch failure blocks capture; unfetched opt-out entries and LFS exclusions do not. A repeated repository/revision on the current recursion stack is a cycle diagnostic, not infinite recursion. Reusing fetched objects for the same URL/OID is permitted; each mount path retains distinct provenance.
+
+## One self-contained managed tree
+
+Use a bare Git repository per project. Write blobs with `git hash-object -w --no-filters --stdin`; build the tree from explicit Git modes, raw path components and object IDs using `mktree -z` bottom-up or an isolated `GIT_INDEX_FILE` with `update-index --index-info`. Never call `git add` against source-controlled attributes. Included submodules are ordinary trees, not 160000 gitlinks. Missing submodules appear in the exclusion manifest, not as empty successfully indexed directories. Git need not preserve empty source directories because they contain no source; report that representational fact in the manifest.
+
+Each capture writes its own commit with the snapshot UUID in the message and no required parent relationship. Protect it with a create-only ref `refs/ssr/snapshots/<snapshot_uuid>`. The object/ref must exist durably before READY is committed in PostgreSQL. The snapshot UUID maps permanently to that commit/tree. Never amend or move its ref. A later capture creates another ref/commit, even if Git deduplicates identical blobs.
+
+## Publication and crash boundaries
+
+Use CAPTURING -> FINALIZING -> READY, or CAPTURING/FINALIZING -> FAILED. Before FINALIZING, persist the frozen manifest, proposed tree and commit IDs with an attempt generation. Write objects and the create-only ref. Verify ref/tree/blob availability, then transactionally store files/exclusions/provenance and set READY. Index planning accepts only READY snapshots.
+
+If a crash occurs after Git publication but before READY, recovery verifies the stored attempt manifest and matching ref, then finishes the same PostgreSQL publication. A preexisting ref with different contents is an integrity failure; do not overwrite it. If no complete tree exists, mark the interrupted attempt failed. A remote retry may reuse a recorded upstream pin; a new local recapture is a new snapshot with a renewed stable-input precondition. PostgreSQL and Git do not share an atomic transaction; do not describe them as doing so.
+
+## Link resolution
+
+Resolve links in the virtual snapshot namespace only. Relative targets are interpreted against the link's captured parent. Normalize path components without following the live filesystem; reject any traversal above snapshot root. Follow chains with a visited-link set; report cycles, missing/excluded targets and external targets. Absolute local targets may be mapped only when the capture manifest explicitly records their original-root-relative target and that target is included; never resolve arbitrary absolute targets at read time. Remote absolute links remain external. No target fetch or duplicate target indexing occurs. Included submodule trees are part of the same captured namespace.
+
+Source classification/encoding metadata is derived from captured bytes. A capture can be READY while parsing or scanning later fails; preserve that lifecycle distinction. Intake reports are paged separately rather than copying every exclusion into ordinary model navigation responses.

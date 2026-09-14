@@ -1,0 +1,380 @@
+rules:
+- id: ssr.pattern.python.command_execution.1
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured python pattern os.system(...); this is
+        a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: os.system(...)
+- id: ssr.pattern.python.command_execution.2
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured python pattern subprocess.$METHOD(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: subprocess.$METHOD(...)
+- id: ssr.pattern.python.file_path.3
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - file_path
+      reason: Source matches the configured python pattern open(...); this is a navigation
+        signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: open(...)
+- id: ssr.pattern.python.parsing_deserialization.4
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - parsing_deserialization
+      reason: Source matches the configured python pattern pickle.loads(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: pickle.loads(...)
+- id: ssr.pattern.python.network.5
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - network
+      reason: Source matches the configured python pattern requests.$METHOD(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: requests.$METHOD(...)
+- id: ssr.pattern.python.sql_database.6
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - sql_database
+      reason: Source matches the configured python pattern $DB.execute(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: $DB.execute(...)
+- id: ssr.pattern.python.template_expression.7
+  languages:
+  - python
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - template_expression
+      reason: Source matches the configured python pattern $TEMPLATE.render(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: $TEMPLATE.render(...)
+- id: ssr.pattern.javascript.command_execution.8
+  languages:
+  - javascript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured javascript pattern eval(...); this is
+        a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: eval(...)
+- id: ssr.pattern.javascript.command_execution.9
+  languages:
+  - javascript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured javascript pattern child_process.exec(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: child_process.exec(...)
+- id: ssr.pattern.javascript.file_path.10
+  languages:
+  - javascript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - file_path
+      reason: Source matches the configured javascript pattern fs.readFile(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: fs.readFile(...)
+- id: ssr.pattern.javascript.network.11
+  languages:
+  - javascript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - network
+      reason: Source matches the configured javascript pattern fetch(...); this is
+        a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: fetch(...)
+- id: ssr.pattern.javascript.sql_database.12
+  languages:
+  - javascript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - sql_database
+      reason: Source matches the configured javascript pattern $DB.query(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: $DB.query(...)
+- id: ssr.pattern.typescript.parsing_deserialization.13
+  languages:
+  - typescript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - parsing_deserialization
+      reason: Source matches the configured typescript pattern JSON.parse(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: JSON.parse(...)
+- id: ssr.pattern.typescript.entry_dispatch.14
+  languages:
+  - typescript
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - entry_dispatch
+      reason: Source matches the configured typescript pattern $APP.get(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: $APP.get(...)
+- id: ssr.pattern.c.command_execution.15
+  languages:
+  - c
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured c pattern system(...); this is a navigation
+        signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: system(...)
+- id: ssr.pattern.c.memory_size.16
+  languages:
+  - c
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - memory_size
+      reason: Source matches the configured c pattern memcpy(...); this is a navigation
+        signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: memcpy(...)
+- id: ssr.pattern.c.sql_database.17
+  languages:
+  - c
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - sql_database
+      reason: Source matches the configured c pattern sqlite3_prepare_v2(...); this
+        is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: sqlite3_prepare_v2(...)
+- id: ssr.pattern.cpp.command_execution.18
+  languages:
+  - cpp
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured cpp pattern popen(...); this is a navigation
+        signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: popen(...)
+- id: ssr.pattern.cpp.memory_size.19
+  languages:
+  - cpp
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - memory_size
+      reason: Source matches the configured cpp pattern malloc($A * $B); this is a
+        navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: malloc($A * $B)
+- id: ssr.pattern.cpp.file_path.20
+  languages:
+  - cpp
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - file_path
+      reason: Source matches the configured cpp pattern fopen(...); this is a navigation
+        signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: fopen(...)
+- id: ssr.pattern.java.command_execution.21
+  languages:
+  - java
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured java pattern Runtime.getRuntime().exec(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: Runtime.getRuntime().exec(...)
+- id: ssr.pattern.java.sql_database.22
+  languages:
+  - java
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - sql_database
+      reason: Source matches the configured java pattern $STMT.executeQuery(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: $STMT.executeQuery(...)
+- id: ssr.pattern.java.cryptography_secrets.23
+  languages:
+  - java
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - cryptography_secrets
+      reason: Source matches the configured java pattern java.security.MessageDigest.getInstance(...);
+        this is a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: java.security.MessageDigest.getInstance(...)
+- id: ssr.pattern.php.command_execution.24
+  languages:
+  - php
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured php pattern shell_exec(...); this is a
+        navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: shell_exec(...)
+- id: ssr.pattern.php.sql_database.25
+  languages:
+  - php
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - sql_database
+      reason: Source matches the configured php pattern mysqli_query(...); this is
+        a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: mysqli_query(...)
+- id: ssr.pattern.php.parsing_deserialization.26
+  languages:
+  - php
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - parsing_deserialization
+      reason: Source matches the configured php pattern unserialize(...); this is
+        a navigation signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: unserialize(...)
+- id: ssr.pattern.bash.command_execution.27
+  languages:
+  - bash
+  severity: INFO
+  message: Reconnaissance pattern match; inspect the source and its callers.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Source matches the configured bash pattern eval $X; this is a navigation
+        signal, not a vulnerability verdict.
+      analyzer_kind: native
+  pattern: eval $X
+- id: ssr.pattern.lua.command_execution.lexical
+  languages:
+  - generic
+  severity: INFO
+  message: Lexical reconnaissance match; no syntax or dataflow claim.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Text resembles a command-execution operation; verify it in source.
+      analyzer_kind: generic
+      languages:
+      - lua
+  pattern-regex: \b(?:os\.execute|io\.popen)\s*\(
+- id: ssr.pattern.zsh.command_execution.lexical
+  languages:
+  - generic
+  severity: INFO
+  message: Lexical reconnaissance match; no syntax or dataflow claim.
+  metadata:
+    ssr:
+      categories:
+      - command_execution
+      reason: Text resembles a command-execution operation; verify it in source.
+      analyzer_kind: generic
+      languages:
+      - zsh
+  pattern-regex: (?m)^\s*(?:eval|exec)\b

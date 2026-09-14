@@ -1,0 +1,315 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "W01",
+      "file": "W01-bootstrap.md",
+      "title": "Bootstrap the installable package and locked tools",
+      "depends_on": [],
+      "requirements": [
+        "S1-IN-R07",
+        "S1-NV-R01"
+      ],
+      "owner": "config, CLI composition and installation metadata"
+    },
+    {
+      "id": "W02",
+      "file": "W02-persistence-and-contracts.md",
+      "title": "Install the relational schema and strict contracts",
+      "depends_on": [
+        "W01"
+      ],
+      "requirements": [
+        "S1-IN-R07",
+        "S1-IX-R02",
+        "S1-FN-R01",
+        "S1-RF-R01",
+        "S1-ER-R01"
+      ],
+      "owner": "storage and contracts"
+    },
+    {
+      "id": "W03",
+      "file": "W03-local-snapshots.md",
+      "title": "Capture local working files into immutable Git",
+      "depends_on": [
+        "W02"
+      ],
+      "requirements": [
+        "S1-IN-R01",
+        "S1-IN-R03",
+        "S1-IN-R05",
+        "S1-IN-R06",
+        "S1-IN-R08",
+        "S1-IN-R13",
+        "S1-IN-R14",
+        "S1-IN-R16",
+        "S1-IN-R18",
+        "S1-IN-R20",
+        "S1-IN-R21"
+      ],
+      "owner": "capture.local, capture.git_store, capture.publication and source metadata"
+    },
+    {
+      "id": "W04",
+      "file": "W04-remote-intake.md",
+      "title": "Clone public HTTPS revisions and opted-in submodules",
+      "depends_on": [
+        "W03"
+      ],
+      "requirements": [
+        "S1-IN-R01",
+        "S1-IN-R02",
+        "S1-IN-R04",
+        "S1-IN-R15",
+        "S1-IN-R17",
+        "S1-IN-R18",
+        "S1-IN-R19",
+        "S1-IN-R20"
+      ],
+      "owner": "capture.remote and capture.submodules"
+    },
+    {
+      "id": "W05",
+      "file": "W05-source-reader.md",
+      "title": "Implement byte-accurate reading and stable continuations",
+      "depends_on": [
+        "W03"
+      ],
+      "requirements": [
+        "S1-NV-R04",
+        "S1-NV-R05",
+        "S1-NV-R06",
+        "S1-NV-R12",
+        "S1-NV-R13",
+        "S1-NV-R14",
+        "S1-NV-R15",
+        "S1-NV-R16",
+        "S1-NV-R20",
+        "S1-NV-R21",
+        "S1-NV-R22",
+        "S1-NV-R23",
+        "S1-ER-R01",
+        "S1-ER-R02",
+        "S1-ER-R03",
+        "S1-ER-R04",
+        "S1-ER-R05",
+        "S1-ER-R06"
+      ],
+      "owner": "source reader, encoding/positions, token codec and shared errors"
+    },
+    {
+      "id": "W06",
+      "file": "W06-durable-workers.md",
+      "title": "Plan, claim, publish and resume file-step work",
+      "depends_on": [
+        "W02",
+        "W05"
+      ],
+      "requirements": [
+        "S1-IX-R01",
+        "S1-IX-R02",
+        "S1-IX-R03",
+        "S1-IX-R04",
+        "S1-IX-R05",
+        "S1-IN-R09",
+        "S1-IN-R10",
+        "S1-IN-R11",
+        "S1-IN-R12",
+        "S1-IN-R21",
+        "S1-IN-R22"
+      ],
+      "owner": "indexing planner, worker supervisor, leases and publication"
+    },
+    {
+      "id": "W07",
+      "file": "W07-python-extraction.md",
+      "title": "Build the shared adapter contract and Python inventory",
+      "depends_on": [
+        "W06"
+      ],
+      "requirements": [
+        "S1-FN-R01",
+        "S1-FN-R02",
+        "S1-FN-R03",
+        "S1-FN-R04",
+        "S1-FN-R05",
+        "S1-FN-R06",
+        "S1-FN-R07",
+        "S1-FN-R08",
+        "S1-FN-R09",
+        "S1-RF-R01",
+        "S1-RF-R02",
+        "S1-RF-R03"
+      ],
+      "owner": "languages.protocol, registry and python adapter"
+    },
+    {
+      "id": "W08",
+      "file": "W08-javascript-typescript.md",
+      "title": "Add JavaScript/JSX and TypeScript/TSX adapters",
+      "depends_on": [
+        "W07"
+      ],
+      "requirements": [
+        "S1-IN-R08",
+        "S1-FN-R02",
+        "S1-FN-R03",
+        "S1-FN-R07",
+        "S1-FN-R09",
+        "S1-RF-R02",
+        "S1-RF-R03"
+      ],
+      "owner": "languages.javascript and languages.typescript"
+    },
+    {
+      "id": "W09",
+      "file": "W09-c-cpp.md",
+      "title": "Add C/C++ structure and compiler binding observations",
+      "depends_on": [
+        "W07"
+      ],
+      "requirements": [
+        "S1-FN-R03",
+        "S1-FN-R05",
+        "S1-FN-R06",
+        "S1-FN-R07",
+        "S1-FN-R09",
+        "S1-RF-R03",
+        "S1-RF-R04"
+      ],
+      "owner": "languages.c, languages.cpp and resolution.clang"
+    },
+    {
+      "id": "W10",
+      "file": "W10-java-php.md",
+      "title": "Add Java and PHP adapters",
+      "depends_on": [
+        "W07"
+      ],
+      "requirements": [
+        "S1-IN-R08",
+        "S1-FN-R02",
+        "S1-FN-R03",
+        "S1-FN-R05",
+        "S1-FN-R09",
+        "S1-RF-R02",
+        "S1-RF-R03"
+      ],
+      "owner": "languages.java and languages.php"
+    },
+    {
+      "id": "W11",
+      "file": "W11-lua-shell-zsh.md",
+      "title": "Add Lua, Bash/shell and Zsh adapters",
+      "depends_on": [
+        "W07"
+      ],
+      "requirements": [
+        "S1-IN-R08",
+        "S1-FN-R02",
+        "S1-FN-R09",
+        "S1-RF-R02",
+        "S1-RF-R03"
+      ],
+      "owner": "languages.lua, languages.bash and languages.zsh"
+    },
+    {
+      "id": "W12",
+      "file": "W12-bindings-and-navigation.md",
+      "title": "Resolve cross-file references and one-hop relationships",
+      "depends_on": [
+        "W08",
+        "W09",
+        "W10",
+        "W11"
+      ],
+      "requirements": [
+        "S1-IX-R04",
+        "S1-FN-R06",
+        "S1-FN-R07",
+        "S1-RF-R01",
+        "S1-RF-R02",
+        "S1-RF-R03",
+        "S1-RF-R04",
+        "S1-RF-R05",
+        "S1-RF-R06",
+        "S1-NV-R09"
+      ],
+      "owner": "resolution scope/import/member/association owners and reference navigation"
+    },
+    {
+      "id": "W13",
+      "file": "W13-rules-and-scanning.md",
+      "title": "Implement built-in/custom reconnaissance and full-scope scanner accounting",
+      "depends_on": [
+        "W07",
+        "W08",
+        "W09",
+        "W10",
+        "W11"
+      ],
+      "requirements": [
+        "S1-FL-R01",
+        "S1-FL-R02",
+        "S1-FL-R03",
+        "S1-FL-R04",
+        "S1-FL-R05",
+        "S1-FL-R06",
+        "S1-FL-R07",
+        "S1-FL-R08",
+        "S1-FL-R09",
+        "S1-FL-R10",
+        "S1-FL-R11",
+        "S1-FL-R12",
+        "S1-IN-R09",
+        "S1-IX-R03"
+      ],
+      "owner": "rules loaders/comparison/name engine/Semgrep adapter"
+    },
+    {
+      "id": "W14",
+      "file": "W14-research-navigation.md",
+      "title": "Complete researcher navigation and live pages",
+      "depends_on": [
+        "W05",
+        "W12",
+        "W13"
+      ],
+      "requirements": [
+        "S1-NV-R01",
+        "S1-NV-R02",
+        "S1-NV-R03",
+        "S1-NV-R07",
+        "S1-NV-R08",
+        "S1-NV-R10",
+        "S1-NV-R11",
+        "S1-NV-R12",
+        "S1-NV-R17",
+        "S1-NV-R18",
+        "S1-NV-R19",
+        "S1-ER-R01",
+        "S1-ER-R02",
+        "S1-ER-R03",
+        "S1-ER-R04",
+        "S1-ER-R05",
+        "S1-ER-R06"
+      ],
+      "owner": "navigation functions/files/text/flags/paging and thin CLI adapters"
+    },
+    {
+      "id": "W15",
+      "file": "W15-release-gates.md",
+      "title": "Prove full scope, recovery and installation; hand over",
+      "depends_on": [
+        "W04",
+        "W06",
+        "W14"
+      ],
+      "requirements": [
+        "ALL_APPROVED_REQUIREMENTS"
+      ],
+      "owner": "integration tests, packaging and delivery documentation"
+    }
+  ]
+}

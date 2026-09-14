@@ -1,0 +1,179 @@
+{
+  "status": "Authored positive/negative inputs. Semgrep execution required in W13; not run by specification validation.",
+  "fixtures": [
+    {
+      "rule_id": "ssr.pattern.python.command_execution.1",
+      "language": "python",
+      "positive": "import os\nos.system(cmd)",
+      "negative": "import os\nprint(cmd)"
+    },
+    {
+      "rule_id": "ssr.pattern.python.command_execution.2",
+      "language": "python",
+      "positive": "import subprocess\nsubprocess.run(cmd)",
+      "negative": "print(cmd)"
+    },
+    {
+      "rule_id": "ssr.pattern.python.file_path.3",
+      "language": "python",
+      "positive": "open(path, \"rb\")",
+      "negative": "print(path)"
+    },
+    {
+      "rule_id": "ssr.pattern.python.parsing_deserialization.4",
+      "language": "python",
+      "positive": "import pickle\npickle.loads(data)",
+      "negative": "print(data)"
+    },
+    {
+      "rule_id": "ssr.pattern.python.network.5",
+      "language": "python",
+      "positive": "import requests\nrequests.get(url)",
+      "negative": "print(url)"
+    },
+    {
+      "rule_id": "ssr.pattern.python.sql_database.6",
+      "language": "python",
+      "positive": "cursor.execute(\"SELECT * FROM t WHERE id=?\", (key,))",
+      "negative": "print(key)"
+    },
+    {
+      "rule_id": "ssr.pattern.python.template_expression.7",
+      "language": "python",
+      "positive": "template.render(context)",
+      "negative": "print(context)"
+    },
+    {
+      "rule_id": "ssr.pattern.javascript.command_execution.8",
+      "language": "javascript",
+      "positive": "eval(code);",
+      "negative": "console.log(code);"
+    },
+    {
+      "rule_id": "ssr.pattern.javascript.command_execution.9",
+      "language": "javascript",
+      "positive": "child_process.exec(command);",
+      "negative": "console.log(command);"
+    },
+    {
+      "rule_id": "ssr.pattern.javascript.file_path.10",
+      "language": "javascript",
+      "positive": "fs.readFile(path, cb);",
+      "negative": "console.log(path);"
+    },
+    {
+      "rule_id": "ssr.pattern.javascript.network.11",
+      "language": "javascript",
+      "positive": "fetch(url);",
+      "negative": "console.log(url);"
+    },
+    {
+      "rule_id": "ssr.pattern.javascript.sql_database.12",
+      "language": "javascript",
+      "positive": "db.query(\"SELECT ?\", [key]);",
+      "negative": "console.log(key);"
+    },
+    {
+      "rule_id": "ssr.pattern.typescript.parsing_deserialization.13",
+      "language": "typescript",
+      "positive": "const item = JSON.parse(data);",
+      "negative": "const item = data;"
+    },
+    {
+      "rule_id": "ssr.pattern.typescript.entry_dispatch.14",
+      "language": "typescript",
+      "positive": "app.get(\"/admin\", handler);",
+      "negative": "console.log(handler);"
+    },
+    {
+      "rule_id": "ssr.pattern.c.command_execution.15",
+      "language": "c",
+      "positive": "void f(char *cmd) { system(cmd); }",
+      "negative": "void f(char *cmd) { puts(cmd); }"
+    },
+    {
+      "rule_id": "ssr.pattern.c.memory_size.16",
+      "language": "c",
+      "positive": "void f(char *a, char *b, int n) { memcpy(a,b,n); }",
+      "negative": "void f(int n) { printf(\"%d\",n); }"
+    },
+    {
+      "rule_id": "ssr.pattern.c.sql_database.17",
+      "language": "c",
+      "positive": "void f() { sqlite3_prepare_v2(db,sql,n,out,tail); }",
+      "negative": "void f() { puts(sql); }"
+    },
+    {
+      "rule_id": "ssr.pattern.cpp.command_execution.18",
+      "language": "cpp",
+      "positive": "void f() { popen(cmd,\"r\"); }",
+      "negative": "void f() { log(cmd); }"
+    },
+    {
+      "rule_id": "ssr.pattern.cpp.memory_size.19",
+      "language": "cpp",
+      "positive": "void f() { malloc(count * size); }",
+      "negative": "void f() { malloc(8); }"
+    },
+    {
+      "rule_id": "ssr.pattern.cpp.file_path.20",
+      "language": "cpp",
+      "positive": "void f() { fopen(path,\"rb\"); }",
+      "negative": "void f() { log(path); }"
+    },
+    {
+      "rule_id": "ssr.pattern.java.command_execution.21",
+      "language": "java",
+      "positive": "class T { void f(String cmd) throws Exception { Runtime.getRuntime().exec(cmd); } }",
+      "negative": "class T { void f(String cmd) { System.out.println(cmd); } }"
+    },
+    {
+      "rule_id": "ssr.pattern.java.sql_database.22",
+      "language": "java",
+      "positive": "class T { void f() { stmt.executeQuery(sql); } }",
+      "negative": "class T { void f() { System.out.println(sql); } }"
+    },
+    {
+      "rule_id": "ssr.pattern.java.cryptography_secrets.23",
+      "language": "java",
+      "positive": "class T { void f() throws Exception { java.security.MessageDigest.getInstance(\"SHA-256\"); } }",
+      "negative": "class T { void f() { System.out.println(\"SHA-256\"); } }"
+    },
+    {
+      "rule_id": "ssr.pattern.php.command_execution.24",
+      "language": "php",
+      "positive": "<?php shell_exec($cmd);",
+      "negative": "<?php echo $cmd;"
+    },
+    {
+      "rule_id": "ssr.pattern.php.sql_database.25",
+      "language": "php",
+      "positive": "<?php mysqli_query($db, $sql);",
+      "negative": "<?php echo $sql;"
+    },
+    {
+      "rule_id": "ssr.pattern.php.parsing_deserialization.26",
+      "language": "php",
+      "positive": "<?php unserialize($data);",
+      "negative": "<?php echo $data;"
+    },
+    {
+      "rule_id": "ssr.pattern.bash.command_execution.27",
+      "language": "bash",
+      "positive": "eval \"$command\"",
+      "negative": "printf \"%s\" \"$command\""
+    },
+    {
+      "rule_id": "ssr.pattern.lua.command_execution.lexical",
+      "language": "lua",
+      "positive": "os.execute(command)",
+      "negative": "print(command)"
+    },
+    {
+      "rule_id": "ssr.pattern.zsh.command_execution.lexical",
+      "language": "zsh",
+      "positive": "eval \"$command\"",
+      "negative": "print -r -- \"$command\""
+    }
+  ]
+}

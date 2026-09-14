@@ -1,0 +1,30 @@
+schema_version = 1
+[storage]
+postgres_major = 17
+# DSN/password are supplied by SSR_DATABASE_URL, never from target source.
+[workers]
+heavy_slots = 4
+scanner_slots = 2
+lease_seconds = 120
+heartbeat_seconds = 20
+max_attempts = 3
+retry_delays_seconds = [1, 5]
+scanner_batch_files = 32
+memory_pause_available_bytes = 2147483648
+memory_resume_available_bytes = 3221225472
+[navigation]
+page_default = 50
+page_max = 200
+metadata_response_bytes = 50000
+source_response_bytes = 50000
+source_response_max_bytes = 1000000
+error_response_bytes = 65536
+token_max_bytes = 4096
+query_timeout_seconds = 30
+signature_excerpt_bytes = 1024
+text_excerpt_bytes = 512
+nested_collection_page = 8
+[rules]
+mode = "combined"
+name_timeout_seconds = 10
+semgrep_jobs_per_invocation = 1

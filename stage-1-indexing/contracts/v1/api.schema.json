@@ -1,0 +1,3309 @@
+{
+  "$defs": {
+    "Argument": {
+      "additionalProperties": false,
+      "properties": {
+        "ordinal": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Keyword"
+        },
+        "spread": {
+          "title": "Spread",
+          "type": "boolean"
+        },
+        "range": {
+          "$ref": "#/$defs/ByteRange"
+        }
+      },
+      "required": [
+        "ordinal",
+        "keyword",
+        "spread",
+        "range"
+      ],
+      "title": "Argument",
+      "type": "object"
+    },
+    "ArgumentPage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/Argument"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "ArgumentPage",
+      "type": "object"
+    },
+    "ByteRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Start Byte",
+          "type": "integer"
+        },
+        "end_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "End Byte",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_byte",
+        "end_byte"
+      ],
+      "title": "ByteRange",
+      "type": "object"
+    },
+    "CaptureReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "CAPTURING",
+            "FINALIZING",
+            "READY",
+            "FAILED"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "local",
+            "https"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "source_locator": {
+          "title": "Source Locator",
+          "type": "string"
+        },
+        "requested_revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Requested Revision"
+        },
+        "resolved_upstream_commit": {
+          "anyOf": [
+            {
+              "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resolved Upstream Commit"
+        },
+        "managed_commit": {
+          "anyOf": [
+            {
+              "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Managed Commit"
+        },
+        "tree_oid": {
+          "anyOf": [
+            {
+              "pattern": "^(?:[0-9a-f]{40}|[0-9a-f]{64})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tree Oid"
+        },
+        "included_files": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Included Files",
+          "type": "integer"
+        },
+        "excluded_entries": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Excluded Entries",
+          "type": "integer"
+        },
+        "diagnostic_count": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Diagnostic Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id",
+        "snapshot_id",
+        "state",
+        "source_kind",
+        "source_locator",
+        "requested_revision",
+        "resolved_upstream_commit",
+        "managed_commit",
+        "tree_oid",
+        "included_files",
+        "excluded_entries",
+        "diagnostic_count"
+      ],
+      "title": "CaptureReceipt",
+      "type": "object"
+    },
+    "CaptureRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "fetch_submodules": {
+          "default": false,
+          "title": "Fetch Submodules",
+          "type": "boolean"
+        },
+        "include_ignored": {
+          "default": false,
+          "title": "Include Ignored",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "source"
+      ],
+      "title": "CaptureRequest",
+      "type": "object"
+    },
+    "ContinueReadRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "continuation": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Continuation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "continuation"
+      ],
+      "title": "ContinueReadRequest",
+      "type": "object"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_complete": {
+          "title": "Index Complete",
+          "type": "boolean"
+        },
+        "extraction": {
+          "$ref": "#/$defs/StepCoverage"
+        },
+        "resolution": {
+          "$ref": "#/$defs/StepCoverage"
+        },
+        "flagging": {
+          "$ref": "#/$defs/StepCoverage"
+        }
+      },
+      "required": [
+        "index_complete",
+        "extraction",
+        "resolution",
+        "flagging"
+      ],
+      "title": "Coverage",
+      "type": "object"
+    },
+    "CreateIndexRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "rule_mode": {
+          "default": "combined",
+          "enum": [
+            "combined",
+            "custom_only"
+          ],
+          "title": "Rule Mode",
+          "type": "string"
+        },
+        "custom_rules": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Custom Rules",
+          "type": "array"
+        },
+        "profile_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Path"
+        }
+      },
+      "required": [
+        "snapshot_id"
+      ],
+      "title": "CreateIndexRequest",
+      "type": "object"
+    },
+    "CreateProjectRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "CreateProjectRequest",
+      "type": "object"
+    },
+    "DiagnosticItem": {
+      "additionalProperties": false,
+      "properties": {
+        "diagnostic_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Diagnostic Id",
+          "type": "string"
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "File Id"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Path"
+        },
+        "component": {
+          "title": "Component",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "remediation": {
+          "title": "Remediation",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "attempt": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Attempt"
+        }
+      },
+      "required": [
+        "diagnostic_id",
+        "file_id",
+        "path",
+        "component",
+        "code",
+        "message",
+        "remediation",
+        "retryable",
+        "attempt"
+      ],
+      "title": "DiagnosticItem",
+      "type": "object"
+    },
+    "DiagnosticPage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/DiagnosticItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "DiagnosticPage",
+      "type": "object"
+    },
+    "DiagnosticRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component"
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Id"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id"
+      ],
+      "title": "DiagnosticRequest",
+      "type": "object"
+    },
+    "DirectoryRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "path": {
+          "default": "",
+          "title": "Path",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id"
+      ],
+      "title": "DirectoryRequest",
+      "type": "object"
+    },
+    "ErrorItem": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "INDEX_INITIALIZING",
+            "INVALID_ARGUMENT",
+            "INVALID_PATTERN",
+            "UNKNOWN_LANGUAGE",
+            "RUN_NOT_FOUND",
+            "SYMBOL_NOT_FOUND",
+            "OCCURRENCE_NOT_FOUND",
+            "OCCURRENCE_MISMATCH",
+            "PATH_NOT_FOUND",
+            "PATH_OUTSIDE_SNAPSHOT",
+            "SOURCE_NOT_TEXT",
+            "SOURCE_RANGE_INVALID",
+            "INVALID_CONTINUATION",
+            "CURSOR_MISMATCH",
+            "RESPONSE_BUDGET_TOO_SMALL",
+            "RESPONSE_ITEM_TOO_LARGE",
+            "QUERY_TIMEOUT",
+            "STORAGE_UNAVAILABLE",
+            "STORAGE_INTEGRITY_ERROR",
+            "INTERNAL_ERROR"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "operation": {
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_path": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Field Path"
+        },
+        "component": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Component"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErrorPosition"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "maxLength": 768,
+          "title": "Message",
+          "type": "string"
+        },
+        "expected": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected"
+        },
+        "received": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Received"
+        },
+        "remediation": {
+          "maxLength": 1024,
+          "title": "Remediation",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "diagnostic_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Diagnostic Id"
+        },
+        "requested_bytes": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Bytes"
+        },
+        "minimum_required_bytes": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Required Bytes"
+        }
+      },
+      "required": [
+        "code",
+        "operation",
+        "field_path",
+        "component",
+        "position",
+        "message",
+        "expected",
+        "received",
+        "remediation",
+        "retryable",
+        "diagnostic_id"
+      ],
+      "title": "ErrorItem",
+      "type": "object"
+    },
+    "ErrorPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "enum": [
+            "input_character",
+            "source_byte",
+            "source_line"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "start": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End"
+        }
+      },
+      "required": [
+        "unit",
+        "start",
+        "end"
+      ],
+      "title": "ErrorPosition",
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/ErrorItem"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "errors"
+      ],
+      "title": "ErrorResponse",
+      "type": "object"
+    },
+    "FileItem": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "File Id"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "entry_type": {
+          "enum": [
+            "file",
+            "directory",
+            "symlink"
+          ],
+          "title": "Entry Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "python",
+                "javascript",
+                "jsx",
+                "typescript",
+                "tsx",
+                "php",
+                "c",
+                "cpp",
+                "java",
+                "lua",
+                "bash",
+                "zsh"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Language"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Size Bytes"
+        },
+        "progress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileProgress"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "file_id",
+        "path",
+        "entry_type",
+        "language",
+        "size_bytes",
+        "progress"
+      ],
+      "title": "FileItem",
+      "type": "object"
+    },
+    "FilePage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/FileItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "FilePage",
+      "type": "object"
+    },
+    "FileProgress": {
+      "additionalProperties": false,
+      "properties": {
+        "extract": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Extract",
+          "type": "string"
+        },
+        "resolve": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Resolve",
+          "type": "string"
+        },
+        "name_flags": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Name Flags",
+          "type": "string"
+        },
+        "semgrep_flags": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Semgrep Flags",
+          "type": "string"
+        },
+        "text_metadata": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Text Metadata",
+          "type": "string"
+        }
+      },
+      "required": [
+        "extract",
+        "resolve",
+        "name_flags",
+        "semgrep_flags",
+        "text_metadata"
+      ],
+      "title": "FileProgress",
+      "type": "object"
+    },
+    "FindFilesRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "path_glob": {
+          "title": "Path Glob",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "python",
+                "javascript",
+                "jsx",
+                "typescript",
+                "tsx",
+                "php",
+                "c",
+                "cpp",
+                "java",
+                "lua",
+                "bash",
+                "zsh"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "path_glob"
+      ],
+      "title": "FindFilesRequest",
+      "type": "object"
+    },
+    "FindFlagsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^[a-z][a-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "path_glob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path Glob"
+        },
+        "symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Symbol Id"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id"
+      ],
+      "title": "FindFlagsRequest",
+      "type": "object"
+    },
+    "FlagItem": {
+      "additionalProperties": false,
+      "properties": {
+        "flag_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Flag Id",
+          "type": "string"
+        },
+        "category": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Category",
+          "type": "string"
+        },
+        "signal_kind": {
+          "enum": [
+            "INTERESTING_NAME",
+            "CODE_PATTERN"
+          ],
+          "title": "Signal Kind",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "file_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/SourceRange"
+        },
+        "owner_symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Owner Symbol Id"
+        },
+        "engine": {
+          "enum": [
+            "name",
+            "semgrep"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "manifest_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "flag_id",
+        "category",
+        "signal_kind",
+        "reason",
+        "file_id",
+        "path",
+        "range",
+        "owner_symbol_id",
+        "engine",
+        "rule_id",
+        "manifest_digest"
+      ],
+      "title": "FlagItem",
+      "type": "object"
+    },
+    "FlagPage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/FlagItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        },
+        "rule_mode": {
+          "enum": [
+            "combined",
+            "custom_only"
+          ],
+          "title": "Rule Mode",
+          "type": "string"
+        },
+        "rule_manifest_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rule Manifest Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items",
+        "rule_mode",
+        "rule_manifest_digest"
+      ],
+      "title": "FlagPage",
+      "type": "object"
+    },
+    "FunctionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "local_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Local Name"
+        },
+        "qualified_name": {
+          "title": "Qualified Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "FUNCTION",
+            "METHOD",
+            "CONSTRUCTOR",
+            "DESTRUCTOR",
+            "LAMBDA"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "python",
+            "javascript",
+            "jsx",
+            "typescript",
+            "tsx",
+            "php",
+            "c",
+            "cpp",
+            "java",
+            "lua",
+            "bash",
+            "zsh"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Signature"
+        },
+        "signature_complete": {
+          "title": "Signature Complete",
+          "type": "boolean"
+        },
+        "definitions": {
+          "items": {
+            "$ref": "#/$defs/OccurrenceRef"
+          },
+          "maxItems": 8,
+          "title": "Definitions",
+          "type": "array"
+        },
+        "declarations": {
+          "items": {
+            "$ref": "#/$defs/OccurrenceRef"
+          },
+          "maxItems": 8,
+          "title": "Declarations",
+          "type": "array"
+        },
+        "definitions_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Definitions Cursor"
+        },
+        "declarations_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Declarations Cursor"
+        },
+        "occurrences_complete": {
+          "title": "Occurrences Complete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "symbol_id",
+        "local_name",
+        "qualified_name",
+        "kind",
+        "language",
+        "signature",
+        "signature_complete",
+        "definitions",
+        "declarations",
+        "definitions_cursor",
+        "declarations_cursor",
+        "occurrences_complete"
+      ],
+      "title": "FunctionItem",
+      "type": "object"
+    },
+    "FunctionSearchPage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/FunctionItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "FunctionSearchPage",
+      "type": "object"
+    },
+    "FunctionSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "pattern": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Pattern",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "wildcard",
+            "regex"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "default": true,
+          "title": "Case Sensitive",
+          "type": "boolean"
+        },
+        "path_glob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path Glob"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "python",
+                "javascript",
+                "jsx",
+                "typescript",
+                "tsx",
+                "php",
+                "c",
+                "cpp",
+                "java",
+                "lua",
+                "bash",
+                "zsh"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "pattern",
+        "mode"
+      ],
+      "title": "FunctionSearchRequest",
+      "type": "object"
+    },
+    "NameRule": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "wildcard",
+            "regex"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "pattern": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Pattern",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "title": "Case Sensitive",
+          "type": "boolean"
+        },
+        "categories": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Categories",
+          "type": "array"
+        },
+        "reason": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "mode",
+        "pattern",
+        "case_sensitive",
+        "categories",
+        "reason"
+      ],
+      "title": "NameRule",
+      "type": "object"
+    },
+    "NameRules": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "maximum": 1,
+          "minimum": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/NameRule"
+          },
+          "title": "Rules",
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "rules"
+      ],
+      "title": "NameRules",
+      "type": "object"
+    },
+    "OccurrencePage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/OccurrenceRef"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "OccurrencePage",
+      "type": "object"
+    },
+    "OccurrenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "start_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Start Byte",
+          "type": "integer"
+        },
+        "end_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "End Byte",
+          "type": "integer"
+        },
+        "occurrence_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Occurrence Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "start_line": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_byte",
+        "end_byte",
+        "occurrence_id",
+        "path",
+        "start_line",
+        "end_line"
+      ],
+      "title": "OccurrenceRef",
+      "type": "object"
+    },
+    "OccurrencesRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "kind": {
+          "enum": [
+            "definition",
+            "declaration"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "symbol_id",
+        "kind"
+      ],
+      "title": "OccurrencesRequest",
+      "type": "object"
+    },
+    "OutlineItem": {
+      "additionalProperties": false,
+      "properties": {
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "parent_symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Parent Symbol Id"
+        },
+        "depth": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Depth",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "FUNCTION",
+            "METHOD",
+            "CONSTRUCTOR",
+            "DESTRUCTOR",
+            "LAMBDA",
+            "CLASS",
+            "INTERFACE",
+            "TYPE",
+            "MODULE",
+            "VARIABLE"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "display_name": {
+          "title": "Display Name",
+          "type": "string"
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Signature"
+        },
+        "signature_complete": {
+          "title": "Signature Complete",
+          "type": "boolean"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/OccurrenceRef"
+        }
+      },
+      "required": [
+        "symbol_id",
+        "parent_symbol_id",
+        "depth",
+        "kind",
+        "display_name",
+        "signature",
+        "signature_complete",
+        "occurrence"
+      ],
+      "title": "OutlineItem",
+      "type": "object"
+    },
+    "OutlinePage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/OutlineItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        },
+        "extraction_state": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Extraction State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items",
+        "extraction_state"
+      ],
+      "title": "OutlinePage",
+      "type": "object"
+    },
+    "OutlineRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "path"
+      ],
+      "title": "OutlineRequest",
+      "type": "object"
+    },
+    "Progress": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "PLANNED",
+            "RUNNING",
+            "PAUSED",
+            "FAILED",
+            "SUCCEEDED"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "query_ready": {
+          "title": "Query Ready",
+          "type": "boolean"
+        },
+        "extraction_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Extraction Id",
+          "type": "string"
+        },
+        "resolution_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Resolution Id",
+          "type": "string"
+        },
+        "flagging_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Flagging Id",
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "state",
+        "query_ready",
+        "extraction_id",
+        "resolution_id",
+        "flagging_id",
+        "coverage"
+      ],
+      "title": "Progress",
+      "type": "object"
+    },
+    "ProjectReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "label"
+      ],
+      "title": "ProjectReceipt",
+      "type": "object"
+    },
+    "QueryKey": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "start_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Start Byte",
+          "type": "integer"
+        },
+        "record_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "start_byte",
+        "record_id"
+      ],
+      "title": "QueryKey",
+      "type": "object"
+    },
+    "QueryToken": {
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "maximum": 1,
+          "minimum": 1,
+          "title": "V",
+          "type": "integer"
+        },
+        "type": {
+          "const": "query",
+          "title": "Type",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "find_functions",
+            "search_text",
+            "get_callers",
+            "get_callees",
+            "get_references",
+            "get_file_outline",
+            "list_directory",
+            "find_files",
+            "find_flags",
+            "list_occurrences",
+            "list_diagnostics",
+            "get_call_arguments",
+            "get_binding_targets"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "query_digest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Query Digest",
+          "type": "string"
+        },
+        "last_key": {
+          "$ref": "#/$defs/QueryKey"
+        }
+      },
+      "required": [
+        "v",
+        "type",
+        "operation",
+        "index_run_id",
+        "query_digest",
+        "last_key"
+      ],
+      "title": "QueryToken",
+      "type": "object"
+    },
+    "ReadFileRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "start_line": {
+          "default": 1,
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Line"
+        },
+        "max_bytes": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Bytes"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "path"
+      ],
+      "title": "ReadFileRequest",
+      "type": "object"
+    },
+    "ReadFunctionRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "occurrence_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Occurrence Id",
+          "type": "string"
+        },
+        "max_bytes": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Bytes"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "symbol_id",
+        "occurrence_id"
+      ],
+      "title": "ReadFunctionRequest",
+      "type": "object"
+    },
+    "ReferenceDetailRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "reference_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "reference_id"
+      ],
+      "title": "ReferenceDetailRequest",
+      "type": "object"
+    },
+    "ReferenceItem": {
+      "additionalProperties": false,
+      "properties": {
+        "reference_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "usage": {
+          "enum": [
+            "CALL",
+            "CONSTRUCT",
+            "IMPORT",
+            "CALLBACK_ARGUMENT",
+            "SYMBOL_USE",
+            "SOURCE"
+          ],
+          "title": "Usage",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/SourceRange"
+        },
+        "owner_symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Owner Symbol Id"
+        },
+        "receiver": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ByteRange"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "arguments": {
+          "items": {
+            "$ref": "#/$defs/Argument"
+          },
+          "maxItems": 8,
+          "title": "Arguments",
+          "type": "array"
+        },
+        "resolution_state": {
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "FAILED",
+            "SUCCEEDED"
+          ],
+          "title": "Resolution State",
+          "type": "string"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESOLVED",
+                "AMBIGUOUS",
+                "UNRESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Outcome"
+        },
+        "basis": {
+          "anyOf": [
+            {
+              "enum": [
+                "LEXICAL_DECLARATION",
+                "CAPTURED_IMPORT",
+                "DECLARED_RECEIVER_TYPE",
+                "CONSTRUCTOR_INITIALIZER",
+                "CLANG_REFERENCE",
+                "DYNAMIC_TARGET",
+                "MISSING_IMPORT",
+                "MISSING_BUILD_CONTEXT",
+                "UNSUPPORTED_BINDING",
+                "EXTERNAL_SOURCE_NOT_CAPTURED",
+                "CONTEXT_DISAGREEMENT",
+                "MULTIPLE_CANDIDATES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Basis"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/$defs/Target"
+          },
+          "maxItems": 8,
+          "title": "Targets",
+          "type": "array"
+        },
+        "external_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "External Name"
+        },
+        "arguments_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Arguments Cursor"
+        },
+        "targets_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Targets Cursor"
+        }
+      },
+      "required": [
+        "reference_id",
+        "usage",
+        "path",
+        "range",
+        "owner_symbol_id",
+        "receiver",
+        "arguments",
+        "resolution_state",
+        "outcome",
+        "basis",
+        "targets",
+        "external_name",
+        "arguments_cursor",
+        "targets_cursor"
+      ],
+      "title": "ReferenceItem",
+      "type": "object"
+    },
+    "ReferencePage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ReferenceItem"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "ReferencePage",
+      "type": "object"
+    },
+    "ReferencesRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "enum": [
+                "CALL",
+                "CONSTRUCT",
+                "IMPORT",
+                "CALLBACK_ARGUMENT",
+                "SYMBOL_USE",
+                "SOURCE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usage"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "symbol_id"
+      ],
+      "title": "ReferencesRequest",
+      "type": "object"
+    },
+    "SourcePage": {
+      "additionalProperties": false,
+      "properties": {
+        "subject_kind": {
+          "enum": [
+            "function",
+            "file"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Symbol Id"
+        },
+        "occurrence_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Occurrence Id"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/SourceRange"
+        },
+        "next_continuation": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Continuation"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        }
+      },
+      "required": [
+        "subject_kind",
+        "index_run_id",
+        "snapshot_id",
+        "symbol_id",
+        "occurrence_id",
+        "path",
+        "source",
+        "range",
+        "next_continuation",
+        "coverage"
+      ],
+      "title": "SourcePage",
+      "type": "object"
+    },
+    "SourceRange": {
+      "additionalProperties": false,
+      "properties": {
+        "start_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Start Byte",
+          "type": "integer"
+        },
+        "end_byte": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "End Byte",
+          "type": "integer"
+        },
+        "start_line": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        },
+        "end_line": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "start_column": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Start Column",
+          "type": "integer"
+        },
+        "end_column": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "End Column",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_byte",
+        "end_byte",
+        "start_line",
+        "end_line",
+        "start_column",
+        "end_column"
+      ],
+      "title": "SourceRange",
+      "type": "object"
+    },
+    "SourceToken": {
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "maximum": 1,
+          "minimum": 1,
+          "title": "V",
+          "type": "integer"
+        },
+        "type": {
+          "const": "source",
+          "title": "Type",
+          "type": "string"
+        },
+        "subject_kind": {
+          "enum": [
+            "function",
+            "file"
+          ],
+          "title": "Subject Kind",
+          "type": "string"
+        },
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "file_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Symbol Id"
+        },
+        "occurrence_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Occurrence Id"
+        },
+        "selection_start": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Selection Start",
+          "type": "integer"
+        },
+        "selection_end": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Selection End",
+          "type": "integer"
+        },
+        "page_start": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Page Start",
+          "type": "integer"
+        },
+        "page_end": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Page End",
+          "type": "integer"
+        },
+        "budget": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Budget",
+          "type": "integer"
+        },
+        "reader_profile": {
+          "const": "source-v1",
+          "title": "Reader Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "v",
+        "type",
+        "subject_kind",
+        "index_run_id",
+        "snapshot_id",
+        "file_id",
+        "symbol_id",
+        "occurrence_id",
+        "selection_start",
+        "selection_end",
+        "page_start",
+        "page_end",
+        "budget",
+        "reader_profile"
+      ],
+      "title": "SourceToken",
+      "type": "object"
+    },
+    "StepCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "total_files": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Total Files",
+          "type": "integer"
+        },
+        "completed_files": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Completed Files",
+          "type": "integer"
+        },
+        "failed_files": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Failed Files",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total_files",
+        "completed_files",
+        "failed_files"
+      ],
+      "title": "StepCoverage",
+      "type": "object"
+    },
+    "SymbolPageRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "symbol_id"
+      ],
+      "title": "SymbolPageRequest",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "symbol_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Symbol Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "definition": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OccurrenceRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "symbol_id",
+        "name",
+        "definition"
+      ],
+      "title": "Target",
+      "type": "object"
+    },
+    "TargetPage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/Target"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "TargetPage",
+      "type": "object"
+    },
+    "TextMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "match_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Match Id",
+          "type": "string"
+        },
+        "file_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "range": {
+          "$ref": "#/$defs/SourceRange"
+        },
+        "excerpt": {
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "excerpt_truncated": {
+          "title": "Excerpt Truncated",
+          "type": "boolean"
+        },
+        "symbol_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Symbol Id"
+        },
+        "occurrence_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Occurrence Id"
+        }
+      },
+      "required": [
+        "match_id",
+        "file_id",
+        "path",
+        "range",
+        "excerpt",
+        "excerpt_truncated",
+        "symbol_id",
+        "occurrence_id"
+      ],
+      "title": "TextMatch",
+      "type": "object"
+    },
+    "TextSearchPage": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/TextMatch"
+          },
+          "maxItems": 200,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "snapshot_id",
+        "next_cursor",
+        "coverage",
+        "items"
+      ],
+      "title": "TextSearchPage",
+      "type": "object"
+    },
+    "TextSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "index_run_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Index Run Id",
+          "type": "string"
+        },
+        "pattern": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Pattern",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "default": true,
+          "title": "Case Sensitive",
+          "type": "boolean"
+        },
+        "multiline": {
+          "default": false,
+          "title": "Multiline",
+          "type": "boolean"
+        },
+        "path_glob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path Glob"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "python",
+                "javascript",
+                "jsx",
+                "typescript",
+                "tsx",
+                "php",
+                "c",
+                "cpp",
+                "java",
+                "lua",
+                "bash",
+                "zsh"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "index_run_id",
+        "pattern"
+      ],
+      "title": "TextSearchRequest",
+      "type": "object"
+    }
+  },
+  "anyOf": [
+    {
+      "$ref": "#/$defs/FunctionSearchRequest"
+    },
+    {
+      "$ref": "#/$defs/FunctionSearchPage"
+    },
+    {
+      "$ref": "#/$defs/ReadFunctionRequest"
+    },
+    {
+      "$ref": "#/$defs/ContinueReadRequest"
+    },
+    {
+      "$ref": "#/$defs/ReadFileRequest"
+    },
+    {
+      "$ref": "#/$defs/SourcePage"
+    },
+    {
+      "$ref": "#/$defs/SourceToken"
+    },
+    {
+      "$ref": "#/$defs/QueryToken"
+    },
+    {
+      "$ref": "#/$defs/TextSearchRequest"
+    },
+    {
+      "$ref": "#/$defs/TextSearchPage"
+    },
+    {
+      "$ref": "#/$defs/SymbolPageRequest"
+    },
+    {
+      "$ref": "#/$defs/ReferencesRequest"
+    },
+    {
+      "$ref": "#/$defs/ReferencePage"
+    },
+    {
+      "$ref": "#/$defs/DirectoryRequest"
+    },
+    {
+      "$ref": "#/$defs/FindFilesRequest"
+    },
+    {
+      "$ref": "#/$defs/FilePage"
+    },
+    {
+      "$ref": "#/$defs/OutlineRequest"
+    },
+    {
+      "$ref": "#/$defs/OutlinePage"
+    },
+    {
+      "$ref": "#/$defs/FindFlagsRequest"
+    },
+    {
+      "$ref": "#/$defs/FlagPage"
+    },
+    {
+      "$ref": "#/$defs/OccurrencesRequest"
+    },
+    {
+      "$ref": "#/$defs/OccurrencePage"
+    },
+    {
+      "$ref": "#/$defs/ErrorResponse"
+    },
+    {
+      "$ref": "#/$defs/NameRules"
+    },
+    {
+      "$ref": "#/$defs/ReferenceDetailRequest"
+    },
+    {
+      "$ref": "#/$defs/ArgumentPage"
+    },
+    {
+      "$ref": "#/$defs/TargetPage"
+    },
+    {
+      "$ref": "#/$defs/CreateProjectRequest"
+    },
+    {
+      "$ref": "#/$defs/ProjectReceipt"
+    },
+    {
+      "$ref": "#/$defs/CaptureRequest"
+    },
+    {
+      "$ref": "#/$defs/CaptureReceipt"
+    },
+    {
+      "$ref": "#/$defs/CreateIndexRequest"
+    },
+    {
+      "$ref": "#/$defs/Progress"
+    },
+    {
+      "$ref": "#/$defs/DiagnosticRequest"
+    },
+    {
+      "$ref": "#/$defs/DiagnosticPage"
+    }
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SSR Stage 1 request/response contract bundle",
+  "description": "Select the named $defs model for the called operation. Pydantic model validators and owner checks additionally enforce cross-field and database/source invariants."
+}
