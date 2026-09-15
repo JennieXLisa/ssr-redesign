@@ -18,6 +18,12 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 
 ## Implementation recipe
 
+Use execution.md's single cross-family lock order and common mutation owner for
+file and compiler-context work. Tests can use deterministic fake context outputs
+here, but must cover input/reference census prerequisites, failed-context barriers,
+shared-demand drain/retry and parent completion over both families. Installed
+compiler evidence and final associations remain W09/W12 gates, not claimed here.
+
 1. Implement immutable run→dataset composition and per-file/component planning. Complete resumable, extraction-profile-specific file_metadata preparation, then freeze the applicability plan and expose query_ready; never change shared snapshot classification when a new run overrides language/encoding. Use fake deterministic processors only as fixtures, not a substitute for later real adapter gates.
 2. Claim eligible work with SKIP LOCKED in a short transaction, generation fencing and database-clock lease expiry. Heartbeats require matching ownership and cannot resurrect an old generation.
 3. Write staging publications in bounded batches; validate the complete output manifest and atomically activate it with the file-step success marker. Join visible publication state in every read.

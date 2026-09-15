@@ -5,6 +5,11 @@ Read with [extraction.md](extraction.md), [resolution.md](resolution.md) and
 produces final bindings after the inventory barrier. These are finite navigation
 rules, not an interpreter or a promise to identify every runtime target.
 
+Frozen modes, root/dialect selection and the exact fixture-to-`SemanticProfile`
+mapping are specified in [language-profiles.md](language-profiles.md). Use its
+typed `file_options` and `compiler_options`, including the extraction/resolution
+fingerprint split; unknown fixture fields are errors rather than ignored hints.
+
 ## Shared recipe and record meaning
 
 For each original file, create the module scope first. Walk declaration syntax
@@ -256,6 +261,12 @@ checked by the actual bundle/diagnostic tests after grammar pinning.
 Reference `spelling` contains the complete original expression selected by
 `range`; `callee` separately identifies its callee text/range. For example,
 `spelling="obj.method()"` and `callee.text="obj.method"` are distinct assertions.
+
+Before invoking a runtime adapter, call `fixture_to_profile(case)` from
+`validation/reference_profiles.py` and validate its exact-file/directory choices
+against captured metadata. This maps all fixture profile fields into the typed
+production profile without changing corpus bytes. Parse-error fixtures undergo
+the same profile selection; their expected failure is in parsing, not settings.
 
 `expected.resolution` contains final binding outcomes/bases/targets and proven
 association pairs. Normalize target IDs through proven associations to the

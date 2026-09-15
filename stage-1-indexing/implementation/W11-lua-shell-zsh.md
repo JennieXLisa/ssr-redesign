@@ -23,6 +23,14 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 4. Emit the language-policy declarations and invalidations: Lua local visibility differs from local-function recursion; shell function availability depends on definition/source execution and is not lexical merely because definitions are nested. Preserve expanded command words, builtin/dispatch prefixes and conditional definitions for conservative W12 binding.
 5. Run the common span/ownership/error suite with shebang-based extensionless scripts and known dotfiles. Compare actual published extraction projections to the authored language goldens; verify Zsh anonymous-function invocation and its body ownership under the dedicated installed grammar. W12 compares the separate final binding projections.
 
+Apply [language-profiles.md](../specification/language-profiles.md)'s exact mapping:
+`shell_mode` must match the source dialect and becomes the frozen Bash/Zsh
+selection; `cwd_snapshot` becomes a captured directory basis for source-link
+resolution. A null cwd is unknown, never the worker cwd. Dialect changes alter
+extraction identity; cwd-only changes alter resolution identity. Lua rejects
+shell-only settings. Test real grammar selection and profile-aware source links
+without executing or sourcing any target script.
+
 ## Verification commands
 
 These are the required implementation commands/test targets; they are not claims that tests already exist or were run while writing this specification.

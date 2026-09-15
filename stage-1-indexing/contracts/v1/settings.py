@@ -1,8 +1,10 @@
 """Exact settings reference; loading never discovers configuration in target code."""
 from copy import deepcopy
+import re
 from typing import Annotated, Literal
+from urllib.parse import unquote_to_bytes
 
-from pydantic import Field, model_validator
+from pydantic import AfterValidator, Field, field_validator, model_validator
 from models import Count, Language, Model, Version
 
 Positive = Annotated[int, Field(strict=True, ge=1)]
@@ -75,29 +77,144 @@ class EncodingOverride(Model):
     codec: Codec
 
 
+def snapshot_directory(path: str) -> str:
+    """Validate profile path syntax; inventory/alias containment remains owner work.
+
+    The empty string denotes the snapshot root. Decode percent escapes once for
+    boundary checks; never interpret a profile path as a host filesystem path.
+    """
+    if path == '':
+        return path
+    if re.search(r'%(?![0-9A-Fa-f]{2})', path):
+        raise ValueError('malformed profile path escape')
+    raw = unquote_to_bytes(path)
+    if (b'\x00' in raw or b'\\' in raw or re.match(br'^[A-Za-z]:', raw)
+            or any(part in (b'', b'.', b'..') for part in raw.split(b'/'))):
+        raise ValueError('profile paths must be normalized snapshot-relative paths')
+    return path
+
+
+def snapshot_file(path: str) -> str:
+    snapshot_directory(path)
+    if not path:
+        raise ValueError('profile file must name a snapshot entry')
+    return path
+
+
+SnapshotDirectory = Annotated[str, AfterValidator(snapshot_directory)]
+SnapshotFile = Annotated[str, AfterValidator(snapshot_file)]
+
+
+class BasicFileOptions(Model):
+    path: SnapshotFile
+    language: Literal['python', 'c', 'cpp', 'java', 'lua']
+
+
+class JavaScriptFileOptions(Model):
+    path: SnapshotFile
+    language: Literal['javascript', 'jsx', 'typescript', 'tsx']
+    mode: Literal['script', 'module', 'commonjs'] = 'script'
+    strict: bool = False
+
+    @model_validator(mode='before')
+    @classmethod
+    def mode_default(cls, value):
+        if isinstance(value, dict) and 'strict' not in value:
+            value = {**value, 'strict': value.get('mode') == 'module'}
+        return value
+
+    @model_validator(mode='after')
+    def module_is_strict(self):
+        if self.mode == 'module' and not self.strict:
+            raise ValueError('module mode requires strict semantics')
+        return self
+
+
+class PhpFileOptions(Model):
+    path: SnapshotFile
+    language: Literal['php']
+    input: Literal['mixed', 'php-only'] = 'mixed'
+
+
+class ShellFileOptions(Model):
+    path: SnapshotFile
+    language: Literal['bash', 'zsh']
+    cwd_snapshot: SnapshotDirectory | None = None
+
+
+FileOptions = Annotated[
+    BasicFileOptions | JavaScriptFileOptions | PhpFileOptions | ShellFileOptions,
+    Field(discriminator='language'),
+]
+CStandard = Literal['c89', 'c90', 'c99', 'c11', 'c17', 'gnu89', 'gnu90', 'gnu99', 'gnu11', 'gnu17']
+CppStandard = Literal['c++98', 'c++03', 'c++11', 'c++14', 'c++17', 'c++20',
+                      'gnu++98', 'gnu++03', 'gnu++11', 'gnu++14', 'gnu++17', 'gnu++20']
+
+
+def immutable_array(value):
+    """JSON arrays become tuples; reject scalar strings, sets and generators."""
+    if not isinstance(value, (list, tuple)):
+        raise ValueError('profile collection must be an array')
+    return tuple(value)
+
+
+class CompilerOptions(Model):
+    language: Literal['c', 'cpp']
+    standard: CStandard | CppStandard
+    include_roots: tuple[SnapshotDirectory, ...] = ('',)
+    translation_units: Annotated[tuple[SnapshotFile, ...], Field(min_length=1)]
+
+    @field_validator('include_roots', 'translation_units', mode='before')
+    @classmethod
+    def arrays(cls, value):
+        return immutable_array(value)
+
+    @model_validator(mode='after')
+    def compatible_inputs(self):
+        if ('++' in self.standard) != (self.language == 'cpp'):
+            raise ValueError('compiler standard does not match selected dialect')
+        for items in (self.include_roots, self.translation_units):
+            if len(items) != len(set(items)):
+                raise ValueError('compiler input paths must be unique')
+        return self
+
+
 class SemanticProfile(Model):
     schema_version: Version = 1
     language_overrides: list[LanguageOverride] = Field(default_factory=list)
     encoding_overrides: list[EncodingOverride] = Field(default_factory=list)
-    package_roots: list[str] = Field(default_factory=list)
-    module_aliases: dict[str, str] = Field(default_factory=dict)
-    compilation_database: str | None = None
+    package_roots: list[SnapshotDirectory] = Field(default_factory=list)
+    module_aliases: dict[str, SnapshotDirectory] = Field(default_factory=dict)
+    compilation_database: SnapshotFile | None = None
+    file_options: tuple[FileOptions, ...] = ()
+    compiler_options: tuple[CompilerOptions, ...] = ()
+
+    @field_validator('file_options', 'compiler_options', mode='before')
+    @classmethod
+    def arrays(cls, value):
+        return immutable_array(value)
 
     @model_validator(mode='after')
     def paths(self):
-        paths = [*self.package_roots, *self.module_aliases.values()]
-        if self.compilation_database is not None:
-            paths.append(self.compilation_database)
-        for path in paths:
-            if path.startswith('/') or '\x00' in path or any(p in ('.', '..') for p in path.split('/')):
-                raise ValueError('profile paths must be normalized snapshot-relative paths')
-        if self.compilation_database == '':
-            raise ValueError('compilation database must name a snapshot file')
         if len(self.package_roots) != len(set(self.package_roots)):
             raise ValueError('package roots must be unique')
         if any(not alias for alias in self.module_aliases):
             raise ValueError('module aliases must be nonempty')
-        # The canonical path owner additionally decodes %HH and validates scope.
+        selected = {item.path: item.language for item in self.file_options}
+        if len(selected) != len(self.file_options):
+            raise ValueError('one exact-path language option is allowed per file')
+        if self.compilation_database is not None and self.compiler_options:
+            raise ValueError('select compilation_database or compiler_options, not both')
+        translation_units = []
+        for options in self.compiler_options:
+            for path in options.translation_units:
+                if path in selected and selected[path] != options.language:
+                    raise ValueError('translation unit contradicts exact-path dialect')
+                translation_units.append(path)
+        if len(translation_units) != len(set(translation_units)):
+            raise ValueError('translation unit occurs in multiple explicit compiler selections')
+        # The canonical path owner additionally verifies canonical display encoding,
+        # captured node kind, decoded aliases, and all path/override associations.
         return self
 
 

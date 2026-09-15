@@ -1,6 +1,6 @@
 # Stage 1 — Implementation specification and developer entry point
 
-Edition: 1.1, 16 September 2026. Scope: source intake, immutable snapshots, structural indexing, supported reference resolution, security-interest flags, and researcher navigation. No LLM invocation, autonomous review, threat-model generation, exploitation workflow, or backward-compatible runtime is part of this stage.
+Edition: 1.2, 16 September 2026. Scope: source intake, immutable snapshots, structural indexing, supported reference resolution, security-interest flags, and researcher navigation. No LLM invocation, autonomous review, threat-model generation, exploitation workflow, or backward-compatible runtime is part of this stage.
 
 ## Read this first
 
@@ -11,6 +11,13 @@ Use this precedence: explicit researcher decisions in the requirements; the conc
 The package specifies development work. It does not claim that a harness implements it. Validation performed on the package itself is recorded in [VALIDATION.md](VALIDATION.md); the full runtime release gates remain unexecuted until implementation.
 
 ## Architecture in one paragraph
+
+Edition 1.2 adds the durable compiler-context census/work/publication recipe,
+explicit fixture-to-runtime language profiles and chosen native isolation policies.
+Reference checks, a bounded macOS policy probe and actual production integration
+are separate evidence classes in VALIDATION.md. Neither authored schemas nor the
+native probe mean that PostgreSQL concurrency, Linux isolation, all installed tools
+or the full SSR runner have passed their runtime gates.
 
 A Python application owns a PostgreSQL database and one bare managed Git repository per research project. Capture completes before processing. Immutable, versioned extraction/resolution/flagging datasets can be shared by runs using compatible inputs. Workers publish complete file-step results under leases; navigation reads only published records and exact Git bytes. Tree-sitter/Python AST provide structure. Conservative language adapters and a C/C++ libclang adapter establish supported bindings; uncertain relationships remain explicit. Semgrep CE and local-name rules generate observations, not vulnerability decisions. The CLI and future tool adapters invoke the same operations.
 
@@ -44,12 +51,15 @@ Each task has its own recipe in [implementation/](implementation/README.md). A t
 |---|---|
 | [Architecture](specification/architecture.md) | Packages, dependencies, ownership, configuration, version policy |
 | [Configuration and processes](specification/configuration-and-processes.md) | Typed settings/profile formats, concrete locations/probes, manifest shape, runner and real HTTPS acceptance |
+| [Native isolation](specification/native-isolation.md) | macOS/Linux mechanisms, resource/launcher policy, readiness and exact denial gates |
 | [Storage](specification/storage.md) | PostgreSQL entities, keys, uniqueness, indexes, publication and reuse |
 | [Capture](specification/capture.md) | Local/remote algorithms, Git publication, submodules, links, LFS, recovery |
 | [Extraction](specification/extraction.md) | Source normalization, adapter output, language constructs, errors |
 | [Language policies](specification/language-policies.md) | Per-language visibility/shadowing/import/ownership decisions and exact authored source/output fixtures |
+| [Language profiles](specification/language-profiles.md) | All fixture shorthand fields mapped to typed frozen configuration and phase fingerprints |
 | [Resolution](specification/resolution.md) | Supported binding cases, compiler inputs, identity association, limitations |
 | [Compiler profile](specification/compiler-profile.md) | Explicit accepted option grammar, POSIX tokenizer, rooted mapping, context trust and W09/W12 boundary |
+| [Compiler work](specification/compiler-work.md) | Durable input/reference censuses, context attempts/publications, source evidence and reconciliation |
 | [Rules](specification/rules.md) | Categories, rule formats, comparison, scanning and coverage accounting |
 | [Navigation](specification/navigation.md) | Operations, ordering, cursors, filters, errors and response limits |
 | [Source reading](specification/source-reading.md) | Encoding, byte/line conventions, whole-response budgets, token algorithm |

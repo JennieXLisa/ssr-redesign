@@ -7,6 +7,12 @@ building reviewed projects. The runnable, pure data model is
 `validation/reference_compiler.py`. W09 implements and tests the real adapter;
 W12 reconciles observations and publishes readable associations.
 
+The durable workflow is [compiler-work.md](compiler-work.md), with typed internal
+values in `contracts/v1/compiler_records.py`: frozen expected context/reference
+censuses, separate resolution-owned context jobs, fenced active publications and
+lossless source/USR/diagnostic projections. Sanitizer input identity is frozen
+before resolution allocation; context results never feed extraction fingerprints.
+
 ## Frozen inputs and scope
 
 Profile identifier: `strict-posix-clang-v1`. Freeze the captured compilation
@@ -168,6 +174,9 @@ contain absolute includes or other frontend file requests. W09 must run the
 selected library in an isolated worker whose file access permits only the
 verified snapshot materialization, pinned toolchain resources and necessary
 trusted runtime files. Source reads cannot fall back to arbitrary host paths.
+The exact platform mechanisms, launch envelope/readiness and denial gates are
+specified in [native-isolation.md](native-isolation.md); use its common runner,
+not a compiler-specific unsandboxed subprocess path.
 A VFS overlay that falls back to the host is insufficient. Deny source-derived
 writes, executable/module/plugin loading and network access; clear inherited
 include/SDK/toolchain/plugin environment variables and configuration discovery.
@@ -223,6 +232,11 @@ match. A known structural reference with no unique mapped evidence remains
 
 W12 waits for successful extraction and all expected context work, then groups
 by the physical reference. Deduplicate only proven SAME_ENTITY target identities.
+Expected contexts come from the frozen input census, never the observed subset.
+Successful INVALID context outputs count as completed limitations; failed/missing
+context work blocks finalization. The reference census and VALID complete file
+visits/skipped ranges distinguish MISSING, NOT_IN_TU and INACTIVE without creating
+placeholder compiler observations. See compiler-work.md for the exact state table.
 All valid observations agreeing on one captured target may produce RESOLVED.
 Two or more distinct supported captured candidates produce `AMBIGUOUS /
 CONTEXT_DISAGREEMENT`; preserve all candidates. One supported candidate plus an

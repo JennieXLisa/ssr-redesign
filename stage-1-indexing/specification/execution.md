@@ -78,7 +78,7 @@ Run status precedence: all selected datasets audited SUCCEEDED → SUCCEEDED; PA
 
 ## Common lock order and exact mutation guards
 
-Every mutation that needs more than one level acquires **datasets (UUID byte order) → index_runs (UUID byte order) → work_units (work_id order) → publications (publication_id order)**. Omit unused levels; never acquire an earlier level later. Plan insertion, run creation/control, retry, lease recovery, final publication and completion use this order. Staging inserts are separate transactions that never subsequently acquire dataset locks or activate results. No transaction retains locks across parsing, Git, compiler/scanner work or user interaction.
+Every mutation that needs more than one level acquires **datasets (UUID byte order) → index_runs (UUID byte order) → work rows (family, work_id) → publication rows (family, publication_id)**. Family order is file first (`work_units`/`publications`), compiler second (`compiler_context_work`/`compiler_publications`); IDs within each family use UUID byte order. Omit unused levels; never acquire an earlier level later. This single order also covers cross-family retries/completion; there is no second compiler-specific queue owner or inverse lock order. Plan insertion, run creation/control, retry, lease recovery, final publication and completion use this order. Staging inserts are separate transactions that never subsequently acquire dataset locks or activate results. No transaction retains locks across parsing, Git, compiler/scanner work or user interaction.
 
 Claim first chooses candidate dataset IDs without locks, acquires one dataset `FOR UPDATE SKIP LOCKED`, rechecks launching-run intent/demand, then selects eligible work `FOR UPDATE SKIP LOCKED` ordered by original path bytes, component and work_id. A multiple-row retry first locks every involved dataset in sorted order, then the run, then sorted work rows. Run references are immutable so pause may read their IDs before locking and revalidate the run after acquiring them. New run attachment also locks its datasets before inserting the run; this prevents a phantom consumer racing a last-consumer pause.
 
@@ -87,3 +87,34 @@ Heartbeat/publication predicates are: dataset not SUCCEEDED, work.state=RUNNING,
 The first claim and automatic retries increment both lifetime attempt_count and retry_cycle_attempt_count. Automatic attempts in one explicit retry cycle are bounded by max_attempts (default three); explicit retry resets only retry_cycle_attempt_count. This prevents losing historical diagnostics or treating a manually retried exhausted job as permanently ineligible.
 
 Required real-PostgreSQL schedules: A/B shared demand with pause/resume in both orders; pause between claim and publish; all consumers paused then lease expiry; completion racing final publication; retry racing an old worker; and two concurrent last-consumer controls taking overlapping datasets in reversed input order. Use barriers and a bounded test timeout to prove no deadlock, stale publication, duplicate success or premature completion. Pure state-policy tests are a decision oracle, not that concurrency evidence.
+
+## Compiler context obligations
+
+[Compiler work](compiler-work.md) supplies resolution-owned durable context plans,
+context work and active publications. File work is not overloaded with a hidden
+context key. All dataset state/completion, demand, pause/drain, lease recovery,
+retry-cycle and no-late-publication rules above apply to the **union** of file
+and compiler context work. The same publication owner dispatches typed families;
+helpers still never commit independently. Compiler work consumes heavy slots.
+
+Freeze the compiler input census, including rejected and default contexts, before
+constructing the resolution fingerprint; an explicit empty census is required
+when no contexts apply. query_ready additionally requires that frozen input census,
+not the later reference census or successful compiler work. After successful
+extraction, freeze exact structural reference anchors, then run the context jobs.
+The reference census is an output prerequisite, not a semantic identity input.
+
+W12 reconciliation waits for that reference census and every expected context's
+active successful publication. A completed INVALID context is an explicit binding
+limitation. A missing job/publication, pending context or crashed/FAILED attempt
+is not inactive, invalid-source success or agreement. File resolve work stays
+PENDING behind failed context prerequisites; status/diagnostics identify the
+failed context. Public resolution totals continue to count applicable files,
+not translation units, contexts or attempts. A dataset can therefore report FAILED
+with pending file resolutions and zero failed file jobs; context diagnostics
+explain the blocker. No context count is placed in the file coverage object.
+
+Resolution SUCCEEDED requires both frozen censuses, exact planned-versus-actual
+context work, audited active context outputs and completed required file resolves.
+Real PostgreSQL gates add pause/reclaim/stale-publication and final-reconcile races
+across both families. Pure context-policy regressions do not prove those schedules.

@@ -1,0 +1,390 @@
+{
+  "scope": "native Seatbelt policy with trusted harness probe only; no installed tool/production runner evidence",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "policy_version": "native-isolation-v1",
+  "sandbox_executable_sha256": "abc5bb136d6b5cce8fa85d789f78e3326c51ca60cae637b2064adfb67a1dcd9a",
+  "probe_source_sha256": "ae105631badd8af1e3eaacae7154d20a9c2af77f15731b682bf3a5eee2df781f",
+  "physical_policy_digests": {
+    "compiler": "849b28f2e41e73f491f4b7798f4b7b2e476263820358f8327b0ccebfe2dfe466",
+    "scanner": "b8a6faa60934456011c3dde341e2a2358e1a69aab1af9d25f5cb1a5d9daeff9f"
+  },
+  "checks": [
+    {
+      "purpose": "compiler",
+      "operation": "read",
+      "fixture": "source/allowed",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "read",
+      "fixture": "resources/allowed",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "read",
+      "fixture": "control/allowed",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "read",
+      "fixture": "outside/secret",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "directory",
+      "fixture": "outside",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "read",
+      "fixture": "source/escape",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "write",
+      "fixture": "source/must-not-exist",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "write",
+      "fixture": "runtime/must-not-exist",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "write",
+      "fixture": "outside/must-not-exist",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "write",
+      "fixture": "scratch/output",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "exec",
+      "fixture": "source/not-executable",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "map_exec",
+      "fixture": "source/not-executable",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "child_read",
+      "fixture": "outside/secret",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 13
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "tcp4",
+      "fixture": "owned-loopback-port",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "udp4",
+      "fixture": "owned-loopback-port",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "tcp6",
+      "fixture": "owned-loopback-port",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "compiler",
+      "operation": "unix",
+      "fixture": "outside/sock",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "read",
+      "fixture": "source/allowed",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "read",
+      "fixture": "resources/allowed",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "read",
+      "fixture": "control/allowed",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "read",
+      "fixture": "outside/secret",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "directory",
+      "fixture": "outside",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "read",
+      "fixture": "source/escape",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "write",
+      "fixture": "source/must-not-exist",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "write",
+      "fixture": "runtime/must-not-exist",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "write",
+      "fixture": "outside/must-not-exist",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "write",
+      "fixture": "scratch/output",
+      "expected_allowed": true,
+      "result": "PASS",
+      "observed": {
+        "allowed": true,
+        "errno": 0
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "exec",
+      "fixture": "source/not-executable",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "map_exec",
+      "fixture": "source/not-executable",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "child_read",
+      "fixture": "outside/secret",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 13
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "tcp4",
+      "fixture": "owned-loopback-port",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "udp4",
+      "fixture": "owned-loopback-port",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "tcp6",
+      "fixture": "owned-loopback-port",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    },
+    {
+      "purpose": "scanner",
+      "operation": "unix",
+      "fixture": "outside/sock",
+      "expected_allowed": false,
+      "result": "PASS",
+      "observed": {
+        "allowed": false,
+        "errno": 1
+      }
+    }
+  ],
+  "passed": 34,
+  "failed": 0,
+  "linux": "NOT RUN"
+}

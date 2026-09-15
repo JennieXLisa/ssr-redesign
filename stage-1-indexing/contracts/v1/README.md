@@ -1,5 +1,12 @@
 # Version 1 contract assets
 
+`compiler_records.py` and generated `compiler.schema.json` define durable compiler
+inputs, reference inventory, context work and publication evidence. Their SQL
+projection and owner guards are in `specification/compiler-work.md`. The existing
+`settings.py` profile now includes typed file/compiler options; fixture shorthand
+is translated by `validation/reference_profiles.py`, not passed directly to the
+production schema. These remain adoption references, not an implemented runtime.
+
 `models.py` is the executable Pydantic reference for exact field types, strict input validation and cross-field checks. `api.schema.json` is its generated JSON Schema bundle; use the named model under `$defs` for an operation. Schema constraints alone do not perform database identity checks or prove a byte range maps to the claimed source.
 
 `records.py` and generated `internal.schema.json` define the shared SourceUnit, ExtractionBundle and nested scope/import/declaration/type/property/provenance values. The original-byte publication validator rejects identity, position and reference-spelling mismatches; it is not a substitute for a real adapter proving syntax ownership. `extraction-fixtures.json` supplies authored valid/invalid bundles. `language-fixtures.json` supplies per-dialect source/output projections; its comparison support is `validation/reference_language_fixtures.py`.

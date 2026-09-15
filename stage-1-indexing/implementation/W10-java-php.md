@@ -23,6 +23,13 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 4. Reuse deterministic IDs, common errors and publication. Add separate fixtures for language-specific ownership and parse errors.
 5. Prove both adapters through the worker-to-published-index path, not only grammar node matching. Use the shared golden comparator on actual extraction projections; include Java anonymous-class/lambda ownership and both mixed and PHP-only input modes. W12 compares final binding projections.
 
+Map golden profiles through [language-profiles.md](../specification/language-profiles.md)
+and `reference_profiles.fixture_to_profile`. PHP `php_input` becomes typed
+`file_options[*].input`; prove it selects the mixed/php-only capsule without
+rewriting original bytes and changes extraction identity. Java retains exact
+path/dialect selection and rejects PHP/JS-specific settings. Runtime capsule
+consumption remains required even when all profile validation tests pass.
+
 ## Verification commands
 
 These are the required implementation commands/test targets; they are not claims that tests already exist or were run while writing this specification.

@@ -24,6 +24,14 @@ Python, JS/TS, PHP, Java and Lua each own a small import/member policy module us
 
 ## C/C++ compiler adapter
 
+The concrete durable protocol is [compiler-work.md](compiler-work.md): freeze
+the context input census before resolution identity, then the successful structural
+reference census, fence each context attempt, and consume only audited active
+publications at W12's barrier. [Language profiles](language-profiles.md) defines
+the exact compiler-selector handoff. [Native isolation](native-isolation.md)
+defines the required runner, resource and readiness policy. None of these stages
+may be replaced by untracked in-memory observations or an unsandboxed parse.
+
 Use libclang cursor traversal for declarations, referenced declarations, type identity and USRs. Parse translation units from a managed read-only materialization of the captured snapshot. A captured `compile_commands.json` may provide argument arrays; otherwise use a recorded conservative profile (`-x c -std=c17` or `-x c++ -std=c++20` plus the captured root include path). Default-profile uncertainty remains in provenance. Headers are resolved in their recorded translation-unit contexts, not each treated as a universally standalone program. [S4–S5]
 
 The exact accepted grammar and tokenizer are [compiler-profile.md](compiler-profile.md)'s `strict-posix-clang-v1`, with runnable adversarial cases in reference_compiler.py. Prefer argument arrays; otherwise use its strict Python 3.12 shlex POSIX subset for macOS/Linux/WSL, never a shell. Its table exhaustively enumerates accepted language/standard/target, define/undefine and include/search forms. Reject an invalid context atomically, not by passing through unknown flags or silently omitting their semantic effects. Driver labels are metadata, not executables. Source/include paths must map through captured inventories or explicit frozen toolchain roots. No build scripts, response files or target execution are used. The selected v1 intentionally rejects action/output flags (including ordinary -c/-o) and traversed symlinks; these are visible context limitations, not hidden source exclusions.

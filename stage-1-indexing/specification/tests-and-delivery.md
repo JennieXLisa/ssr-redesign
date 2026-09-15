@@ -33,6 +33,18 @@ Use `tests/fixtures/capture/`, `tests/fixtures/languages/<language>/`, `tests/fi
 
 ## Required consistency queries
 
+The compiler context gates additionally audit both frozen censuses and the union
+of file/context work families. Exercise missing context work, invalid-input
+publications, failed attempts, proven inactive/nonvisited references, stale
+publication reconstruction, all-context reconciliation and opposite-order
+cross-family lock schedules as specified in compiler-work.md. The profile gates
+must consume mapped SemanticProfile values through actual registry/adapter owners,
+not merely compare authored fixture metadata. Native isolation gates use the
+chosen macOS/Linux launch policies with positive controls, denied filesystem,
+executable-mapping and network operations, readiness identity checks and actual
+compiler/scanner tool probes. Pure regressions and the trusted C macOS smoke
+receipt do not substitute for those runtime gates.
+
 Audit work_units against the frozen applicable plan; count each file once per logical step. Join active publications and compare their result_count/digest against actual typed rows. Resolve every occurrence range against file size. Verify every binding target belongs to visible extraction records from the same snapshot/profile. Verify each successful dataset has no pending/running/failed required work and cannot accept new publication. Compare the full normalized extraction/binding/flag manifest between serial and parallel executions; exclude only nonsemantic timestamps/worker diagnostics from that comparison.
 
 ## Benchmark record

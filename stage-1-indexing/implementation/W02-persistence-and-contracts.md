@@ -18,6 +18,12 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 
 ## Implementation recipe
 
+The initial schema includes both file work/publications and the compiler context
+family in [compiler-work.md](../specification/compiler-work.md). Adopt
+compiler_records.py with the other internal contracts; test typed scalar/JSON
+round-trips, partial-null constraints and selected-extraction membership in real
+PostgreSQL. Later W09 supplies compiler observations, not another schema design.
+
 1. Adopt the reference schema.sql as the initial migration and models.py plus records.py as public/internal production contracts, divided by responsibility. Include scopes, imports, lexical declarations, typed JSON fields, run control_intent and the frozen per-file applicability plan. W07 consumes these contracts; it must not invent competing records. Do not retain two DTO authorities. Export complete JSON Schemas from the production models.
 2. Implement a migration ledger with filename/digest and an advisory migration lock. Apply each migration in one transaction. Refuse changed hashes for applied migrations; do not silently repair them.
 3. Implement narrow repositories for projects/captures, datasets/work, source records and navigation. All write methods accept an explicit caller-owned transaction; none commits internally.

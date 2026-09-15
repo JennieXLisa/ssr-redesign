@@ -28,6 +28,7 @@ src/ssr/
   rules/        models.py, loading.py, comparison.py, names.py, semgrep.py, builtin/
   navigation/   functions.py, references.py, files.py, text.py, flags.py, paging.py
   cli/          main.py, capture.py, index.py, query.py, rendering.py
+  processes/    runner.py, isolation.py, native/ (trusted launchers and policies)
 ```
 
 Names describe intended responsibility, not a requirement to create every empty file. Create a module when its task implements it. No catch-all `service.py` owning capture, SQL, scanners and source reading. No line-count quota; split a module when it owns independent rules or dependencies. Domain owners accept repositories/source-reader interfaces, not the whole application object.

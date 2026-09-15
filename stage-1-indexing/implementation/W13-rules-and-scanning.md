@@ -21,7 +21,7 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 2. Implement safe YAML, schema validation, canonical definition comparison, same-key conflict errors and identical-definition consolidation retaining all source references.
 3. Implement combined/custom-only selection and frozen manifest persistence. Validate the full selection against local syntax fixtures before scanning any captured target source.
 4. Implement local-name wildcard/regex matching exactly as specified. No qualified-name selector or exact-match third mode.
-5. Run Semgrep in controlled materializations with approved flags and no hidden ignore/size/timeout suppression. Reconcile every expected applicable file and isolate batch failures to uncommitted files.
+5. Run Semgrep through the installed [native-isolation.md](../specification/native-isolation.md) runner/policy for both rule validation and target scanning, with approved flags and no hidden ignore/size/timeout suppression. Require the policy/readiness receipt, exact executable inventory and scanner-only scratch. Reconcile every expected applicable file and isolate batch failures to uncommitted files.
 6. Map matches back to original-byte spans and executable owners. Preserve generic Lua/Zsh pattern provenance, overlapping independent rules, and explicit parser/scanner failures.
 7. Publish per-file name/Semgrep components separately, retaining extraction if scanning fails. Update coverage only through the common publication/completion owner.
 
@@ -31,7 +31,7 @@ These are the required implementation commands/test targets; they are not claims
 
 ```sh
 uv run pytest tests/rules tests/scanner tests/indexing/test_flagging_resume.py
-semgrep scan --config tests/rules/compiled-fixtures.yaml --json tests/rules/targets
+uv run pytest tests/processes/test_scanner_isolation.py
 ```
 
 ## Acceptance evidence

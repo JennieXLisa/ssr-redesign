@@ -23,6 +23,14 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 4. Preserve TypeScript declaration signatures, overload occurrences, modifiers and type text without inventing bodies or compiler-confirmed types.
 5. Run the shared positive/negative/ownership/Unicode/CRLF suite and real worker publication tests for both adapters. Compare actual published extraction projections against the authored language fixtures using the reusable `assert_fixture` comparator; W12 later compares their binding outcomes. Preserve anonymous names, callback usage, type-only imports and null overload bodies.
 
+Use [language-profiles.md](../specification/language-profiles.md)'s typed exact
+file options and fixture mapper. Freeze module/script/CommonJS mode, strictness
+and JSX/TSX dialect independently; never discover a mode by running a loader or
+reading target package configuration implicitly. Test actual capsule/scope
+selection for mode changes and verify their extraction fingerprint changes.
+Only explicit CommonJS semantics permit the supported require/export binding
+recipe; observations alone do not establish it.
+
 ## Verification commands
 
 These are the required implementation commands/test targets; they are not claims that tests already exist or were run while writing this specification.

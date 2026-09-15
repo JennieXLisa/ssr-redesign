@@ -25,6 +25,14 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 5. Implement SyntaxError diagnostics and failed-work treatment. A valid no-function file succeeds with an empty inventory; an invalid file does not.
 6. Create reusable conformance fixtures and assertions for range round-trips, same-name scopes, lambdas, errors and publication. Other language tasks extend this suite rather than copy it.
 
+Adopt [language-profiles.md](../specification/language-profiles.md) at the shared
+registry boundary. Map each golden with `reference_profiles.fixture_to_profile`,
+freeze exact-path dialect selection and parser options before adapter creation,
+and verify SourceUnit/profile identity. Keep `extract(source)` unchanged. Python
+`package_root` maps to production `package_roots` for resolution; no package
+import or host cwd supplies missing context. Passing the profile regression is
+not proof that the real registry consumes these options.
+
 ## Verification commands
 
 These are the required implementation commands/test targets; they are not claims that tests already exist or were run while writing this specification.

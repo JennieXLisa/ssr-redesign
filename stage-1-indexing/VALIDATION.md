@@ -1,6 +1,6 @@
 # Specification validation and implementation status
 
-Edition 1.1, 16 September 2026. This report describes checks on the specification/reference assets, not a working SSR harness.
+Edition 1.2, 16 September 2026. This report describes checks on specification/reference assets and a separately bounded native policy probe, not a working SSR harness.
 
 ## Executed here
 
@@ -11,7 +11,7 @@ python3 -B stage-1-indexing/validation/refresh_manifest.py --check
 git diff --check
 ```
 
-Execution environment: Python 3.12.12, Pydantic 2.13.4, jsonschema 4.26.0 and PyYAML 6.0.3 on native macOS arm64. **94 core specification/reference/structure checks and 95 regression tests passed**, with zero failures, errors or skips. The machine-readable outcomes are [validation/results.json](validation/results.json) and [validation/regression-results.json](validation/regression-results.json). The combined command regenerates all three schema bundles, validates them and parses every delivered Python source before running the regressions. W01 still must verify the actual production dependency lock and installed resources.
+Execution environment: Python 3.12.12, Pydantic 2.13.4, jsonschema 4.26.0 and PyYAML 6.0.3 on native macOS arm64. **94 core specification/reference/structure checks and 166 regression tests passed**, with zero failures, errors or skips. The machine-readable outcomes are [validation/results.json](validation/results.json) and [validation/regression-results.json](validation/regression-results.json). The combined command regenerates all four schema bundles (public, extraction, settings, compiler), validates them and parses every delivered Python source before running the regressions. W01 still must verify the actual production dependency lock and installed resources.
 
 The checks cover JSON Schema validity for each named API model; strict request boundaries; invalid modes, ranges, coverage counts and error envelopes; pure UTF-8 source-page sizing, Unicode/escaping and character-safe boundaries; adjacent page coverage and repeated continuation sections under changing progress; a calculated minimum budget that succeeds when resubmitted; the ordered task dependency graph; mapping of all 83 approved requirement IDs; rule/fixture identity accounting; Python/TOML/YAML syntax and relative links against the repository baseline.
 
@@ -19,7 +19,30 @@ Regressions additionally cover large independent-error batches/operational codes
 
 The source-reader reference is an in-memory UTF-8 paging model, not a Git reader or PostgreSQL navigation service. SourceUnit transcoding tests cover the five declared codecs but do not prove the production reader/materializer integration. Rule fixture accounting confirms that the authored files correspond to the authored rule IDs, not that Semgrep accepts or matches those patterns. Pure compiler tests validate the sanitizer, not installed libclang or OS containment. Lifecycle tests validate decisions, not concurrent PostgreSQL behavior.
 
-The revised SQL was separately parsed with pglast 8.4: **42 statements parsed successfully**. Reproduce with `uv run --no-project --python 3.12 --with pglast==8.4 python -B -c "from pathlib import Path; from pglast import parse_sql; print(len(parse_sql(Path('stage-1-indexing/contracts/v1/schema.sql').read_text())))"`. This is parser syntax evidence only, not PostgreSQL 17 migration execution, foreign-key transaction behavior or a database integration pass.
+The revised SQL was separately parsed with pglast 8.4: **61 statements parsed successfully**. Reproduce with `uv run --no-project --python 3.12 --with pglast==8.4 python -B -c "from pathlib import Path; from pglast import parse_sql; print(len(parse_sql(Path('stage-1-indexing/contracts/v1/schema.sql').read_text())))"`. This is parser syntax evidence only, not PostgreSQL 17 migration execution, foreign-key transaction behavior or a database integration pass.
+
+The additional 71 regressions cover 42 durable compiler-context/census/evidence
+cases, 14 profile translation/identity cases and 15 native policy/envelope cases.
+All 32 fixture profiles map to SemanticProfile and JSON-roundtrip. The source
+fixture file and its benchmark SHA-256 pin remain byte-for-byte unchanged.
+
+### Separate native macOS smoke evidence
+
+`python3 -B stage-1-indexing/validation/probe_macos_isolation.py --run` compiled only
+the included harness-authored C helper in owned temporary storage. It passed
+**34 native policy checks, zero failures**, on macOS 26.6.2 arm64. The receipt is
+[validation/macos-isolation-results.json](validation/macos-isolation-results.json).
+Positive captured/resource reads worked; denied host/symlink reads, writes,
+executable mapping/exec and TCP/UDP/Unix access returned EACCES/EPERM. A child crash
+is not a successful denial. The first probe aborted before main; kernel denial
+records identified two exact startup sysctls and a literal-root directory read.
+Those narrow, disclosed allowances were added and the complete probe rerun.
+
+This proves only the generated Seatbelt policy with a trusted small probe. It
+does not exercise installed libclang, Semgrep, the full runtime capsule, readiness
+protocol or production process supervision. Linux bubblewrap/Landlock/seccomp
+enforcement, mount/capability sealing and the native launcher were NOT RUN.
+The 15 pure policy/envelope tests are not substitutes for those platform gates.
 
 ## Review corrections and evidence boundary
 
@@ -32,6 +55,9 @@ The revised SQL was separately parsed with pglast 8.4: **42 statements parsed su
 | Error contract | No 32-item truncation; the 65,536-byte error target is not a hard ceiling. Operational codes use the shared closed registry; large independent batches are tested. |
 | CRLF paging | Preserved upstream ce84d76's indivisible-atom prose/reference reconciliation and exact-minimum regression tests. |
 | Compiler inputs | Exhaustive option grammar, POSIX tokenizer, rooted mapping, context-error/trust policy, adversarial sanitizer tests, and separate W09 observation/W12 navigation acceptance. |
+| Durable compiler contexts | Input and reference censuses, independent context work/attempt/publication records, source/USR evidence, exact reconstruction and all-context barriers; shared lifecycle/lock ownership and file coverage are explicit. |
+| Fixture profiles | Typed per-file dialect/mode/PHP/shell settings and compiler selectors, exact shorthand mapping, frozen phase projections and fingerprint tests. |
+| Platform isolation recipe | Selected macOS Seatbelt and Linux bubblewrap/Landlock/seccomp policies, explicit runtime/data mounts, noexec and capability sealing, typed launch/readiness binding and denial tests. Bounded macOS probe passed; Linux and actual tool/runner gates remain unrun. |
 | Acceptance/delivery | Concrete golden inputs, deterministic manifest/validation commands, and pinned benchmark inputs with explicit production evidence boundaries; no benchmark timing or runtime gate is claimed here. |
 
 Additional corrections fix configuration locations/merging, capture manifest representation, the process-runner boundary, mandatory real TLS transport tests, auxiliary cursor-key mappings, scanner source maps and active-publication diagnostic provenance. The original approved requirements were not rewritten.
@@ -44,6 +70,6 @@ These are mandatory development gates, not waived checks. Each work recipe names
 
 ## Provenance and package boundary
 
-The approved documentation baseline is `JennieXLisa/ssr-redesign` at `c2c238d325d82188e47d8b83b9d963800754d986`. This correction pass starts from the existing fixes through `ecfb05da9e94c26af33e7218c29d23bb0c351746`. Requirements, AGENTS.md and the two discussion-era API contracts are retained. Engineering choices remain delegated refinements, not claims of individual approval or runtime completion. IMPLEMENTATION.md now explicitly distinguishes supplied mechanisms/fixtures from unimplemented grammar, sandbox and runtime integration work.
+The approved documentation baseline is `JennieXLisa/ssr-redesign` at `c2c238d325d82188e47d8b83b9d963800754d986`. Edition 1.2 refines the reviewed update through `94ec1a6023844df423e59b57ddc8c0d1b078f6b6`. Requirements, AGENTS.md and the two discussion-era API contracts are retained. Engineering choices remain delegated refinements, not claims of individual approval or runtime completion. IMPLEMENTATION.md distinguishes supplied mechanisms/fixtures and bounded native smoke evidence from unimplemented grammar, platform/tool and full runtime integration.
 
 The downloadable package is an overlay for that repository. Its manifest hashes the delivered files; copy it over an existing checkout without removing the historical requirements. A publication receipt may record the later Git commit separately so the package manifest does not attempt to hash itself or its own commit identity.

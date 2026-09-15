@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
 MANIFEST = ROOT / 'MANIFEST.json'
-SUFFIXES = {'.md', '.json', '.py', '.sql', '.toml', '.yaml', '.yml', '.txt'}
+SUFFIXES = {'.md', '.json', '.py', '.sql', '.toml', '.yaml', '.yml', '.txt', '.c'}
 
 
 def expected_manifest() -> dict:
@@ -26,7 +26,7 @@ def expected_manifest() -> dict:
         entries.append({'path': path.relative_to(REPO).as_posix(), 'bytes': len(raw),
                         'sha256': hashlib.sha256(raw).hexdigest(),
                         'git_blob_sha1': hashlib.sha1(f'blob {len(raw)}\0'.encode() + raw).hexdigest()})
-    return {**current, 'edition': '1.1', 'date': '2026-09-16',
+    return {**current, 'edition': '1.2', 'date': '2026-09-16',
             'delivery': 'Stage 1 specification/reference correction overlay; approved requirements retained',
             'self_excluded': True, 'files': entries}
 

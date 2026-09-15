@@ -22,3 +22,9 @@ settings = TypeAdapter(Union[Settings, SemanticProfile]).json_schema()
 settings['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
 settings['title'] = 'SSR Stage 1 operational settings and semantic profile schemas'
 (p.parent/'settings.schema.json').write_text(json.dumps(settings,separators=(',', ':'))+'\n')
+from compiler_records import COMPILER_MODELS
+compiler = TypeAdapter(Union[tuple(COMPILER_MODELS)]).json_schema()
+compiler['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
+compiler['title'] = 'SSR Stage 1 durable compiler context contract bundle'
+compiler['description'] = 'Internal context census, work and observation models. Source, selected-publication, lock and native compiler checks remain owner/runtime obligations.'
+(p.parent/'compiler.schema.json').write_text(json.dumps(compiler,separators=(',', ':'))+'\n')

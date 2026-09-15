@@ -4,6 +4,12 @@ Implements S1-IN-R07/R20/R21, S1-IX-R01–R05, S1-FN-R01–R09, S1-RF-R01–R06 
 
 ## Identity and reuse
 
+[Language profiles](language-profiles.md) gives exact typed configuration projections
+for the fingerprints below: JS/PHP/dialect settings affect extraction;
+package/alias/shell/compiler settings additionally affect resolution. The frozen
+compiler-input census digest precedes resolution identity; context results and
+the later reference-census output never enter that input hash.
+
 A snapshot is an immutable source identity, not an index run. A dataset is a versioned derived result collection. A requested index run points to three datasets: extraction, resolution, and flagging. The extraction fingerprint includes snapshot ID, parser/grammar versions, language overrides and encoding configuration. Resolution adds the extraction fingerprint, resolver version and sanitized compilation-context digest. Flagging adds extraction fingerprint, rule-manifest digest, name matcher version and Semgrep version/options. All fingerprints use SHA-256 of the canonical JSON semantic configuration, not mutable file paths.
 
 Changing a rule creates a new run/flagging dataset while reusing compatible extraction/resolution datasets. Encoding/language overrides produce a new extraction profile and its own file_metadata publications; never overwrite another run's interpretation in the shared snapshot file row. Retrying an interrupted run does not create new source or semantic configuration. A unique `(snapshot_id, kind, fingerprint)` dataset key makes concurrent requests converge on compatible work. Hardware/concurrency changes do not invalidate datasets. A run's dataset references never change after creation.
@@ -56,6 +62,17 @@ Read a navigation page, related occurrences, and its coverage counters inside on
 Dataset success is an owner-controlled transition: all required work units SUCCEEDED; inapplicable components were never queued; unresolved bindings are valid outputs; failed extraction/scanning is not. Dataset publication cannot continue after SUCCEEDED. A run is complete only when all selected datasets and captured-file metadata obligations complete. The displayed per-step totals derive from applicable distinct files, not attempts, matches, publication batches or historical failures. Flagging combines the name and Semgrep components per file: failed if either required component is FAILED, complete only if all required components succeed.
 
 ## Retention and repair
+
+Compiler-specific tables and typed JSON projections are specified in
+[compiler-work.md](compiler-work.md) and `contracts/v1/compiler_records.py`.
+They use the same storage/publication owner with separate work/publication table
+families, not independent transaction ownership or an undocumented file-work key.
+Completion/repair must include both families under execution.md's common lock
+order. The active compiler view is intermediate evidence for W12, not directly
+public navigation data or final bindings. Reconstruct its manifest only from
+that active publication, including its own diagnostics; stale attempts cannot
+participate. Context failures block applicable final resolution. Backup/retention
+covers these tables together with existing datasets and Git, not a worker cache.
 
 Do not implement automatic deletion of completed snapshots or datasets in Stage 1. A backup must include PostgreSQL and each managed Git repository/ref. Test restoring them together. An absent Git blob is STORAGE_INTEGRITY_ERROR, not a cue to fetch newer source. Abandoned staging data may be removed only when its lease generation is no longer active and no committed publication refers to it. Maintenance operates through storage ownership, not an agent issuing ad-hoc SQL.
 
