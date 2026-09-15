@@ -364,7 +364,9 @@ class OccurrencesRequest(SymbolPageRequest):
 class OccurrencePage(Page):
     items: Annotated[list[OccurrenceRef], Field(max_length=200)]
 
-ErrorCode = Literal['INDEX_INITIALIZING','INVALID_ARGUMENT','INVALID_PATTERN','UNKNOWN_LANGUAGE','RUN_NOT_FOUND','SYMBOL_NOT_FOUND','OCCURRENCE_NOT_FOUND','OCCURRENCE_MISMATCH','PATH_NOT_FOUND','PATH_OUTSIDE_SNAPSHOT','SOURCE_NOT_TEXT','SOURCE_RANGE_INVALID','INVALID_CONTINUATION','CURSOR_MISMATCH','RESPONSE_BUDGET_TOO_SMALL','RESPONSE_ITEM_TOO_LARGE','QUERY_TIMEOUT','STORAGE_UNAVAILABLE','STORAGE_INTEGRITY_ERROR','INTERNAL_ERROR']
+NavigationErrorCode = Literal['INDEX_INITIALIZING','INVALID_ARGUMENT','INVALID_PATTERN','UNKNOWN_LANGUAGE','RUN_NOT_FOUND','SYMBOL_NOT_FOUND','OCCURRENCE_NOT_FOUND','OCCURRENCE_MISMATCH','PATH_NOT_FOUND','PATH_OUTSIDE_SNAPSHOT','SOURCE_NOT_TEXT','SOURCE_RANGE_INVALID','INVALID_CONTINUATION','CURSOR_MISMATCH','RESPONSE_BUDGET_TOO_SMALL','RESPONSE_ITEM_TOO_LARGE','QUERY_TIMEOUT','STORAGE_UNAVAILABLE','STORAGE_INTEGRITY_ERROR','INTERNAL_ERROR']
+OperationalErrorCode = Literal['PROJECT_NOT_FOUND','SNAPSHOT_NOT_READY','REVISION_NOT_FOUND','REVISION_AMBIGUOUS','UNSUPPORTED_SOURCE','UNSUPPORTED_ENTRY','CAPTURE_IO_ERROR','SUBMODULE_PIN_UNAVAILABLE','SUBMODULE_FETCH_FAILED','SUBMODULE_CYCLE','REMOTE_ADDRESS_REJECTED','REMOTE_FETCH_FAILED','REDIRECT_REQUIRES_RESUBMISSION','RESOURCE_REQUIRED','NONDETERMINISTIC_OUTPUT','LEASE_LOST','INVALID_RULE_SELECTION','RULE_CONFLICT','NAME_MATCH_FAILED','SCANNER_FAILED','SCANNER_FILE_NOT_PROCESSED','PARSER_FAILED','COMPILER_FAILED','INVALID_COMPILATION_CONTEXT','PREREQUISITE_UNAVAILABLE','INVALID_STATE_TRANSITION']
+ErrorCode = NavigationErrorCode | OperationalErrorCode
 class ErrorPosition(Model):
     unit: Literal['input_character','source_byte','source_line']
     start: Count
@@ -377,8 +379,8 @@ class ErrorItem(Model):
     component: str | None
     position: ErrorPosition | None
     message: Annotated[str, Field(max_length=768)]
-    expected: str | None
-    received: str | None
+    expected: Annotated[str, Field(max_length=256)] | None
+    received: Annotated[str, Field(max_length=256)] | None
     remediation: Annotated[str, Field(max_length=1024)]
     retryable: bool
     diagnostic_id: Id | None
@@ -386,7 +388,9 @@ class ErrorItem(Model):
     minimum_required_bytes: Count | None = None
 
 class ErrorResponse(Model):
-    errors: Annotated[list[ErrorItem], Field(min_length=1, max_length=32)]
+    # S1-ER-R06 requires every independent request error, not the first 32.
+    # The configured error byte value is a target, never a truncation limit.
+    errors: Annotated[list[ErrorItem], Field(min_length=1)]
 
 class NameRule(Model):
     id: Annotated[str, Field(min_length=1, max_length=128)]

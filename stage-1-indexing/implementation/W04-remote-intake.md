@@ -22,7 +22,7 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 3. Without opt-in, report gitlink exclusions and perform no child-network requests. With opt-in, resolve each immediate parent pin and URL, fetch recursively and flatten only the requested captured source.
 4. Handle relative repository URLs using Git repository-relative semantics; keep local populated submodule bytes authoritative. Missing local children use their immediate parent HEAD pin, never a branch-tip guess.
 5. Detect LFS pointers without LFS downloads. Preserve an explicit exclusion even when a remote advertises credentials or a download URL.
-6. Inject a fake HTTPS Git transport for deterministic tests and an optional documented public smoke test. Do not rely on a mutable public branch for the required CI acceptance suite.
+6. Keep fake transport unit tests, and add configuration-and-processes.md's mandatory controlled real HTTPS Git transport suite: temporary CA/smart-HTTP server, pinned-address/TLS/redirect failures, credential/proxy poisoning, exact revisions and request recording. A test-only loopback policy is injected; no production address bypass is exposed. Public smoke tests are optional, but fake transport alone cannot pass G02. Do not rely on a mutable public branch for required CI acceptance.
 
 ## Verification commands
 

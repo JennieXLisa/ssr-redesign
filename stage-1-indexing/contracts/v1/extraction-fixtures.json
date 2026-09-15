@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "purpose": "Authored shared-record contract fixture, not parser output evidence",
+  "source": "def outer(x: int = 1):\n    return missing(x)\n",
+  "bundle": {
+    "schema_version": 1,
+    "snapshot_id": "00000000-0000-0000-0000-000000000001",
+    "extraction_id": "00000000-0000-0000-0000-000000000002",
+    "file_id": "00000000-0000-0000-0000-000000000003",
+    "language": "python",
+    "byte_length": 45,
+    "parser_profile_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "SUCCEEDED",
+    "symbols": [{
+      "symbol_id": "00000000-0000-0000-0000-000000000006",
+      "owner_scope_id": "00000000-0000-0000-0000-000000000004",
+      "local_name": "outer", "qualified_name": "fixture.outer", "kind": "FUNCTION",
+      "signature": "def outer(x: int = 1):",
+      "return_type": {"text": null, "origin": "unknown", "evidence": []},
+      "properties": [],
+      "provenance": {"backend": "python-ast", "version": "3.12", "profile_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "evidence": [{"start_byte": 0, "end_byte": 44}], "limitations": []}
+    }],
+    "occurrences": [{
+      "occurrence_id": "00000000-0000-0000-0000-000000000007",
+      "symbol_id": "00000000-0000-0000-0000-000000000006", "role": "definition",
+      "range": {"start_byte": 0, "end_byte": 44, "start_line": 1, "end_line": 2, "start_column": 1, "end_column": 22},
+      "body_range": {"start_byte": 27, "end_byte": 44},
+      "signature_range": {"start_byte": 0, "end_byte": 22},
+      "name_range": {"start_byte": 4, "end_byte": 9},
+      "parameters": [{"ordinal": 0, "name": "x", "kind": "positional", "range": {"start_byte": 10, "end_byte": 20}, "type": {"text": "int", "origin": "declared", "evidence": [{"start_byte": 13, "end_byte": 16}]}, "default_range": {"start_byte": 19, "end_byte": 20}}]
+    }],
+    "scopes": [
+      {"scope_id": "00000000-0000-0000-0000-000000000004", "parent_scope_id": null, "owner_symbol_id": null, "kind": "module", "range": {"start_byte": 0, "end_byte": 45}},
+      {"scope_id": "00000000-0000-0000-0000-000000000005", "parent_scope_id": "00000000-0000-0000-0000-000000000004", "owner_symbol_id": "00000000-0000-0000-0000-000000000006", "kind": "callable", "range": {"start_byte": 27, "end_byte": 44}}
+    ],
+    "imports": [],
+    "declarations": [
+      {"declaration_id": "00000000-0000-0000-0000-000000000009", "scope_id": "00000000-0000-0000-0000-000000000004", "name": "outer", "kind": "symbol", "symbol_id": "00000000-0000-0000-0000-000000000006", "import_id": null, "range": {"start_byte": 4, "end_byte": 9}, "visible_from": 44, "visibility": "after_declaration", "namespace": "value"},
+      {"declaration_id": "00000000-0000-0000-0000-000000000010", "scope_id": "00000000-0000-0000-0000-000000000005", "name": "x", "kind": "parameter", "symbol_id": null, "import_id": null, "range": {"start_byte": 10, "end_byte": 11}, "visible_from": 27, "visibility": "whole_scope", "namespace": "value"}
+    ],
+    "references": [{
+      "reference_id": "00000000-0000-0000-0000-000000000008", "scope_id": "00000000-0000-0000-0000-000000000005", "owner_symbol_id": "00000000-0000-0000-0000-000000000006", "usage": "CALL",
+      "range": {"start_byte": 34, "end_byte": 44, "start_line": 2, "end_line": 2, "start_column": 12, "end_column": 22},
+      "spelling": "missing(x)", "callee_range": {"start_byte": 34, "end_byte": 41}, "receiver_range": null,
+      "arguments": [{"ordinal": 0, "keyword": null, "spread": false, "range": {"start_byte": 42, "end_byte": 43}}],
+      "provenance": {"backend": "python-ast", "version": "3.12", "profile_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "evidence": [{"start_byte": 34, "end_byte": 44}], "limitations": []}
+    }],
+    "diagnostics": []
+  },
+  "invalid_mutations": [
+    {"path": ["references", 0, "owner_symbol_id"], "value": null, "reason": "wrong executable owner"},
+    {"path": ["references", 0, "arguments", 0, "ordinal"], "value": 2, "reason": "noncontiguous argument ordinal"},
+    {"path": ["references", 0, "range", "end_byte"], "value": 46, "reason": "range outside file"},
+    {"path": ["occurrences", 0, "role"], "value": "declaration", "reason": "declaration with body"},
+    {"path": ["scopes", 1, "parent_scope_id"], "value": "00000000-0000-0000-0000-000000000005", "reason": "scope cycle"},
+    {"path": ["symbols", 0, "return_type", "text"], "value": "guessed", "reason": "unknown type with invented value"},
+    {"path": ["symbols", 0, "provenance", "profile_digest"], "value": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "reason": "wrong semantic profile"},
+    {"path": ["declarations", 0, "symbol_id"], "value": "00000000-0000-0000-0000-000000000099", "reason": "unknown symbol"},
+    {"path": ["status"], "value": "FAILED", "reason": "failed output without diagnostic or with inventory"},
+    {"path": ["symbols", 0, "unexpected"], "value": true, "reason": "unknown internal field"}
+  ]
+}

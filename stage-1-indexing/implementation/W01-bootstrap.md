@@ -20,9 +20,9 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 
 1. Create the src-layout Python 3.12 package and an ssr console entry point. Keep import-time work free of database connections, parser initialization and network access.
 2. Declare the selected parser pins and application dependencies from architecture.md. Resolve/freeze once using uv; install Semgrep CE in a separate tool environment and record its executable version/digest. Do not add agent/provider dependencies.
-3. Define a strict TOML settings model with defaults from contracts/v1/defaults.toml. Load secrets only from named SSR environment variables, never target files; reject unknown settings with the shared actionable error format.
+3. Adopt contracts/v1/settings.py and defaults.toml with configuration-and-processes.md's exact installation/project paths, precedence, separate explicit JSON semantic profile and unknown-field behavior. Load secrets only from named SSR environment variables, never target files; reject unknown settings with the shared actionable error format.
 4. Add a PostgreSQL 17 development Compose service with a persistent local volume and loopback-only port. Read the password from a developer-supplied environment variable; do not commit credentials. A direct DSN remains supported.
-5. Implement ssr doctor to verify Git HTTPS support, PostgreSQL connectivity/version, each grammar capsule, a minimal syntax/query probe, regex/glob behavior, and the Semgrep CLI capabilities. It must report missing prerequisites, not silently drop a language.
+5. Implement ssr doctor using configuration-and-processes.md's concrete probes for real Git HTTPS/TLS/pinning, PostgreSQL connectivity/version, each grammar capsule, syntax/query behavior, regex/glob behavior, libclang and the exact Semgrep invocation/no-network boundary. Emit version/digest/capability receipts. Version/help output alone is insufficient. Report missing prerequisites, not silently drop a language.
 W01 probes installed grammar support only. Language-specific extraction queries are introduced and registered by W07–W11; W01 must not depend on those later files.
 
 6. Add import-linter boundaries reflecting architecture.md. Build a wheel and test installation outside the checkout so grammar/query/rule resources are actually packaged.

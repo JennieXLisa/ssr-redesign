@@ -18,7 +18,7 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 
 ## Implementation recipe
 
-1. Define the typed ExtractionBundle exactly as specified by extraction.md/storage columns. Keep parser results separate from publication; validation rejects wrong ranges/owners before staging activation.
+1. Adopt the SourceUnit/ExtractionBundle and all nested records already fixed by contracts/v1/records.py in W02. Follow extraction.md's two-pass traversal and language-policies.md's visibility/ownership rules. Keep parser results separate from publication; validation rejects wrong ranges/owners before staging activation. Run the valid/invalid shared-record fixtures before adding Python-specific producers.
 2. Implement classification and source-to-parser offset mapping. Python uses tokenize encoding detection and ast positions converted from UTF-8 parser coordinates to original bytes.
 3. Extract callable/class/module scopes, definitions, lambda bodies, signatures/parameters/default spans, imports, call/receiver/argument references and declared properties.
 4. Assign deterministic IDs from source coordinates and ownership, not traversal scheduling. Keep anonymous display names distinct from declared local names.

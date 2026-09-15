@@ -10,3 +10,15 @@ b['$schema']='https://json-schema.org/draft/2020-12/schema'
 b['title']='SSR Stage 1 request/response contract bundle'
 b['description']='Select the named $defs model for the called operation. Pydantic model validators and owner checks additionally enforce cross-field and database/source invariants.'
 (p.parent/'api.schema.json').write_text(json.dumps(b,separators=(',', ':'))+'\n')
+sys.path.insert(0, str(p.parent))
+from records import INTERNAL_MODELS
+from settings import Settings, SemanticProfile
+internal = TypeAdapter(Union[tuple(INTERNAL_MODELS)]).json_schema()
+internal['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
+internal['title'] = 'SSR Stage 1 internal extraction contract bundle'
+internal['description'] = 'SourceUnit is ephemeral; persist only typed bundle projections. Owner checks additionally verify source bytes and dataset identity.'
+(p.parent/'internal.schema.json').write_text(json.dumps(internal,separators=(',', ':'))+'\n')
+settings = TypeAdapter(Union[Settings, SemanticProfile]).json_schema()
+settings['$schema'] = 'https://json-schema.org/draft/2020-12/schema'
+settings['title'] = 'SSR Stage 1 operational settings and semantic profile schemas'
+(p.parent/'settings.schema.json').write_text(json.dumps(settings,separators=(',', ':'))+'\n')

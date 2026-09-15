@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "format": "ssr-benchmark-corpus-v1",
+  "evidence": "Pinned inputs and an executable synthetic generator; no benchmark has been run.",
+  "real": {
+    "id": "cpython-v3.12.0",
+    "repository": "https://github.com/python/cpython.git",
+    "ref": "refs/tags/v3.12.0",
+    "annotated_tag_object": "0fb6e700c2f94ae0717ee1be7d4e50b2dd480d14",
+    "peeled_commit": "0fb18b02c8ad56299d6a2910be0bab8ad601ef24",
+    "pin_evidence": "Prime verified both object IDs using git ls-remote before this reference asset was authored.",
+    "capture": "Use normal public-HTTPS intake with the pinned revision; capture the entire tree under the ordinary source-intake policy. No benchmark path subset or additional exclusion.",
+    "execute_target": false,
+    "failure_policy": "The tree includes intentionally invalid test sources. Preserve terminal failures and blocked downstream work; do not delete those files, weaken parsing or claim index_complete. Record the actual census and outcomes."
+  },
+  "synthetic": {
+    "id": "language-volume-v1",
+    "fixtures": "contracts/v1/language-fixtures.json",
+    "fixtures_sha256": "f0ce4df0e3eb3ce0d8f841cab0104789518ad9660d7367d1f0eec87280e500f9",
+    "selection": "Include a fixture only when every expected extraction file has status SUCCEEDED; include every source file of that fixture, including empty files.",
+    "replicas": 100,
+    "replica_start": 1,
+    "path_template": "replica-{replica:04d}/{fixture_id}/{source_path}",
+    "source_bytes": "Encode each source string as UTF-8 exactly; no newline normalization, rewriting, wrappers or generated code.",
+    "expected": {
+      "cases_per_replica": 20,
+      "files_per_replica": 28,
+      "bytes_per_replica": 2557,
+      "default_file_count": 2800,
+      "default_total_bytes": 255700,
+      "default_census_sha256": "80e587efafa7aae01de833cf92b6c4435adaf05a445cbec49ea32659ebd9f66a"
+    },
+    "census_hash": "SHA-256 of the full files array sorted by path, serialized as UTF-8 JSON with sort_keys=true, ensure_ascii=false, allow_nan=false and separators=(',', ':'); no trailing newline. Each row contains path, fixture_id, source_path, language, bytes and the SHA-256 of original file bytes. Repeated content remains a separate path entry.",
+    "purpose": "Volume and accounting only; not real-world representativeness. Assess each fixture's semantic expectations individually with its own profile. Replication does not make those profiles interchangeable or prove the combined corpus succeeds."
+  },
+  "protocol": {
+    "heavy_slots": [1, 2, 4, 8],
+    "scanner_slots": 2,
+    "effective_scanner_slots": "Set validated workers.scanner_slots=min(2, workers.heavy_slots), including 1 for the serial run; the cap is not an implicit settings clamp. Scanner and compiler work consume the same total heavy-slot budget.",
+    "fresh_storage_repetitions_per_configuration": 3,
+    "fresh_storage": "New disposable PostgreSQL database and managed Git storage for every repetition; no extraction, resolution or flagging dataset reuse. Record OS/tool-cache conditions separately.",
+    "freeze": [
+      "source commit/tree or synthetic full census digest",
+      "application commit, dependency lock and installed tool/resource digests",
+      "parser/grammar/query versions and resource digests",
+      "compiler/library/resource digests and explicit build-context limitations",
+      "scanner executable version/digest and exact rule manifest/mode/digest",
+      "resolved semantic settings and extraction/resolution/flagging profile digests"
+    ],
+    "compare": "Compare full normalized success records, source/work census, terminal failure classifications, blocked work and completeness state against the serial baseline. Retain semantic diagnostics; remove only documented run-local IDs, timestamps, transient attempt data and worker/runtime diagnostics. Rebind IDs to stable physical locators before comparison.",
+    "warm_reuse": "Run and report separately with cache/reused dataset identities and reused work counts; never mix warm reuse into fresh-storage timings.",
+    "performance_claims": false
+  }
+}

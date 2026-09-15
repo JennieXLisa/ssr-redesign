@@ -96,7 +96,7 @@
     "python-syntax:check_contracts.py",
     "relative-links-with-baseline"
   ],
-  "python": "3.13.5",
+  "python": "3.12.12",
   "scope": "schema/model, pure UTF-8 paging reference, and package-structure checks only; no harness/SQL/parser/scanner integration executed",
   "name_rules": 43,
   "semgrep_rules": 29,

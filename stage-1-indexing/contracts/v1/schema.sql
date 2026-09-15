@@ -53,16 +53,22 @@ CREATE TABLE datasets (
  input_extraction_id uuid,
  rule_manifest_id uuid REFERENCES rule_manifests,
  state text NOT NULL CHECK(state IN ('PLANNED','RUNNING','PAUSED','FAILED','SUCCEEDED')),
+ plan_state text NOT NULL DEFAULT 'UNFROZEN' CHECK(plan_state IN ('UNFROZEN','FROZEN')),
+ plan_digest text, plan_file_count bigint CHECK(plan_file_count>=0),
  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), finished_at timestamptz,
  UNIQUE(snapshot_id,kind,fingerprint), UNIQUE(snapshot_id,dataset_id),
  FOREIGN KEY(snapshot_id,input_extraction_id) REFERENCES datasets(snapshot_id,dataset_id),
  CHECK ((kind='extraction') = (input_extraction_id IS NULL)),
- CHECK ((kind='flagging') = (rule_manifest_id IS NOT NULL))
+ CHECK ((kind='flagging') = (rule_manifest_id IS NOT NULL)),
+ CHECK ((plan_state='FROZEN' AND plan_digest IS NOT NULL AND plan_file_count IS NOT NULL)
+     OR (plan_state='UNFROZEN' AND plan_digest IS NULL AND plan_file_count IS NULL)),
+ CHECK (state <> 'SUCCEEDED' OR plan_state='FROZEN')
 );
 CREATE TABLE index_runs (
  index_run_id uuid PRIMARY KEY, snapshot_id uuid NOT NULL REFERENCES snapshots,
  extraction_id uuid NOT NULL, resolution_id uuid NOT NULL, flagging_id uuid NOT NULL,
  state text NOT NULL CHECK(state IN ('PLANNED','RUNNING','PAUSED','FAILED','SUCCEEDED')),
+ control_intent text NOT NULL DEFAULT 'HOLD' CHECK(control_intent IN ('HOLD','RUN','PAUSE')),
  created_at timestamptz NOT NULL DEFAULT clock_timestamp(), finished_at timestamptz,
  FOREIGN KEY(snapshot_id,extraction_id) REFERENCES datasets(snapshot_id,dataset_id),
  FOREIGN KEY(snapshot_id,resolution_id) REFERENCES datasets(snapshot_id,dataset_id),
@@ -75,6 +81,7 @@ CREATE TABLE work_units (
  state text NOT NULL CHECK(state IN ('PENDING','RUNNING','FAILED','SUCCEEDED')),
  generation bigint NOT NULL DEFAULT 0 CHECK(generation>=0),
  attempt_count integer NOT NULL DEFAULT 0 CHECK(attempt_count>=0),
+ retry_cycle_attempt_count integer NOT NULL DEFAULT 0 CHECK(retry_cycle_attempt_count>=0),
  lease_token uuid, lease_expires_at timestamptz, next_attempt_at timestamptz,
  active_publication_id uuid, last_diagnostic_id uuid,
  UNIQUE(dataset_id,file_id,component),
@@ -107,14 +114,40 @@ CREATE TABLE file_metadata (
  bom_bytes smallint NOT NULL DEFAULT 0 CHECK(bom_bytes BETWEEN 0 AND 4),
  PRIMARY KEY(publication_id,file_id)
 );
+-- Frozen per-dataset census, including files with no applicable work.
+-- Extraction text_metadata jobs bootstrap before this plan can be frozen.
+CREATE TABLE dataset_plan_files (
+ dataset_id uuid NOT NULL, snapshot_id uuid NOT NULL, file_id uuid NOT NULL,
+ metadata_publication_id uuid NOT NULL,
+ components text[] NOT NULL,
+ treatment text NOT NULL CHECK(treatment IN ('source','text','binary','symlink','lfs_pointer')),
+ reason text NOT NULL,
+ PRIMARY KEY(dataset_id,file_id),
+ FOREIGN KEY(snapshot_id,dataset_id) REFERENCES datasets(snapshot_id,dataset_id),
+ FOREIGN KEY(snapshot_id,file_id) REFERENCES files(snapshot_id,file_id),
+ FOREIGN KEY(metadata_publication_id,file_id) REFERENCES file_metadata(publication_id,file_id),
+ CHECK(components <@ ARRAY['text_metadata','extract','resolve','name_flags','semgrep_flags']::text[])
+);
+CREATE TABLE scopes (
+ publication_id uuid NOT NULL REFERENCES publications, scope_id uuid NOT NULL,
+ file_id uuid NOT NULL REFERENCES files, parent_scope_id uuid, owner_symbol_id uuid,
+ kind text NOT NULL CHECK(kind IN ('module','callable','type','block','comprehension','namespace')),
+ start_byte bigint NOT NULL CHECK(start_byte>=0), end_byte bigint NOT NULL,
+ PRIMARY KEY(publication_id,scope_id), CHECK(end_byte>=start_byte),
+ FOREIGN KEY(publication_id,parent_scope_id) REFERENCES scopes(publication_id,scope_id) DEFERRABLE INITIALLY DEFERRED
+);
 CREATE TABLE symbols (
  publication_id uuid NOT NULL REFERENCES publications, symbol_id uuid NOT NULL,
  file_id uuid NOT NULL REFERENCES files, local_name text, qualified_name text NOT NULL,
  kind text NOT NULL CHECK(kind IN ('FUNCTION','METHOD','CONSTRUCTOR','DESTRUCTOR','LAMBDA','CLASS','INTERFACE','TYPE','MODULE','VARIABLE')),
- language text NOT NULL, owner_symbol_id uuid, signature text,
+ language text NOT NULL, owner_symbol_id uuid, owner_scope_id uuid NOT NULL, signature text,
+ return_type jsonb NOT NULL,
  properties jsonb NOT NULL, provenance jsonb NOT NULL,
- PRIMARY KEY(publication_id,symbol_id)
+ PRIMARY KEY(publication_id,symbol_id),
+ FOREIGN KEY(publication_id,owner_scope_id) REFERENCES scopes(publication_id,scope_id) DEFERRABLE INITIALLY DEFERRED
 );
+ALTER TABLE scopes ADD CONSTRAINT scope_owner
+ FOREIGN KEY(publication_id,owner_symbol_id) REFERENCES symbols(publication_id,symbol_id) DEFERRABLE INITIALLY DEFERRED;
 CREATE INDEX symbols_name ON symbols(publication_id,md5(local_name));
 CREATE TABLE occurrences (
  publication_id uuid NOT NULL REFERENCES publications, occurrence_id uuid NOT NULL,
@@ -131,13 +164,39 @@ CREATE TABLE occurrences (
 CREATE INDEX occurrence_positions ON occurrences(publication_id,file_id,start_byte,occurrence_id);
 CREATE TABLE reference_occurrences (
  publication_id uuid NOT NULL REFERENCES publications, reference_id uuid NOT NULL,
- file_id uuid NOT NULL REFERENCES files, owner_symbol_id uuid,
+ file_id uuid NOT NULL REFERENCES files, owner_symbol_id uuid, scope_id uuid NOT NULL,
  usage text NOT NULL CHECK(usage IN ('CALL','CONSTRUCT','IMPORT','CALLBACK_ARGUMENT','SYMBOL_USE','SOURCE')),
  start_byte bigint NOT NULL CHECK(start_byte>=0), end_byte bigint NOT NULL,
- callee_range jsonb, receiver_range jsonb, spelling text, import_info jsonb,
- PRIMARY KEY(publication_id,reference_id), CHECK(end_byte>=start_byte)
+ callee_range jsonb, receiver_range jsonb, spelling text NOT NULL, provenance jsonb NOT NULL,
+ PRIMARY KEY(publication_id,reference_id), CHECK(end_byte>=start_byte),
+ FOREIGN KEY(publication_id,scope_id) REFERENCES scopes(publication_id,scope_id),
+ FOREIGN KEY(publication_id,owner_symbol_id) REFERENCES symbols(publication_id,symbol_id)
 );
 CREATE INDEX reference_owner ON reference_occurrences(publication_id,owner_symbol_id,start_byte,reference_id);
+CREATE TABLE imports (
+ publication_id uuid NOT NULL, import_id uuid NOT NULL, reference_id uuid NOT NULL,
+ scope_id uuid NOT NULL, kind text NOT NULL CHECK(kind IN ('import','export','require','include','source','dynamic')),
+ module text, imported_name text, local_name text, exported_name text,
+ relative_level bigint NOT NULL CHECK(relative_level>=0),
+ start_byte bigint NOT NULL CHECK(start_byte>=0), end_byte bigint NOT NULL CHECK(end_byte>=start_byte),
+ PRIMARY KEY(publication_id,import_id),
+ FOREIGN KEY(publication_id,reference_id) REFERENCES reference_occurrences(publication_id,reference_id),
+ FOREIGN KEY(publication_id,scope_id) REFERENCES scopes(publication_id,scope_id)
+);
+CREATE TABLE declarations (
+ publication_id uuid NOT NULL, declaration_id uuid NOT NULL, scope_id uuid NOT NULL,
+ name text NOT NULL, kind text NOT NULL CHECK(kind IN ('symbol','parameter','import','assignment','delete','global','nonlocal')),
+ symbol_id uuid, import_id uuid,
+ start_byte bigint NOT NULL CHECK(start_byte>=0), end_byte bigint NOT NULL CHECK(end_byte>=start_byte),
+ visible_from bigint NOT NULL CHECK(visible_from>=0),
+ visibility text NOT NULL CHECK(visibility IN ('whole_scope','after_declaration','tdz','dynamic')),
+ namespace text NOT NULL CHECK(namespace IN ('value','type')),
+ PRIMARY KEY(publication_id,declaration_id),
+ FOREIGN KEY(publication_id,scope_id) REFERENCES scopes(publication_id,scope_id),
+ FOREIGN KEY(publication_id,symbol_id) REFERENCES symbols(publication_id,symbol_id),
+ FOREIGN KEY(publication_id,import_id) REFERENCES imports(publication_id,import_id)
+);
+CREATE INDEX declaration_lookup ON declarations(publication_id,scope_id,md5(name),visible_from);
 CREATE TABLE arguments (
  publication_id uuid NOT NULL, reference_id uuid NOT NULL, ordinal integer NOT NULL CHECK(ordinal>=0),
  keyword text, spread boolean NOT NULL,
@@ -185,10 +244,13 @@ CREATE TABLE flag_related_owners (
 CREATE TABLE diagnostics (
  diagnostic_id uuid PRIMARY KEY, snapshot_id uuid REFERENCES snapshots, dataset_id uuid REFERENCES datasets,
  work_id uuid REFERENCES work_units, file_id uuid REFERENCES files,
+ publication_id uuid REFERENCES publications,
  component text NOT NULL, code text NOT NULL, detail jsonb NOT NULL,
- created_at timestamptz NOT NULL DEFAULT clock_timestamp()
+ created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ CHECK(publication_id IS NULL OR (work_id IS NOT NULL AND dataset_id IS NOT NULL AND file_id IS NOT NULL))
 );
 CREATE INDEX diagnostic_dataset ON diagnostics(dataset_id,created_at,diagnostic_id);
+CREATE INDEX diagnostic_publication ON diagnostics(publication_id,diagnostic_id) WHERE publication_id IS NOT NULL;
 ALTER TABLE work_units ADD CONSTRAINT work_last_diagnostic FOREIGN KEY(last_diagnostic_id) REFERENCES diagnostics;
 COMMIT;
 -- Publication owner MUST additionally validate cross-publication target identity,

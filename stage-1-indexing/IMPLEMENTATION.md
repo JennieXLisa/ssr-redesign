@@ -1,10 +1,10 @@
 # Stage 1 — Implementation specification and developer entry point
 
-Edition: 1.0, 14 September 2026. Scope: source intake, immutable snapshots, structural indexing, supported reference resolution, security-interest flags, and researcher navigation. No LLM invocation, autonomous review, threat-model generation, exploitation workflow, or backward-compatible runtime is part of this stage.
+Edition: 1.1, 16 September 2026. Scope: source intake, immutable snapshots, structural indexing, supported reference resolution, security-interest flags, and researcher navigation. No LLM invocation, autonomous review, threat-model generation, exploitation workflow, or backward-compatible runtime is part of this stage.
 
 ## Read this first
 
-This completes the design details delegated by the researcher after the approved requirements and two partial API contracts. The files under `requirements/` retain the agreed behavior and its IDs; they are not instructions to repeat the original design interview. The two older contract documents remain the decision history for function search and reading. The documents in [specification/](specification/architecture.md) now resolve their open implementation mechanisms. The new implementation choices are engineering decisions made under that delegation, not claims that the researcher individually approved each library, column, or numeric constant.
+This specifies the engineering choices delegated by the researcher after the approved requirements and two partial API contracts. The files under `requirements/` retain the agreed behavior and its IDs; they are not instructions to repeat the original design interview. The two older contract documents remain decision history. Edition 1.1 corrects the reviewed record, lifecycle, API/error, paging and compiler-policy inconsistencies and supplies concrete conformance inputs. It does not claim that every adapter query, native isolation mechanism or runtime test has been implemented or proved. New engineering choices are made under that delegation, not claims that the researcher individually approved each library, column, or numeric constant.
 
 Use this precedence: explicit researcher decisions in the requirements; the concrete specification in this edition; machine-readable contract models and configuration in `contracts/v1/`; then task recipes. If an executable contract contradicts prose, stop and identify the exact discrepancy instead of choosing whichever is easier. A failed backend is not permission to downgrade a requirement, silently skip source, or label a partial result complete.
 
@@ -43,10 +43,13 @@ Each task has its own recipe in [implementation/](implementation/README.md). A t
 | Document | What it fixes |
 |---|---|
 | [Architecture](specification/architecture.md) | Packages, dependencies, ownership, configuration, version policy |
+| [Configuration and processes](specification/configuration-and-processes.md) | Typed settings/profile formats, concrete locations/probes, manifest shape, runner and real HTTPS acceptance |
 | [Storage](specification/storage.md) | PostgreSQL entities, keys, uniqueness, indexes, publication and reuse |
 | [Capture](specification/capture.md) | Local/remote algorithms, Git publication, submodules, links, LFS, recovery |
 | [Extraction](specification/extraction.md) | Source normalization, adapter output, language constructs, errors |
+| [Language policies](specification/language-policies.md) | Per-language visibility/shadowing/import/ownership decisions and exact authored source/output fixtures |
 | [Resolution](specification/resolution.md) | Supported binding cases, compiler inputs, identity association, limitations |
+| [Compiler profile](specification/compiler-profile.md) | Explicit accepted option grammar, POSIX tokenizer, rooted mapping, context trust and W09/W12 boundary |
 | [Rules](specification/rules.md) | Categories, rule formats, comparison, scanning and coverage accounting |
 | [Navigation](specification/navigation.md) | Operations, ordering, cursors, filters, errors and response limits |
 | [Source reading](specification/source-reading.md) | Encoding, byte/line conventions, whole-response budgets, token algorithm |
@@ -55,6 +58,8 @@ Each task has its own recipe in [implementation/](implementation/README.md). A t
 | [Decisions and sources](specification/decisions-and-sources.md) | Delegated selections, maintained boundaries, primary references |
 
 [TRACEABILITY.json](TRACEABILITY.json) maps every approved requirement ID to its implementation tasks. Contract models and example defaults are specification assets, not a second production implementation. Copy/adapt their types into the owning production package during W02; do not ship two competing DTO definitions.
+
+Shared internal records are `contracts/v1/records.py`; settings and semantic profiles are `contracts/v1/settings.py`. Scopes, imports, declaration invalidations, publication-bound diagnostics and frozen applicability plans have explicit durable representations. The error policy deliberately preserves every independently detectable request error: 65,536 bytes is a target, not a contradictory hard ceiling. Per-run HOLD/RUN/PAUSE intent never cancels another consumer's shared work. These choices and their executable regressions must move together when adopted by the runtime.
 
 ## Completion boundary
 

@@ -1,0 +1,4471 @@
+{
+  "schema_version": 1,
+  "format": "ssr-language-golden-v1",
+  "evidence": "authored expectations; executable self-consistency checks only; runtime adapters not executed",
+  "fixtures": [
+    {
+      "id": "python-shadow-lambdas",
+      "notes": "Whole-function assignment shadowing; same-name scopes; nested/same-line anonymous ownership; original CRLF and multibyte offsets.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "scope.py",
+          "language": "python",
+          "encoding": "utf-8",
+          "source": "# café\r\ndef ping(): return 1\r\ndef outer():\r\n    def ping(): return 2\r\n    return lambda: (lambda: ping(), lambda: missing())\r\ndef shadow():\r\n    ping()\r\n    ping = None\r\nping()\r\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "scope.py",
+              "language": "python",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "scope.py@9:29:FUNCTION",
+              "path": "scope.py",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 9,
+                "end_byte": 29,
+                "text": "def ping(): return 1"
+              },
+              "name": {
+                "start_byte": 13,
+                "end_byte": 17,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 21,
+                "end_byte": 29,
+                "text": "return 1"
+              }
+            },
+            {
+              "key": "scope.py@31:125:FUNCTION",
+              "path": "scope.py",
+              "local_name": "outer",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 31,
+                "end_byte": 125,
+                "text": "def outer():\r\n    def ping(): return 2\r\n    return lambda: (lambda: ping(), lambda: missing())"
+              },
+              "name": {
+                "start_byte": 35,
+                "end_byte": 40,
+                "text": "outer"
+              },
+              "body": {
+                "start_byte": 49,
+                "end_byte": 125,
+                "text": "def ping(): return 2\r\n    return lambda: (lambda: ping(), lambda: missing())"
+              }
+            },
+            {
+              "key": "scope.py@49:69:FUNCTION",
+              "path": "scope.py",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": "scope.py@31:125:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 49,
+                "end_byte": 69,
+                "text": "def ping(): return 2"
+              },
+              "name": {
+                "start_byte": 53,
+                "end_byte": 57,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 61,
+                "end_byte": 69,
+                "text": "return 2"
+              }
+            },
+            {
+              "key": "scope.py@82:125:LAMBDA",
+              "path": "scope.py",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "scope.py@31:125:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 82,
+                "end_byte": 125,
+                "text": "lambda: (lambda: ping(), lambda: missing())"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 90,
+                "end_byte": 125,
+                "text": "(lambda: ping(), lambda: missing())"
+              }
+            },
+            {
+              "key": "scope.py@91:105:LAMBDA",
+              "path": "scope.py",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "scope.py@82:125:LAMBDA",
+              "role": "definition",
+              "range": {
+                "start_byte": 91,
+                "end_byte": 105,
+                "text": "lambda: ping()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 99,
+                "end_byte": 105,
+                "text": "ping()"
+              }
+            },
+            {
+              "key": "scope.py@107:124:LAMBDA",
+              "path": "scope.py",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "scope.py@82:125:LAMBDA",
+              "role": "definition",
+              "range": {
+                "start_byte": 107,
+                "end_byte": 124,
+                "text": "lambda: missing()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 115,
+                "end_byte": 124,
+                "text": "missing()"
+              }
+            },
+            {
+              "key": "scope.py@127:169:FUNCTION",
+              "path": "scope.py",
+              "local_name": "shadow",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 127,
+                "end_byte": 169,
+                "text": "def shadow():\r\n    ping()\r\n    ping = None"
+              },
+              "name": {
+                "start_byte": 131,
+                "end_byte": 137,
+                "text": "shadow"
+              },
+              "body": {
+                "start_byte": 146,
+                "end_byte": 169,
+                "text": "ping()\r\n    ping = None"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "scope.py@99:105:CALL",
+              "path": "scope.py",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.py@91:105:LAMBDA",
+              "range": {
+                "start_byte": 99,
+                "end_byte": 105,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 99,
+                "end_byte": 103,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.py@115:124:CALL",
+              "path": "scope.py",
+              "usage": "CALL",
+              "spelling": "missing()",
+              "owner": "scope.py@107:124:LAMBDA",
+              "range": {
+                "start_byte": 115,
+                "end_byte": 124,
+                "text": "missing()"
+              },
+              "callee": {
+                "start_byte": 115,
+                "end_byte": 122,
+                "text": "missing"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.py@146:152:CALL",
+              "path": "scope.py",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.py@127:169:FUNCTION",
+              "range": {
+                "start_byte": 146,
+                "end_byte": 152,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 146,
+                "end_byte": 150,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.py@171:177:CALL",
+              "path": "scope.py",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": null,
+              "range": {
+                "start_byte": 171,
+                "end_byte": 177,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 171,
+                "end_byte": 175,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "scope.py@99:105:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.py@49:69:FUNCTION"
+              ]
+            },
+            {
+              "reference": "scope.py@115:124:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "UNSUPPORTED_BINDING",
+              "targets": []
+            },
+            {
+              "reference": "scope.py@146:152:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            },
+            {
+              "reference": "scope.py@171:177:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.py@9:29:FUNCTION"
+              ]
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "python-evaluation-owners",
+      "notes": "Decorators and defaults execute in the enclosing module; the returned lambda owns only its body.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "defaults.py",
+          "language": "python",
+          "encoding": "utf-8",
+          "source": "def deco(x): return x\ndef make(): return 1\n@deco(make())\ndef f(x=make()):\n    return lambda: make()\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "defaults.py",
+              "language": "python",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "defaults.py@0:21:FUNCTION",
+              "path": "defaults.py",
+              "local_name": "deco",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 21,
+                "text": "def deco(x): return x"
+              },
+              "name": {
+                "start_byte": 4,
+                "end_byte": 8,
+                "text": "deco"
+              },
+              "body": {
+                "start_byte": 13,
+                "end_byte": 21,
+                "text": "return x"
+              }
+            },
+            {
+              "key": "defaults.py@22:42:FUNCTION",
+              "path": "defaults.py",
+              "local_name": "make",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 22,
+                "end_byte": 42,
+                "text": "def make(): return 1"
+              },
+              "name": {
+                "start_byte": 26,
+                "end_byte": 30,
+                "text": "make"
+              },
+              "body": {
+                "start_byte": 34,
+                "end_byte": 42,
+                "text": "return 1"
+              }
+            },
+            {
+              "key": "defaults.py@43:99:FUNCTION",
+              "path": "defaults.py",
+              "local_name": "f",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 43,
+                "end_byte": 99,
+                "text": "@deco(make())\ndef f(x=make()):\n    return lambda: make()"
+              },
+              "name": {
+                "start_byte": 61,
+                "end_byte": 62,
+                "text": "f"
+              },
+              "body": {
+                "start_byte": 78,
+                "end_byte": 99,
+                "text": "return lambda: make()"
+              }
+            },
+            {
+              "key": "defaults.py@85:99:LAMBDA",
+              "path": "defaults.py",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "defaults.py@43:99:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 85,
+                "end_byte": 99,
+                "text": "lambda: make()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 93,
+                "end_byte": 99,
+                "text": "make()"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "defaults.py@44:56:CALL",
+              "path": "defaults.py",
+              "usage": "CALL",
+              "spelling": "deco(make())",
+              "owner": null,
+              "range": {
+                "start_byte": 44,
+                "end_byte": 56,
+                "text": "deco(make())"
+              },
+              "callee": {
+                "start_byte": 44,
+                "end_byte": 48,
+                "text": "deco"
+              },
+              "receiver": null,
+              "arguments": [
+                {
+                  "start_byte": 49,
+                  "end_byte": 55,
+                  "text": "make()"
+                }
+              ]
+            },
+            {
+              "key": "defaults.py@49:55:CALL",
+              "path": "defaults.py",
+              "usage": "CALL",
+              "spelling": "make()",
+              "owner": null,
+              "range": {
+                "start_byte": 49,
+                "end_byte": 55,
+                "text": "make()"
+              },
+              "callee": {
+                "start_byte": 49,
+                "end_byte": 53,
+                "text": "make"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "defaults.py@65:71:CALL",
+              "path": "defaults.py",
+              "usage": "CALL",
+              "spelling": "make()",
+              "owner": null,
+              "range": {
+                "start_byte": 65,
+                "end_byte": 71,
+                "text": "make()"
+              },
+              "callee": {
+                "start_byte": 65,
+                "end_byte": 69,
+                "text": "make"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "defaults.py@93:99:CALL",
+              "path": "defaults.py",
+              "usage": "CALL",
+              "spelling": "make()",
+              "owner": "defaults.py@85:99:LAMBDA",
+              "range": {
+                "start_byte": 93,
+                "end_byte": 99,
+                "text": "make()"
+              },
+              "callee": {
+                "start_byte": 93,
+                "end_byte": 97,
+                "text": "make"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "defaults.py@44:56:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "defaults.py@0:21:FUNCTION"
+              ]
+            },
+            {
+              "reference": "defaults.py@49:55:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "defaults.py@22:42:FUNCTION"
+              ]
+            },
+            {
+              "reference": "defaults.py@65:71:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "defaults.py@22:42:FUNCTION"
+              ]
+            },
+            {
+              "reference": "defaults.py@93:99:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "defaults.py@22:42:FUNCTION"
+              ]
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "python-captured-import",
+      "notes": "Relative alias links captured package source; a missing module never attaches to another repository name.",
+      "profile": {
+        "package_root": "."
+      },
+      "sources": [
+        {
+          "path": "pkg/__init__.py",
+          "language": "python",
+          "encoding": "utf-8",
+          "source": ""
+        },
+        {
+          "path": "pkg/util.py",
+          "language": "python",
+          "encoding": "utf-8",
+          "source": "def run(): return 1\n"
+        },
+        {
+          "path": "pkg/main.py",
+          "language": "python",
+          "encoding": "utf-8",
+          "source": "from .util import run as execute\nfrom .missing import lost\nexecute()\nlost()\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "pkg/__init__.py",
+              "language": "python",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "pkg/util.py",
+              "language": "python",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "pkg/main.py",
+              "language": "python",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "pkg/util.py@0:19:FUNCTION",
+              "path": "pkg/util.py",
+              "local_name": "run",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 19,
+                "text": "def run(): return 1"
+              },
+              "name": {
+                "start_byte": 4,
+                "end_byte": 7,
+                "text": "run"
+              },
+              "body": {
+                "start_byte": 11,
+                "end_byte": 19,
+                "text": "return 1"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "pkg/main.py@59:68:CALL",
+              "path": "pkg/main.py",
+              "usage": "CALL",
+              "spelling": "execute()",
+              "owner": null,
+              "range": {
+                "start_byte": 59,
+                "end_byte": 68,
+                "text": "execute()"
+              },
+              "callee": {
+                "start_byte": 59,
+                "end_byte": 66,
+                "text": "execute"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "pkg/main.py@69:75:CALL",
+              "path": "pkg/main.py",
+              "usage": "CALL",
+              "spelling": "lost()",
+              "owner": null,
+              "range": {
+                "start_byte": 69,
+                "end_byte": 75,
+                "text": "lost()"
+              },
+              "callee": {
+                "start_byte": 69,
+                "end_byte": 73,
+                "text": "lost"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "pkg/main.py",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 32,
+                "text": "from .util import run as execute"
+              },
+              "kind": "import",
+              "module": "util",
+              "imported_name": "run",
+              "local_name": "execute",
+              "exported_name": null,
+              "relative_level": 1
+            },
+            {
+              "path": "pkg/main.py",
+              "range": {
+                "start_byte": 33,
+                "end_byte": 58,
+                "text": "from .missing import lost"
+              },
+              "kind": "import",
+              "module": "missing",
+              "imported_name": "lost",
+              "local_name": "lost",
+              "exported_name": null,
+              "relative_level": 1
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "pkg/main.py@59:68:CALL",
+              "outcome": "RESOLVED",
+              "basis": "CAPTURED_IMPORT",
+              "targets": [
+                "pkg/util.py@0:19:FUNCTION"
+              ]
+            },
+            {
+              "reference": "pkg/main.py@69:75:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "MISSING_IMPORT",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "javascript-tdz",
+      "notes": "A TDZ blocks an outer callable even before the local initializer; the sibling call still resolves.",
+      "profile": {
+        "mode": "module"
+      },
+      "sources": [
+        {
+          "path": "scope.js",
+          "language": "javascript",
+          "encoding": "utf-8",
+          "source": "// café\r\nfunction ping() {}\nfunction run() { ping(); { ping(); let ping = null; } }\nrun();\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "scope.js",
+              "language": "javascript",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "scope.js@10:28:FUNCTION",
+              "path": "scope.js",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 28,
+                "text": "function ping() {}"
+              },
+              "name": {
+                "start_byte": 19,
+                "end_byte": 23,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 26,
+                "end_byte": 28,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "scope.js@29:84:FUNCTION",
+              "path": "scope.js",
+              "local_name": "run",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 29,
+                "end_byte": 84,
+                "text": "function run() { ping(); { ping(); let ping = null; } }"
+              },
+              "name": {
+                "start_byte": 38,
+                "end_byte": 41,
+                "text": "run"
+              },
+              "body": {
+                "start_byte": 44,
+                "end_byte": 84,
+                "text": "{ ping(); { ping(); let ping = null; } }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "scope.js@46:52:CALL",
+              "path": "scope.js",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.js@29:84:FUNCTION",
+              "range": {
+                "start_byte": 46,
+                "end_byte": 52,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 46,
+                "end_byte": 50,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.js@56:62:CALL",
+              "path": "scope.js",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.js@29:84:FUNCTION",
+              "range": {
+                "start_byte": 56,
+                "end_byte": 62,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 56,
+                "end_byte": 60,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.js@85:90:CALL",
+              "path": "scope.js",
+              "usage": "CALL",
+              "spelling": "run()",
+              "owner": null,
+              "range": {
+                "start_byte": 85,
+                "end_byte": 90,
+                "text": "run()"
+              },
+              "callee": {
+                "start_byte": 85,
+                "end_byte": 88,
+                "text": "run"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "scope.js@46:52:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.js@10:28:FUNCTION"
+              ]
+            },
+            {
+              "reference": "scope.js@56:62:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            },
+            {
+              "reference": "scope.js@85:90:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.js@29:84:FUNCTION"
+              ]
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "javascript-export-alias",
+      "notes": "Captured ES export aliases supply value bindings; a parameter shadows an equally named function.",
+      "profile": {
+        "mode": "module"
+      },
+      "sources": [
+        {
+          "path": "lib.mjs",
+          "language": "javascript",
+          "encoding": "utf-8",
+          "source": "export function ping() {}\nexport { ping as exported };\n"
+        },
+        {
+          "path": "main.mjs",
+          "language": "javascript",
+          "encoding": "utf-8",
+          "source": "import { exported as local } from \"./lib.mjs\";\nlocal();\nfunction mutate(ping) { ping(); }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "lib.mjs",
+              "language": "javascript",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "main.mjs",
+              "language": "javascript",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "lib.mjs@7:25:FUNCTION",
+              "path": "lib.mjs",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 7,
+                "end_byte": 25,
+                "text": "function ping() {}"
+              },
+              "name": {
+                "start_byte": 16,
+                "end_byte": 20,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 23,
+                "end_byte": 25,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "main.mjs@56:89:FUNCTION",
+              "path": "main.mjs",
+              "local_name": "mutate",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 56,
+                "end_byte": 89,
+                "text": "function mutate(ping) { ping(); }"
+              },
+              "name": {
+                "start_byte": 65,
+                "end_byte": 71,
+                "text": "mutate"
+              },
+              "body": {
+                "start_byte": 78,
+                "end_byte": 89,
+                "text": "{ ping(); }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "main.mjs@47:54:CALL",
+              "path": "main.mjs",
+              "usage": "CALL",
+              "spelling": "local()",
+              "owner": null,
+              "range": {
+                "start_byte": 47,
+                "end_byte": 54,
+                "text": "local()"
+              },
+              "callee": {
+                "start_byte": 47,
+                "end_byte": 52,
+                "text": "local"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "main.mjs@80:86:CALL",
+              "path": "main.mjs",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "main.mjs@56:89:FUNCTION",
+              "range": {
+                "start_byte": 80,
+                "end_byte": 86,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 80,
+                "end_byte": 84,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "lib.mjs",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 25,
+                "text": "export function ping() {}"
+              },
+              "kind": "export",
+              "module": null,
+              "imported_name": "ping",
+              "local_name": "ping",
+              "exported_name": "ping",
+              "relative_level": 0
+            },
+            {
+              "path": "lib.mjs",
+              "range": {
+                "start_byte": 26,
+                "end_byte": 54,
+                "text": "export { ping as exported };"
+              },
+              "kind": "export",
+              "module": null,
+              "imported_name": "ping",
+              "local_name": "ping",
+              "exported_name": "exported",
+              "relative_level": 0
+            },
+            {
+              "path": "main.mjs",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 46,
+                "text": "import { exported as local } from \"./lib.mjs\";"
+              },
+              "kind": "import",
+              "module": "./lib.mjs",
+              "imported_name": "exported",
+              "local_name": "local",
+              "exported_name": null,
+              "relative_level": 0
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "main.mjs@47:54:CALL",
+              "outcome": "RESOLVED",
+              "basis": "CAPTURED_IMPORT",
+              "targets": [
+                "lib.mjs@7:25:FUNCTION"
+              ]
+            },
+            {
+              "reference": "main.mjs@80:86:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "javascript-callback-not-call",
+      "notes": "A function supplied as an argument is a non-call reference and must not become a caller edge.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "callback.js",
+          "language": "javascript",
+          "encoding": "utf-8",
+          "source": "function ping() {}\nfunction accept(cb) {}\naccept(ping);\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "callback.js",
+              "language": "javascript",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "callback.js@0:18:FUNCTION",
+              "path": "callback.js",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 18,
+                "text": "function ping() {}"
+              },
+              "name": {
+                "start_byte": 9,
+                "end_byte": 13,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 16,
+                "end_byte": 18,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "callback.js@19:41:FUNCTION",
+              "path": "callback.js",
+              "local_name": "accept",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 19,
+                "end_byte": 41,
+                "text": "function accept(cb) {}"
+              },
+              "name": {
+                "start_byte": 28,
+                "end_byte": 34,
+                "text": "accept"
+              },
+              "body": {
+                "start_byte": 39,
+                "end_byte": 41,
+                "text": "{}"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "callback.js@42:54:CALL",
+              "path": "callback.js",
+              "usage": "CALL",
+              "spelling": "accept(ping)",
+              "owner": null,
+              "range": {
+                "start_byte": 42,
+                "end_byte": 54,
+                "text": "accept(ping)"
+              },
+              "callee": {
+                "start_byte": 42,
+                "end_byte": 48,
+                "text": "accept"
+              },
+              "receiver": null,
+              "arguments": [
+                {
+                  "start_byte": 49,
+                  "end_byte": 53,
+                  "text": "ping"
+                }
+              ]
+            },
+            {
+              "key": "callback.js@49:53:CALLBACK_ARGUMENT",
+              "path": "callback.js",
+              "usage": "CALLBACK_ARGUMENT",
+              "spelling": "ping",
+              "owner": null,
+              "range": {
+                "start_byte": 49,
+                "end_byte": 53,
+                "text": "ping"
+              },
+              "callee": null,
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "callback.js@42:54:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "callback.js@19:41:FUNCTION"
+              ]
+            },
+            {
+              "reference": "callback.js@49:53:CALLBACK_ARGUMENT",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "callback.js@0:18:FUNCTION"
+              ]
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "jsx-expression-owners",
+      "notes": "Element spelling is not a call; expression-container and arrow-body calls retain distinct owners.",
+      "profile": {
+        "mode": "module"
+      },
+      "sources": [
+        {
+          "path": "view.jsx",
+          "language": "jsx",
+          "encoding": "utf-8",
+          "source": "// café\r\nfunction ping() {}\nfunction View() { return <Button onClick={() => ping()}>{missing()}</Button>; }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "view.jsx",
+              "language": "jsx",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "view.jsx@10:28:FUNCTION",
+              "path": "view.jsx",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 28,
+                "text": "function ping() {}"
+              },
+              "name": {
+                "start_byte": 19,
+                "end_byte": 23,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 26,
+                "end_byte": 28,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "view.jsx@29:108:FUNCTION",
+              "path": "view.jsx",
+              "local_name": "View",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 29,
+                "end_byte": 108,
+                "text": "function View() { return <Button onClick={() => ping()}>{missing()}</Button>; }"
+              },
+              "name": {
+                "start_byte": 38,
+                "end_byte": 42,
+                "text": "View"
+              },
+              "body": {
+                "start_byte": 45,
+                "end_byte": 108,
+                "text": "{ return <Button onClick={() => ping()}>{missing()}</Button>; }"
+              }
+            },
+            {
+              "key": "view.jsx@71:83:LAMBDA",
+              "path": "view.jsx",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "view.jsx@29:108:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 71,
+                "end_byte": 83,
+                "text": "() => ping()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 77,
+                "end_byte": 83,
+                "text": "ping()"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "view.jsx@77:83:CALL",
+              "path": "view.jsx",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "view.jsx@71:83:LAMBDA",
+              "range": {
+                "start_byte": 77,
+                "end_byte": 83,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 77,
+                "end_byte": 81,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "view.jsx@86:95:CALL",
+              "path": "view.jsx",
+              "usage": "CALL",
+              "spelling": "missing()",
+              "owner": "view.jsx@29:108:FUNCTION",
+              "range": {
+                "start_byte": 86,
+                "end_byte": 95,
+                "text": "missing()"
+              },
+              "callee": {
+                "start_byte": 86,
+                "end_byte": 93,
+                "text": "missing"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "view.jsx@77:83:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "view.jsx@10:28:FUNCTION"
+              ]
+            },
+            {
+              "reference": "view.jsx@86:95:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "UNSUPPORTED_BINDING",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "tsx-expression-owners",
+      "notes": "Element spelling is not a call; expression-container and arrow-body calls retain distinct owners.",
+      "profile": {
+        "mode": "module"
+      },
+      "sources": [
+        {
+          "path": "view.tsx",
+          "language": "tsx",
+          "encoding": "utf-8",
+          "source": "// café\r\nfunction ping(): void {}\nfunction View() { return <Button onClick={() => ping()}>{missing()}</Button>; }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "view.tsx",
+              "language": "tsx",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "view.tsx@10:34:FUNCTION",
+              "path": "view.tsx",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 34,
+                "text": "function ping(): void {}"
+              },
+              "name": {
+                "start_byte": 19,
+                "end_byte": 23,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 32,
+                "end_byte": 34,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "view.tsx@35:114:FUNCTION",
+              "path": "view.tsx",
+              "local_name": "View",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 35,
+                "end_byte": 114,
+                "text": "function View() { return <Button onClick={() => ping()}>{missing()}</Button>; }"
+              },
+              "name": {
+                "start_byte": 44,
+                "end_byte": 48,
+                "text": "View"
+              },
+              "body": {
+                "start_byte": 51,
+                "end_byte": 114,
+                "text": "{ return <Button onClick={() => ping()}>{missing()}</Button>; }"
+              }
+            },
+            {
+              "key": "view.tsx@77:89:LAMBDA",
+              "path": "view.tsx",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "view.tsx@35:114:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 77,
+                "end_byte": 89,
+                "text": "() => ping()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 83,
+                "end_byte": 89,
+                "text": "ping()"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "view.tsx@83:89:CALL",
+              "path": "view.tsx",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "view.tsx@77:89:LAMBDA",
+              "range": {
+                "start_byte": 83,
+                "end_byte": 89,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 83,
+                "end_byte": 87,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "view.tsx@92:101:CALL",
+              "path": "view.tsx",
+              "usage": "CALL",
+              "spelling": "missing()",
+              "owner": "view.tsx@35:114:FUNCTION",
+              "range": {
+                "start_byte": 92,
+                "end_byte": 101,
+                "text": "missing()"
+              },
+              "callee": {
+                "start_byte": 92,
+                "end_byte": 99,
+                "text": "missing"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "view.tsx@83:89:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "view.tsx@10:34:FUNCTION"
+              ]
+            },
+            {
+              "reference": "view.tsx@92:101:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "UNSUPPORTED_BINDING",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "typescript-overload-type-only",
+      "notes": "Two overload declarations retain null bodies; type-only imports never supply runtime call targets.",
+      "profile": {
+        "mode": "module"
+      },
+      "sources": [
+        {
+          "path": "lib.ts",
+          "language": "typescript",
+          "encoding": "utf-8",
+          "source": "export function actual() {}\n"
+        },
+        {
+          "path": "main.ts",
+          "language": "typescript",
+          "encoding": "utf-8",
+          "source": "// café\r\nimport type { actual } from \"./lib.ts\";\nfunction pick(x: string): string;\nfunction pick(x: number): number;\nfunction pick(x: string | number): string | number { return x; }\npick(1);\nactual();\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "lib.ts",
+              "language": "typescript",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "main.ts",
+              "language": "typescript",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "lib.ts@7:27:FUNCTION",
+              "path": "lib.ts",
+              "local_name": "actual",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 7,
+                "end_byte": 27,
+                "text": "function actual() {}"
+              },
+              "name": {
+                "start_byte": 16,
+                "end_byte": 22,
+                "text": "actual"
+              },
+              "body": {
+                "start_byte": 25,
+                "end_byte": 27,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "main.ts@50:83:FUNCTION",
+              "path": "main.ts",
+              "local_name": "pick",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "declaration",
+              "range": {
+                "start_byte": 50,
+                "end_byte": 83,
+                "text": "function pick(x: string): string;"
+              },
+              "name": {
+                "start_byte": 59,
+                "end_byte": 63,
+                "text": "pick"
+              },
+              "body": null
+            },
+            {
+              "key": "main.ts@84:117:FUNCTION",
+              "path": "main.ts",
+              "local_name": "pick",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "declaration",
+              "range": {
+                "start_byte": 84,
+                "end_byte": 117,
+                "text": "function pick(x: number): number;"
+              },
+              "name": {
+                "start_byte": 93,
+                "end_byte": 97,
+                "text": "pick"
+              },
+              "body": null
+            },
+            {
+              "key": "main.ts@118:182:FUNCTION",
+              "path": "main.ts",
+              "local_name": "pick",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 118,
+                "end_byte": 182,
+                "text": "function pick(x: string | number): string | number { return x; }"
+              },
+              "name": {
+                "start_byte": 127,
+                "end_byte": 131,
+                "text": "pick"
+              },
+              "body": {
+                "start_byte": 169,
+                "end_byte": 182,
+                "text": "{ return x; }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "main.ts@183:190:CALL",
+              "path": "main.ts",
+              "usage": "CALL",
+              "spelling": "pick(1)",
+              "owner": null,
+              "range": {
+                "start_byte": 183,
+                "end_byte": 190,
+                "text": "pick(1)"
+              },
+              "callee": {
+                "start_byte": 183,
+                "end_byte": 187,
+                "text": "pick"
+              },
+              "receiver": null,
+              "arguments": [
+                {
+                  "start_byte": 188,
+                  "end_byte": 189,
+                  "text": "1"
+                }
+              ]
+            },
+            {
+              "key": "main.ts@192:200:CALL",
+              "path": "main.ts",
+              "usage": "CALL",
+              "spelling": "actual()",
+              "owner": null,
+              "range": {
+                "start_byte": 192,
+                "end_byte": 200,
+                "text": "actual()"
+              },
+              "callee": {
+                "start_byte": 192,
+                "end_byte": 198,
+                "text": "actual"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "lib.ts",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 27,
+                "text": "export function actual() {}"
+              },
+              "kind": "export",
+              "module": null,
+              "imported_name": "actual",
+              "local_name": "actual",
+              "exported_name": "actual",
+              "relative_level": 0
+            },
+            {
+              "path": "main.ts",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 49,
+                "text": "import type { actual } from \"./lib.ts\";"
+              },
+              "kind": "import",
+              "module": "./lib.ts",
+              "imported_name": "actual",
+              "local_name": "actual",
+              "exported_name": null,
+              "relative_level": 0
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "main.ts@183:190:CALL",
+              "outcome": "AMBIGUOUS",
+              "basis": "MULTIPLE_CANDIDATES",
+              "targets": [
+                "main.ts@50:83:FUNCTION",
+                "main.ts@84:117:FUNCTION"
+              ]
+            },
+            {
+              "reference": "main.ts@192:200:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "UNSUPPORTED_BINDING",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "c-prototype-pointer",
+      "notes": "A function-pointer parameter is not a callable declaration; direct compiler binding and prototype/definition association remain explicit.",
+      "profile": {
+        "compiler": "c17",
+        "include_root": "."
+      },
+      "sources": [
+        {
+          "path": "unit.c",
+          "language": "c",
+          "encoding": "utf-8",
+          "source": "// café\r\nint ping(void);\nint ping(void) { return 1; }\nvoid caller(int (*fp)(void)) { ping(); fp(); }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "unit.c",
+              "language": "c",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "unit.c@10:25:FUNCTION",
+              "path": "unit.c",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "declaration",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 25,
+                "text": "int ping(void);"
+              },
+              "name": {
+                "start_byte": 14,
+                "end_byte": 18,
+                "text": "ping"
+              },
+              "body": null
+            },
+            {
+              "key": "unit.c@26:54:FUNCTION",
+              "path": "unit.c",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 26,
+                "end_byte": 54,
+                "text": "int ping(void) { return 1; }"
+              },
+              "name": {
+                "start_byte": 30,
+                "end_byte": 34,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 41,
+                "end_byte": 54,
+                "text": "{ return 1; }"
+              }
+            },
+            {
+              "key": "unit.c@55:101:FUNCTION",
+              "path": "unit.c",
+              "local_name": "caller",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 55,
+                "end_byte": 101,
+                "text": "void caller(int (*fp)(void)) { ping(); fp(); }"
+              },
+              "name": {
+                "start_byte": 60,
+                "end_byte": 66,
+                "text": "caller"
+              },
+              "body": {
+                "start_byte": 84,
+                "end_byte": 101,
+                "text": "{ ping(); fp(); }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "unit.c@86:92:CALL",
+              "path": "unit.c",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "unit.c@55:101:FUNCTION",
+              "range": {
+                "start_byte": 86,
+                "end_byte": 92,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 86,
+                "end_byte": 90,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "unit.c@94:98:CALL",
+              "path": "unit.c",
+              "usage": "CALL",
+              "spelling": "fp()",
+              "owner": "unit.c@55:101:FUNCTION",
+              "range": {
+                "start_byte": 94,
+                "end_byte": 98,
+                "text": "fp()"
+              },
+              "callee": {
+                "start_byte": 94,
+                "end_byte": 96,
+                "text": "fp"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "unit.c@86:92:CALL",
+              "outcome": "RESOLVED",
+              "basis": "CLANG_REFERENCE",
+              "targets": [
+                "unit.c@10:25:FUNCTION"
+              ]
+            },
+            {
+              "reference": "unit.c@94:98:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": [
+            [
+              "unit.c@10:25:FUNCTION",
+              "unit.c@26:54:FUNCTION"
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "cpp-test-member",
+      "notes": "W09 supplies physical compiler observations; W12 alone publishes final associations and navigation for the required header/implementation member example.",
+      "profile": {
+        "compiler": "c++20",
+        "include_root": ".",
+        "translation_units": [
+          "Test.cpp",
+          "main.cpp"
+        ]
+      },
+      "sources": [
+        {
+          "path": "Test.hpp",
+          "language": "cpp",
+          "encoding": "utf-8",
+          "source": "// café\r\nclass Test { public: Test(); void something(); };\n"
+        },
+        {
+          "path": "Test.cpp",
+          "language": "cpp",
+          "encoding": "utf-8",
+          "source": "#include \"Test.hpp\"\nTest::Test() {}\nvoid Test::something() {}\n"
+        },
+        {
+          "path": "main.cpp",
+          "language": "cpp",
+          "encoding": "utf-8",
+          "source": "#include \"Test.hpp\"\nvoid run() { auto obj = new Test(); obj->something(); }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "Test.hpp",
+              "language": "cpp",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "Test.cpp",
+              "language": "cpp",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "main.cpp",
+              "language": "cpp",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "Test.hpp@10:58:CLASS",
+              "path": "Test.hpp",
+              "local_name": "Test",
+              "kind": "CLASS",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 58,
+                "text": "class Test { public: Test(); void something(); }"
+              },
+              "name": {
+                "start_byte": 16,
+                "end_byte": 20,
+                "text": "Test"
+              },
+              "body": {
+                "start_byte": 21,
+                "end_byte": 58,
+                "text": "{ public: Test(); void something(); }"
+              }
+            },
+            {
+              "key": "Test.hpp@31:38:CONSTRUCTOR",
+              "path": "Test.hpp",
+              "local_name": "Test",
+              "kind": "CONSTRUCTOR",
+              "owner": "Test.hpp@10:58:CLASS",
+              "role": "declaration",
+              "range": {
+                "start_byte": 31,
+                "end_byte": 38,
+                "text": "Test();"
+              },
+              "name": {
+                "start_byte": 31,
+                "end_byte": 35,
+                "text": "Test"
+              },
+              "body": null
+            },
+            {
+              "key": "Test.hpp@39:56:METHOD",
+              "path": "Test.hpp",
+              "local_name": "something",
+              "kind": "METHOD",
+              "owner": "Test.hpp@10:58:CLASS",
+              "role": "declaration",
+              "range": {
+                "start_byte": 39,
+                "end_byte": 56,
+                "text": "void something();"
+              },
+              "name": {
+                "start_byte": 44,
+                "end_byte": 53,
+                "text": "something"
+              },
+              "body": null
+            },
+            {
+              "key": "Test.cpp@20:35:CONSTRUCTOR",
+              "path": "Test.cpp",
+              "local_name": "Test",
+              "kind": "CONSTRUCTOR",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 20,
+                "end_byte": 35,
+                "text": "Test::Test() {}"
+              },
+              "name": {
+                "start_byte": 26,
+                "end_byte": 30,
+                "text": "Test"
+              },
+              "body": {
+                "start_byte": 33,
+                "end_byte": 35,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "Test.cpp@36:61:METHOD",
+              "path": "Test.cpp",
+              "local_name": "something",
+              "kind": "METHOD",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 36,
+                "end_byte": 61,
+                "text": "void Test::something() {}"
+              },
+              "name": {
+                "start_byte": 47,
+                "end_byte": 56,
+                "text": "something"
+              },
+              "body": {
+                "start_byte": 59,
+                "end_byte": 61,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "main.cpp@20:75:FUNCTION",
+              "path": "main.cpp",
+              "local_name": "run",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 20,
+                "end_byte": 75,
+                "text": "void run() { auto obj = new Test(); obj->something(); }"
+              },
+              "name": {
+                "start_byte": 25,
+                "end_byte": 28,
+                "text": "run"
+              },
+              "body": {
+                "start_byte": 31,
+                "end_byte": 75,
+                "text": "{ auto obj = new Test(); obj->something(); }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "main.cpp@44:54:CONSTRUCT",
+              "path": "main.cpp",
+              "usage": "CONSTRUCT",
+              "spelling": "new Test()",
+              "owner": "main.cpp@20:75:FUNCTION",
+              "range": {
+                "start_byte": 44,
+                "end_byte": 54,
+                "text": "new Test()"
+              },
+              "callee": {
+                "start_byte": 48,
+                "end_byte": 52,
+                "text": "Test"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "main.cpp@56:72:CALL",
+              "path": "main.cpp",
+              "usage": "CALL",
+              "spelling": "obj->something()",
+              "owner": "main.cpp@20:75:FUNCTION",
+              "range": {
+                "start_byte": 56,
+                "end_byte": 72,
+                "text": "obj->something()"
+              },
+              "callee": {
+                "start_byte": 56,
+                "end_byte": 70,
+                "text": "obj->something"
+              },
+              "receiver": {
+                "start_byte": 56,
+                "end_byte": 59,
+                "text": "obj"
+              },
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "Test.cpp",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 19,
+                "text": "#include \"Test.hpp\""
+              },
+              "kind": "include",
+              "module": "Test.hpp",
+              "imported_name": null,
+              "local_name": null,
+              "exported_name": null,
+              "relative_level": 0
+            },
+            {
+              "path": "main.cpp",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 19,
+                "text": "#include \"Test.hpp\""
+              },
+              "kind": "include",
+              "module": "Test.hpp",
+              "imported_name": null,
+              "local_name": null,
+              "exported_name": null,
+              "relative_level": 0
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "main.cpp@44:54:CONSTRUCT",
+              "outcome": "RESOLVED",
+              "basis": "CLANG_REFERENCE",
+              "targets": [
+                "Test.cpp@20:35:CONSTRUCTOR"
+              ]
+            },
+            {
+              "reference": "main.cpp@56:72:CALL",
+              "outcome": "RESOLVED",
+              "basis": "CLANG_REFERENCE",
+              "targets": [
+                "Test.cpp@36:61:METHOD"
+              ]
+            }
+          ],
+          "associations": [
+            [
+              "Test.cpp@20:35:CONSTRUCTOR",
+              "Test.hpp@31:38:CONSTRUCTOR"
+            ],
+            [
+              "Test.cpp@36:61:METHOD",
+              "Test.hpp@39:56:METHOD"
+            ]
+          ]
+        },
+        "compiler_observations": [
+          {
+            "reference": "main.cpp@44:54:CONSTRUCT",
+            "declaration": "Test.hpp@31:38:CONSTRUCTOR",
+            "definition": "Test.cpp@20:35:CONSTRUCTOR",
+            "same_usr": true,
+            "context": "main.cpp"
+          },
+          {
+            "reference": "main.cpp@56:72:CALL",
+            "declaration": "Test.hpp@39:56:METHOD",
+            "definition": "Test.cpp@36:61:METHOD",
+            "same_usr": true,
+            "context": "main.cpp"
+          }
+        ],
+        "navigation": {
+          "callees": [
+            {
+              "owner": "main.cpp@20:75:FUNCTION",
+              "reference": "main.cpp@44:54:CONSTRUCT",
+              "target": "Test.cpp@20:35:CONSTRUCTOR"
+            },
+            {
+              "owner": "main.cpp@20:75:FUNCTION",
+              "reference": "main.cpp@56:72:CALL",
+              "target": "Test.cpp@36:61:METHOD"
+            }
+          ],
+          "callers": [
+            {
+              "target": "Test.cpp@36:61:METHOD",
+              "reference": "main.cpp@56:72:CALL",
+              "owner": "main.cpp@20:75:FUNCTION"
+            }
+          ],
+          "reads": [
+            {
+              "requested_symbol": "Test.hpp@39:56:METHOD",
+              "occurrence": "Test.cpp@36:61:METHOD",
+              "path": "Test.cpp",
+              "range": {
+                "start_byte": 36,
+                "end_byte": 61,
+                "text": "void Test::something() {}"
+              }
+            },
+            {
+              "requested_symbol": "Test.cpp@36:61:METHOD",
+              "occurrence": "Test.hpp@39:56:METHOD",
+              "path": "Test.hpp",
+              "range": {
+                "start_byte": 39,
+                "end_byte": 56,
+                "text": "void something();"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cpp-missing-header",
+      "notes": "Missing build context must not produce a name-only member target.",
+      "profile": {
+        "compiler": "c++20",
+        "include_root": ".",
+        "translation_units": [
+          "missing.cpp"
+        ]
+      },
+      "sources": [
+        {
+          "path": "missing.cpp",
+          "language": "cpp",
+          "encoding": "utf-8",
+          "source": "#include \"missing.hpp\"\nvoid run() { auto obj = new Test(); obj->something(); }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "missing.cpp",
+              "language": "cpp",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "missing.cpp@23:78:FUNCTION",
+              "path": "missing.cpp",
+              "local_name": "run",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 23,
+                "end_byte": 78,
+                "text": "void run() { auto obj = new Test(); obj->something(); }"
+              },
+              "name": {
+                "start_byte": 28,
+                "end_byte": 31,
+                "text": "run"
+              },
+              "body": {
+                "start_byte": 34,
+                "end_byte": 78,
+                "text": "{ auto obj = new Test(); obj->something(); }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "missing.cpp@47:57:CONSTRUCT",
+              "path": "missing.cpp",
+              "usage": "CONSTRUCT",
+              "spelling": "new Test()",
+              "owner": "missing.cpp@23:78:FUNCTION",
+              "range": {
+                "start_byte": 47,
+                "end_byte": 57,
+                "text": "new Test()"
+              },
+              "callee": {
+                "start_byte": 51,
+                "end_byte": 55,
+                "text": "Test"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "missing.cpp@59:75:CALL",
+              "path": "missing.cpp",
+              "usage": "CALL",
+              "spelling": "obj->something()",
+              "owner": "missing.cpp@23:78:FUNCTION",
+              "range": {
+                "start_byte": 59,
+                "end_byte": 75,
+                "text": "obj->something()"
+              },
+              "callee": {
+                "start_byte": 59,
+                "end_byte": 73,
+                "text": "obj->something"
+              },
+              "receiver": {
+                "start_byte": 59,
+                "end_byte": 62,
+                "text": "obj"
+              },
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "missing.cpp",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 22,
+                "text": "#include \"missing.hpp\""
+              },
+              "kind": "include",
+              "module": "missing.hpp",
+              "imported_name": null,
+              "local_name": null,
+              "exported_name": null,
+              "relative_level": 0
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "missing.cpp@47:57:CONSTRUCT",
+              "outcome": "UNRESOLVED",
+              "basis": "MISSING_BUILD_CONTEXT",
+              "targets": []
+            },
+            {
+              "reference": "missing.cpp@59:75:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "MISSING_BUILD_CONTEXT",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "java-anonymous-class",
+      "notes": "Static method lookup, explicit constructor, anonymous-class method ownership, lambda ownership and unknown receiver dispatch.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "Sample.java",
+          "language": "java",
+          "encoding": "utf-8",
+          "source": "// café\r\nclass Sample { Sample() {} static void ping() {} void run(Runnable task) { ping(); task.run(); Runnable inner = new Runnable() { public void run() { ping(); } }; Runnable later = () -> ping(); } }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "Sample.java",
+              "language": "java",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "Sample.java@10:206:CLASS",
+              "path": "Sample.java",
+              "local_name": "Sample",
+              "kind": "CLASS",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 206,
+                "text": "class Sample { Sample() {} static void ping() {} void run(Runnable task) { ping(); task.run(); Runnable inner = new Runnable() { public void run() { ping(); } }; Runnable later = () -> ping(); } }"
+              },
+              "name": {
+                "start_byte": 16,
+                "end_byte": 22,
+                "text": "Sample"
+              },
+              "body": {
+                "start_byte": 23,
+                "end_byte": 206,
+                "text": "{ Sample() {} static void ping() {} void run(Runnable task) { ping(); task.run(); Runnable inner = new Runnable() { public void run() { ping(); } }; Runnable later = () -> ping(); } }"
+              }
+            },
+            {
+              "key": "Sample.java@25:36:CONSTRUCTOR",
+              "path": "Sample.java",
+              "local_name": "Sample",
+              "kind": "CONSTRUCTOR",
+              "owner": "Sample.java@10:206:CLASS",
+              "role": "definition",
+              "range": {
+                "start_byte": 25,
+                "end_byte": 36,
+                "text": "Sample() {}"
+              },
+              "name": {
+                "start_byte": 25,
+                "end_byte": 31,
+                "text": "Sample"
+              },
+              "body": {
+                "start_byte": 34,
+                "end_byte": 36,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "Sample.java@37:58:METHOD",
+              "path": "Sample.java",
+              "local_name": "ping",
+              "kind": "METHOD",
+              "owner": "Sample.java@10:206:CLASS",
+              "role": "definition",
+              "range": {
+                "start_byte": 37,
+                "end_byte": 58,
+                "text": "static void ping() {}"
+              },
+              "name": {
+                "start_byte": 49,
+                "end_byte": 53,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 56,
+                "end_byte": 58,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "Sample.java@59:204:METHOD",
+              "path": "Sample.java",
+              "local_name": "run",
+              "kind": "METHOD",
+              "owner": "Sample.java@10:206:CLASS",
+              "role": "definition",
+              "range": {
+                "start_byte": 59,
+                "end_byte": 204,
+                "text": "void run(Runnable task) { ping(); task.run(); Runnable inner = new Runnable() { public void run() { ping(); } }; Runnable later = () -> ping(); }"
+              },
+              "name": {
+                "start_byte": 64,
+                "end_byte": 67,
+                "text": "run"
+              },
+              "body": {
+                "start_byte": 83,
+                "end_byte": 204,
+                "text": "{ ping(); task.run(); Runnable inner = new Runnable() { public void run() { ping(); } }; Runnable later = () -> ping(); }"
+              }
+            },
+            {
+              "key": "Sample.java@122:170:CLASS",
+              "path": "Sample.java",
+              "local_name": null,
+              "kind": "CLASS",
+              "owner": "Sample.java@59:204:METHOD",
+              "role": "definition",
+              "range": {
+                "start_byte": 122,
+                "end_byte": 170,
+                "text": "new Runnable() { public void run() { ping(); } }"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 137,
+                "end_byte": 170,
+                "text": "{ public void run() { ping(); } }"
+              }
+            },
+            {
+              "key": "Sample.java@139:168:METHOD",
+              "path": "Sample.java",
+              "local_name": "run",
+              "kind": "METHOD",
+              "owner": "Sample.java@122:170:CLASS",
+              "role": "definition",
+              "range": {
+                "start_byte": 139,
+                "end_byte": 168,
+                "text": "public void run() { ping(); }"
+              },
+              "name": {
+                "start_byte": 151,
+                "end_byte": 154,
+                "text": "run"
+              },
+              "body": {
+                "start_byte": 157,
+                "end_byte": 168,
+                "text": "{ ping(); }"
+              }
+            },
+            {
+              "key": "Sample.java@189:201:LAMBDA",
+              "path": "Sample.java",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "Sample.java@59:204:METHOD",
+              "role": "definition",
+              "range": {
+                "start_byte": 189,
+                "end_byte": 201,
+                "text": "() -> ping()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 195,
+                "end_byte": 201,
+                "text": "ping()"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "Sample.java@85:91:CALL",
+              "path": "Sample.java",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "Sample.java@59:204:METHOD",
+              "range": {
+                "start_byte": 85,
+                "end_byte": 91,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 85,
+                "end_byte": 89,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "Sample.java@93:103:CALL",
+              "path": "Sample.java",
+              "usage": "CALL",
+              "spelling": "task.run()",
+              "owner": "Sample.java@59:204:METHOD",
+              "range": {
+                "start_byte": 93,
+                "end_byte": 103,
+                "text": "task.run()"
+              },
+              "callee": {
+                "start_byte": 93,
+                "end_byte": 101,
+                "text": "task.run"
+              },
+              "receiver": {
+                "start_byte": 93,
+                "end_byte": 97,
+                "text": "task"
+              },
+              "arguments": []
+            },
+            {
+              "key": "Sample.java@122:170:CONSTRUCT",
+              "path": "Sample.java",
+              "usage": "CONSTRUCT",
+              "spelling": "new Runnable() { public void run() { ping(); } }",
+              "owner": "Sample.java@59:204:METHOD",
+              "range": {
+                "start_byte": 122,
+                "end_byte": 170,
+                "text": "new Runnable() { public void run() { ping(); } }"
+              },
+              "callee": {
+                "start_byte": 126,
+                "end_byte": 134,
+                "text": "Runnable"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "Sample.java@159:165:CALL",
+              "path": "Sample.java",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "Sample.java@139:168:METHOD",
+              "range": {
+                "start_byte": 159,
+                "end_byte": 165,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 159,
+                "end_byte": 163,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "Sample.java@195:201:CALL",
+              "path": "Sample.java",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "Sample.java@189:201:LAMBDA",
+              "range": {
+                "start_byte": 195,
+                "end_byte": 201,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 195,
+                "end_byte": 199,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "Sample.java@85:91:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "Sample.java@37:58:METHOD"
+              ]
+            },
+            {
+              "reference": "Sample.java@93:103:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "UNSUPPORTED_BINDING",
+              "targets": []
+            },
+            {
+              "reference": "Sample.java@122:170:CONSTRUCT",
+              "outcome": "UNRESOLVED",
+              "basis": "UNSUPPORTED_BINDING",
+              "targets": []
+            },
+            {
+              "reference": "Sample.java@159:165:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "Sample.java@37:58:METHOD"
+              ]
+            },
+            {
+              "reference": "Sample.java@195:201:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "Sample.java@37:58:METHOD"
+              ]
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "php-mixed-closures",
+      "notes": "HTML does not fabricate symbols; arrow/closure body calls have independent owners; a parameter call stays dynamic.",
+      "profile": {
+        "php_input": "mixed"
+      },
+      "sources": [
+        {
+          "path": "mixed.phtml",
+          "language": "php",
+          "encoding": "utf-8",
+          "source": "<p>café</p>\r\n<?php\r\nfunction ping() { return 1; }\r\nfunction outer($cb) { $a = fn() => ping(); $b = function() { ping(); }; $cb(); }\r\nping();\r\n?>"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "mixed.phtml",
+              "language": "php",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "mixed.phtml@21:50:FUNCTION",
+              "path": "mixed.phtml",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 21,
+                "end_byte": 50,
+                "text": "function ping() { return 1; }"
+              },
+              "name": {
+                "start_byte": 30,
+                "end_byte": 34,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 37,
+                "end_byte": 50,
+                "text": "{ return 1; }"
+              }
+            },
+            {
+              "key": "mixed.phtml@52:132:FUNCTION",
+              "path": "mixed.phtml",
+              "local_name": "outer",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 52,
+                "end_byte": 132,
+                "text": "function outer($cb) { $a = fn() => ping(); $b = function() { ping(); }; $cb(); }"
+              },
+              "name": {
+                "start_byte": 61,
+                "end_byte": 66,
+                "text": "outer"
+              },
+              "body": {
+                "start_byte": 72,
+                "end_byte": 132,
+                "text": "{ $a = fn() => ping(); $b = function() { ping(); }; $cb(); }"
+              }
+            },
+            {
+              "key": "mixed.phtml@79:93:LAMBDA",
+              "path": "mixed.phtml",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "mixed.phtml@52:132:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 79,
+                "end_byte": 93,
+                "text": "fn() => ping()"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 87,
+                "end_byte": 93,
+                "text": "ping()"
+              }
+            },
+            {
+              "key": "mixed.phtml@100:122:LAMBDA",
+              "path": "mixed.phtml",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": "mixed.phtml@52:132:FUNCTION",
+              "role": "definition",
+              "range": {
+                "start_byte": 100,
+                "end_byte": 122,
+                "text": "function() { ping(); }"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 111,
+                "end_byte": 122,
+                "text": "{ ping(); }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "mixed.phtml@87:93:CALL",
+              "path": "mixed.phtml",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "mixed.phtml@79:93:LAMBDA",
+              "range": {
+                "start_byte": 87,
+                "end_byte": 93,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 87,
+                "end_byte": 91,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "mixed.phtml@113:119:CALL",
+              "path": "mixed.phtml",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "mixed.phtml@100:122:LAMBDA",
+              "range": {
+                "start_byte": 113,
+                "end_byte": 119,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 113,
+                "end_byte": 117,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "mixed.phtml@124:129:CALL",
+              "path": "mixed.phtml",
+              "usage": "CALL",
+              "spelling": "$cb()",
+              "owner": "mixed.phtml@52:132:FUNCTION",
+              "range": {
+                "start_byte": 124,
+                "end_byte": 129,
+                "text": "$cb()"
+              },
+              "callee": {
+                "start_byte": 124,
+                "end_byte": 127,
+                "text": "$cb"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "mixed.phtml@134:140:CALL",
+              "path": "mixed.phtml",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": null,
+              "range": {
+                "start_byte": 134,
+                "end_byte": 140,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 134,
+                "end_byte": 138,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "mixed.phtml@87:93:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "mixed.phtml@21:50:FUNCTION"
+              ]
+            },
+            {
+              "reference": "mixed.phtml@113:119:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "mixed.phtml@21:50:FUNCTION"
+              ]
+            },
+            {
+              "reference": "mixed.phtml@124:129:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            },
+            {
+              "reference": "mixed.phtml@134:140:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "mixed.phtml@21:50:FUNCTION"
+              ]
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "php-only-namespace-alias",
+      "notes": "PHP-only capsule input; explicit use-function aliases do not become locally named callable symbols.",
+      "profile": {
+        "php_input": "php-only"
+      },
+      "sources": [
+        {
+          "path": "util.php",
+          "language": "php",
+          "encoding": "utf-8",
+          "source": "namespace Util;\nfunction ping() {}\n"
+        },
+        {
+          "path": "app.php",
+          "language": "php",
+          "encoding": "utf-8",
+          "source": "namespace App;\nuse function Util\\ping as go;\ngo();\n$dynamic();\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "util.php",
+              "language": "php",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "app.php",
+              "language": "php",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "util.php@16:34:FUNCTION",
+              "path": "util.php",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 16,
+                "end_byte": 34,
+                "text": "function ping() {}"
+              },
+              "name": {
+                "start_byte": 25,
+                "end_byte": 29,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 32,
+                "end_byte": 34,
+                "text": "{}"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "app.php@45:49:CALL",
+              "path": "app.php",
+              "usage": "CALL",
+              "spelling": "go()",
+              "owner": null,
+              "range": {
+                "start_byte": 45,
+                "end_byte": 49,
+                "text": "go()"
+              },
+              "callee": {
+                "start_byte": 45,
+                "end_byte": 47,
+                "text": "go"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "app.php@51:61:CALL",
+              "path": "app.php",
+              "usage": "CALL",
+              "spelling": "$dynamic()",
+              "owner": null,
+              "range": {
+                "start_byte": 51,
+                "end_byte": 61,
+                "text": "$dynamic()"
+              },
+              "callee": {
+                "start_byte": 51,
+                "end_byte": 59,
+                "text": "$dynamic"
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "app.php",
+              "range": {
+                "start_byte": 15,
+                "end_byte": 44,
+                "text": "use function Util\\ping as go;"
+              },
+              "kind": "import",
+              "module": "Util",
+              "imported_name": "ping",
+              "local_name": "go",
+              "exported_name": null,
+              "relative_level": 0
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "app.php@45:49:CALL",
+              "outcome": "RESOLVED",
+              "basis": "CAPTURED_IMPORT",
+              "targets": [
+                "util.php@16:34:FUNCTION"
+              ]
+            },
+            {
+              "reference": "app.php@51:61:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "lua-local-colon-table",
+      "notes": "Local and parameter shadowing; colon member spelling; an anonymous table function is not named after its field.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "scope.lua",
+          "language": "lua",
+          "encoding": "utf-8",
+          "source": "-- café\r\nlocal function ping() return 1 end\nlocal obj = {}\nfunction obj:method() return ping() end\nlocal t = {cb = function() return ping() end}\nlocal function outer()\n  local ping = nil\n  ping()\nend\nping()\nobj:method()\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "scope.lua",
+              "language": "lua",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "scope.lua@10:44:FUNCTION",
+              "path": "scope.lua",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 44,
+                "text": "local function ping() return 1 end"
+              },
+              "name": {
+                "start_byte": 25,
+                "end_byte": 29,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 32,
+                "end_byte": 40,
+                "text": "return 1"
+              }
+            },
+            {
+              "key": "scope.lua@60:99:METHOD",
+              "path": "scope.lua",
+              "local_name": "method",
+              "kind": "METHOD",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 60,
+                "end_byte": 99,
+                "text": "function obj:method() return ping() end"
+              },
+              "name": {
+                "start_byte": 73,
+                "end_byte": 79,
+                "text": "method"
+              },
+              "body": {
+                "start_byte": 82,
+                "end_byte": 95,
+                "text": "return ping()"
+              }
+            },
+            {
+              "key": "scope.lua@116:144:LAMBDA",
+              "path": "scope.lua",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 116,
+                "end_byte": 144,
+                "text": "function() return ping() end"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 127,
+                "end_byte": 140,
+                "text": "return ping()"
+              }
+            },
+            {
+              "key": "scope.lua@146:200:FUNCTION",
+              "path": "scope.lua",
+              "local_name": "outer",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 146,
+                "end_byte": 200,
+                "text": "local function outer()\n  local ping = nil\n  ping()\nend"
+              },
+              "name": {
+                "start_byte": 161,
+                "end_byte": 166,
+                "text": "outer"
+              },
+              "body": {
+                "start_byte": 171,
+                "end_byte": 196,
+                "text": "local ping = nil\n  ping()"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "scope.lua@89:95:CALL",
+              "path": "scope.lua",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.lua@60:99:METHOD",
+              "range": {
+                "start_byte": 89,
+                "end_byte": 95,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 89,
+                "end_byte": 93,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.lua@134:140:CALL",
+              "path": "scope.lua",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.lua@116:144:LAMBDA",
+              "range": {
+                "start_byte": 134,
+                "end_byte": 140,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 134,
+                "end_byte": 138,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.lua@190:196:CALL",
+              "path": "scope.lua",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": "scope.lua@146:200:FUNCTION",
+              "range": {
+                "start_byte": 190,
+                "end_byte": 196,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 190,
+                "end_byte": 194,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.lua@201:207:CALL",
+              "path": "scope.lua",
+              "usage": "CALL",
+              "spelling": "ping()",
+              "owner": null,
+              "range": {
+                "start_byte": 201,
+                "end_byte": 207,
+                "text": "ping()"
+              },
+              "callee": {
+                "start_byte": 201,
+                "end_byte": 205,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "scope.lua@208:220:CALL",
+              "path": "scope.lua",
+              "usage": "CALL",
+              "spelling": "obj:method()",
+              "owner": null,
+              "range": {
+                "start_byte": 208,
+                "end_byte": 220,
+                "text": "obj:method()"
+              },
+              "callee": {
+                "start_byte": 208,
+                "end_byte": 218,
+                "text": "obj:method"
+              },
+              "receiver": {
+                "start_byte": 208,
+                "end_byte": 211,
+                "text": "obj"
+              },
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "scope.lua@89:95:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.lua@10:44:FUNCTION"
+              ]
+            },
+            {
+              "reference": "scope.lua@134:140:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.lua@10:44:FUNCTION"
+              ]
+            },
+            {
+              "reference": "scope.lua@190:196:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            },
+            {
+              "reference": "scope.lua@201:207:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "scope.lua@10:44:FUNCTION"
+              ]
+            },
+            {
+              "reference": "scope.lua@208:220:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "bash-substitutions",
+      "notes": "Literal same-script functions resolve; command/process substitutions remain module-owned; expanded command words stay dynamic.",
+      "profile": {
+        "shell_mode": "bash",
+        "cwd_snapshot": "."
+      },
+      "sources": [
+        {
+          "path": "script.bash",
+          "language": "bash",
+          "encoding": "utf-8",
+          "source": "#!/usr/bin/env bash\n# café\r\nping() { :; }\nouter() { \"$1\"; }\nping\nvalue=$(ping)\ncat <(ping)\n\"$cmd\"\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "script.bash",
+              "language": "bash",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "script.bash@29:42:FUNCTION",
+              "path": "script.bash",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 29,
+                "end_byte": 42,
+                "text": "ping() { :; }"
+              },
+              "name": {
+                "start_byte": 29,
+                "end_byte": 33,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 36,
+                "end_byte": 42,
+                "text": "{ :; }"
+              }
+            },
+            {
+              "key": "script.bash@43:60:FUNCTION",
+              "path": "script.bash",
+              "local_name": "outer",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 43,
+                "end_byte": 60,
+                "text": "outer() { \"$1\"; }"
+              },
+              "name": {
+                "start_byte": 43,
+                "end_byte": 48,
+                "text": "outer"
+              },
+              "body": {
+                "start_byte": 51,
+                "end_byte": 60,
+                "text": "{ \"$1\"; }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "script.bash@38:39:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": ":",
+              "owner": "script.bash@29:42:FUNCTION",
+              "range": {
+                "start_byte": 38,
+                "end_byte": 39,
+                "text": ":"
+              },
+              "callee": {
+                "start_byte": 38,
+                "end_byte": 39,
+                "text": ":"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.bash@53:57:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": "\"$1\"",
+              "owner": "script.bash@43:60:FUNCTION",
+              "range": {
+                "start_byte": 53,
+                "end_byte": 57,
+                "text": "\"$1\""
+              },
+              "callee": {
+                "start_byte": 53,
+                "end_byte": 57,
+                "text": "\"$1\""
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.bash@61:65:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": "ping",
+              "owner": null,
+              "range": {
+                "start_byte": 61,
+                "end_byte": 65,
+                "text": "ping"
+              },
+              "callee": {
+                "start_byte": 61,
+                "end_byte": 65,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.bash@74:78:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": "ping",
+              "owner": null,
+              "range": {
+                "start_byte": 74,
+                "end_byte": 78,
+                "text": "ping"
+              },
+              "callee": {
+                "start_byte": 74,
+                "end_byte": 78,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.bash@80:91:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": "cat <(ping)",
+              "owner": null,
+              "range": {
+                "start_byte": 80,
+                "end_byte": 91,
+                "text": "cat <(ping)"
+              },
+              "callee": {
+                "start_byte": 80,
+                "end_byte": 83,
+                "text": "cat"
+              },
+              "receiver": null,
+              "arguments": [
+                {
+                  "start_byte": 84,
+                  "end_byte": 91,
+                  "text": "<(ping)"
+                }
+              ]
+            },
+            {
+              "key": "script.bash@86:90:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": "ping",
+              "owner": null,
+              "range": {
+                "start_byte": 86,
+                "end_byte": 90,
+                "text": "ping"
+              },
+              "callee": {
+                "start_byte": 86,
+                "end_byte": 90,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.bash@92:98:CALL",
+              "path": "script.bash",
+              "usage": "CALL",
+              "spelling": "\"$cmd\"",
+              "owner": null,
+              "range": {
+                "start_byte": 92,
+                "end_byte": 98,
+                "text": "\"$cmd\""
+              },
+              "callee": {
+                "start_byte": 92,
+                "end_byte": 98,
+                "text": "\"$cmd\""
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "script.bash@38:39:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "EXTERNAL_SOURCE_NOT_CAPTURED",
+              "targets": []
+            },
+            {
+              "reference": "script.bash@53:57:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            },
+            {
+              "reference": "script.bash@61:65:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "script.bash@29:42:FUNCTION"
+              ]
+            },
+            {
+              "reference": "script.bash@74:78:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "script.bash@29:42:FUNCTION"
+              ]
+            },
+            {
+              "reference": "script.bash@80:91:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "EXTERNAL_SOURCE_NOT_CAPTURED",
+              "targets": []
+            },
+            {
+              "reference": "script.bash@86:90:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "script.bash@29:42:FUNCTION"
+              ]
+            },
+            {
+              "reference": "script.bash@92:98:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "bash-captured-source",
+      "notes": "Literal source links load a captured definition under an explicit frozen path basis; unknown expanded commands remain unresolved.",
+      "profile": {
+        "shell_mode": "bash",
+        "cwd_snapshot": "."
+      },
+      "sources": [
+        {
+          "path": "helpers.sh",
+          "language": "bash",
+          "encoding": "utf-8",
+          "source": "loaded() { :; }\n"
+        },
+        {
+          "path": "main.sh",
+          "language": "bash",
+          "encoding": "utf-8",
+          "source": ". \"./helpers.sh\"\nloaded\n\"$cmd\"\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "helpers.sh",
+              "language": "bash",
+              "status": "SUCCEEDED"
+            },
+            {
+              "path": "main.sh",
+              "language": "bash",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "helpers.sh@0:15:FUNCTION",
+              "path": "helpers.sh",
+              "local_name": "loaded",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 15,
+                "text": "loaded() { :; }"
+              },
+              "name": {
+                "start_byte": 0,
+                "end_byte": 6,
+                "text": "loaded"
+              },
+              "body": {
+                "start_byte": 9,
+                "end_byte": 15,
+                "text": "{ :; }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "helpers.sh@11:12:CALL",
+              "path": "helpers.sh",
+              "usage": "CALL",
+              "spelling": ":",
+              "owner": "helpers.sh@0:15:FUNCTION",
+              "range": {
+                "start_byte": 11,
+                "end_byte": 12,
+                "text": ":"
+              },
+              "callee": {
+                "start_byte": 11,
+                "end_byte": 12,
+                "text": ":"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "main.sh@17:23:CALL",
+              "path": "main.sh",
+              "usage": "CALL",
+              "spelling": "loaded",
+              "owner": null,
+              "range": {
+                "start_byte": 17,
+                "end_byte": 23,
+                "text": "loaded"
+              },
+              "callee": {
+                "start_byte": 17,
+                "end_byte": 23,
+                "text": "loaded"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "main.sh@24:30:CALL",
+              "path": "main.sh",
+              "usage": "CALL",
+              "spelling": "\"$cmd\"",
+              "owner": null,
+              "range": {
+                "start_byte": 24,
+                "end_byte": 30,
+                "text": "\"$cmd\""
+              },
+              "callee": {
+                "start_byte": 24,
+                "end_byte": 30,
+                "text": "\"$cmd\""
+              },
+              "receiver": null,
+              "arguments": []
+            }
+          ],
+          "imports": [
+            {
+              "path": "main.sh",
+              "range": {
+                "start_byte": 0,
+                "end_byte": 16,
+                "text": ". \"./helpers.sh\""
+              },
+              "kind": "source",
+              "module": "./helpers.sh",
+              "imported_name": null,
+              "local_name": null,
+              "exported_name": null,
+              "relative_level": 0
+            }
+          ]
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "helpers.sh@11:12:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "EXTERNAL_SOURCE_NOT_CAPTURED",
+              "targets": []
+            },
+            {
+              "reference": "main.sh@17:23:CALL",
+              "outcome": "RESOLVED",
+              "basis": "CAPTURED_IMPORT",
+              "targets": [
+                "helpers.sh@0:15:FUNCTION"
+              ]
+            },
+            {
+              "reference": "main.sh@24:30:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "zsh-anonymous-invocation",
+      "notes": "Dedicated Zsh anonymous function syntax is an immediate invocation, with its own command owner; parameter expansion is not a function name.",
+      "profile": {
+        "shell_mode": "zsh",
+        "cwd_snapshot": "."
+      },
+      "sources": [
+        {
+          "path": "script.zsh",
+          "language": "zsh",
+          "encoding": "utf-8",
+          "source": "#!/usr/bin/env zsh\n# café\r\nping() { :; }\nfunction { ping; \"$1\"; }\nping\nprint -r -- ${^items}\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "script.zsh",
+              "language": "zsh",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "script.zsh@28:41:FUNCTION",
+              "path": "script.zsh",
+              "local_name": "ping",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 28,
+                "end_byte": 41,
+                "text": "ping() { :; }"
+              },
+              "name": {
+                "start_byte": 28,
+                "end_byte": 32,
+                "text": "ping"
+              },
+              "body": {
+                "start_byte": 35,
+                "end_byte": 41,
+                "text": "{ :; }"
+              }
+            },
+            {
+              "key": "script.zsh@42:66:LAMBDA",
+              "path": "script.zsh",
+              "local_name": null,
+              "kind": "LAMBDA",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 42,
+                "end_byte": 66,
+                "text": "function { ping; \"$1\"; }"
+              },
+              "name": null,
+              "body": {
+                "start_byte": 51,
+                "end_byte": 66,
+                "text": "{ ping; \"$1\"; }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "script.zsh@37:38:CALL",
+              "path": "script.zsh",
+              "usage": "CALL",
+              "spelling": ":",
+              "owner": "script.zsh@28:41:FUNCTION",
+              "range": {
+                "start_byte": 37,
+                "end_byte": 38,
+                "text": ":"
+              },
+              "callee": {
+                "start_byte": 37,
+                "end_byte": 38,
+                "text": ":"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.zsh@42:66:CALL",
+              "path": "script.zsh",
+              "usage": "CALL",
+              "spelling": "function { ping; \"$1\"; }",
+              "owner": null,
+              "range": {
+                "start_byte": 42,
+                "end_byte": 66,
+                "text": "function { ping; \"$1\"; }"
+              },
+              "callee": null,
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.zsh@53:57:CALL",
+              "path": "script.zsh",
+              "usage": "CALL",
+              "spelling": "ping",
+              "owner": "script.zsh@42:66:LAMBDA",
+              "range": {
+                "start_byte": 53,
+                "end_byte": 57,
+                "text": "ping"
+              },
+              "callee": {
+                "start_byte": 53,
+                "end_byte": 57,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.zsh@59:63:CALL",
+              "path": "script.zsh",
+              "usage": "CALL",
+              "spelling": "\"$1\"",
+              "owner": "script.zsh@42:66:LAMBDA",
+              "range": {
+                "start_byte": 59,
+                "end_byte": 63,
+                "text": "\"$1\""
+              },
+              "callee": {
+                "start_byte": 59,
+                "end_byte": 63,
+                "text": "\"$1\""
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.zsh@67:71:CALL",
+              "path": "script.zsh",
+              "usage": "CALL",
+              "spelling": "ping",
+              "owner": null,
+              "range": {
+                "start_byte": 67,
+                "end_byte": 71,
+                "text": "ping"
+              },
+              "callee": {
+                "start_byte": 67,
+                "end_byte": 71,
+                "text": "ping"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "script.zsh@72:93:CALL",
+              "path": "script.zsh",
+              "usage": "CALL",
+              "spelling": "print -r -- ${^items}",
+              "owner": null,
+              "range": {
+                "start_byte": 72,
+                "end_byte": 93,
+                "text": "print -r -- ${^items}"
+              },
+              "callee": {
+                "start_byte": 72,
+                "end_byte": 77,
+                "text": "print"
+              },
+              "receiver": null,
+              "arguments": [
+                {
+                  "start_byte": 78,
+                  "end_byte": 80,
+                  "text": "-r"
+                },
+                {
+                  "start_byte": 81,
+                  "end_byte": 83,
+                  "text": "--"
+                },
+                {
+                  "start_byte": 84,
+                  "end_byte": 93,
+                  "text": "${^items}"
+                }
+              ]
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "script.zsh@37:38:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "EXTERNAL_SOURCE_NOT_CAPTURED",
+              "targets": []
+            },
+            {
+              "reference": "script.zsh@42:66:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "script.zsh@42:66:LAMBDA"
+              ]
+            },
+            {
+              "reference": "script.zsh@53:57:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "script.zsh@28:41:FUNCTION"
+              ]
+            },
+            {
+              "reference": "script.zsh@59:63:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            },
+            {
+              "reference": "script.zsh@67:71:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "script.zsh@28:41:FUNCTION"
+              ]
+            },
+            {
+              "reference": "script.zsh@72:93:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "EXTERNAL_SOURCE_NOT_CAPTURED",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "typescript-write-invalidates-receiver",
+      "notes": "A direct local function resolves; assigning an unknown value invalidates an explicitly typed receiver shortcut.",
+      "profile": {
+        "mode": "module"
+      },
+      "sources": [
+        {
+          "path": "receiver.ts",
+          "language": "typescript",
+          "encoding": "utf-8",
+          "source": "// café\r\nclass Box { method(): void {} }\nfunction known(): void {}\nfunction check(obj: Box, other: any) { known(); obj = other; obj.method(); }\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "receiver.ts",
+              "language": "typescript",
+              "status": "SUCCEEDED"
+            }
+          ],
+          "symbols": [
+            {
+              "key": "receiver.ts@10:41:CLASS",
+              "path": "receiver.ts",
+              "local_name": "Box",
+              "kind": "CLASS",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 10,
+                "end_byte": 41,
+                "text": "class Box { method(): void {} }"
+              },
+              "name": {
+                "start_byte": 16,
+                "end_byte": 19,
+                "text": "Box"
+              },
+              "body": {
+                "start_byte": 20,
+                "end_byte": 41,
+                "text": "{ method(): void {} }"
+              }
+            },
+            {
+              "key": "receiver.ts@22:39:METHOD",
+              "path": "receiver.ts",
+              "local_name": "method",
+              "kind": "METHOD",
+              "owner": "receiver.ts@10:41:CLASS",
+              "role": "definition",
+              "range": {
+                "start_byte": 22,
+                "end_byte": 39,
+                "text": "method(): void {}"
+              },
+              "name": {
+                "start_byte": 22,
+                "end_byte": 28,
+                "text": "method"
+              },
+              "body": {
+                "start_byte": 37,
+                "end_byte": 39,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "receiver.ts@42:67:FUNCTION",
+              "path": "receiver.ts",
+              "local_name": "known",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 42,
+                "end_byte": 67,
+                "text": "function known(): void {}"
+              },
+              "name": {
+                "start_byte": 51,
+                "end_byte": 56,
+                "text": "known"
+              },
+              "body": {
+                "start_byte": 65,
+                "end_byte": 67,
+                "text": "{}"
+              }
+            },
+            {
+              "key": "receiver.ts@68:144:FUNCTION",
+              "path": "receiver.ts",
+              "local_name": "check",
+              "kind": "FUNCTION",
+              "owner": null,
+              "role": "definition",
+              "range": {
+                "start_byte": 68,
+                "end_byte": 144,
+                "text": "function check(obj: Box, other: any) { known(); obj = other; obj.method(); }"
+              },
+              "name": {
+                "start_byte": 77,
+                "end_byte": 82,
+                "text": "check"
+              },
+              "body": {
+                "start_byte": 105,
+                "end_byte": 144,
+                "text": "{ known(); obj = other; obj.method(); }"
+              }
+            }
+          ],
+          "references": [
+            {
+              "key": "receiver.ts@107:114:CALL",
+              "path": "receiver.ts",
+              "usage": "CALL",
+              "spelling": "known()",
+              "owner": "receiver.ts@68:144:FUNCTION",
+              "range": {
+                "start_byte": 107,
+                "end_byte": 114,
+                "text": "known()"
+              },
+              "callee": {
+                "start_byte": 107,
+                "end_byte": 112,
+                "text": "known"
+              },
+              "receiver": null,
+              "arguments": []
+            },
+            {
+              "key": "receiver.ts@129:141:CALL",
+              "path": "receiver.ts",
+              "usage": "CALL",
+              "spelling": "obj.method()",
+              "owner": "receiver.ts@68:144:FUNCTION",
+              "range": {
+                "start_byte": 129,
+                "end_byte": 141,
+                "text": "obj.method()"
+              },
+              "callee": {
+                "start_byte": 129,
+                "end_byte": 139,
+                "text": "obj.method"
+              },
+              "receiver": {
+                "start_byte": 129,
+                "end_byte": 132,
+                "text": "obj"
+              },
+              "arguments": []
+            }
+          ],
+          "imports": []
+        },
+        "resolution": {
+          "bindings": [
+            {
+              "reference": "receiver.ts@107:114:CALL",
+              "outcome": "RESOLVED",
+              "basis": "LEXICAL_DECLARATION",
+              "targets": [
+                "receiver.ts@42:67:FUNCTION"
+              ]
+            },
+            {
+              "reference": "receiver.ts@129:141:CALL",
+              "outcome": "UNRESOLVED",
+              "basis": "DYNAMIC_TARGET",
+              "targets": []
+            }
+          ],
+          "associations": []
+        }
+      }
+    },
+    {
+      "id": "python-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.py",
+          "language": "python",
+          "encoding": "utf-8",
+          "source": "def broken(:\n"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.py",
+              "language": "python",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "javascript-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.js",
+          "language": "javascript",
+          "encoding": "utf-8",
+          "source": "function broken( {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.js",
+              "language": "javascript",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "jsx-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.jsx",
+          "language": "jsx",
+          "encoding": "utf-8",
+          "source": "function broken() { return <div>"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.jsx",
+              "language": "jsx",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "typescript-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.ts",
+          "language": "typescript",
+          "encoding": "utf-8",
+          "source": "function broken(x: ): {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.ts",
+              "language": "typescript",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "tsx-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.tsx",
+          "language": "tsx",
+          "encoding": "utf-8",
+          "source": "function broken() { return <div>"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.tsx",
+              "language": "tsx",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "c-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.c",
+          "language": "c",
+          "encoding": "utf-8",
+          "source": "void broken( {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.c",
+              "language": "c",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "cpp-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.cpp",
+          "language": "cpp",
+          "encoding": "utf-8",
+          "source": "void broken( {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.cpp",
+              "language": "cpp",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "java-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "Broken.java",
+          "language": "java",
+          "encoding": "utf-8",
+          "source": "class Broken { void broken( {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "Broken.java",
+              "language": "java",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "php-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.php",
+          "language": "php",
+          "encoding": "utf-8",
+          "source": "<?php function broken( {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.php",
+              "language": "php",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "lua-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.lua",
+          "language": "lua",
+          "encoding": "utf-8",
+          "source": "local function broken( end"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.lua",
+              "language": "lua",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "bash-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.bash",
+          "language": "bash",
+          "encoding": "utf-8",
+          "source": "broken() {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.bash",
+              "language": "bash",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    },
+    {
+      "id": "zsh-parse-error",
+      "notes": "Malformed source must publish FAILED diagnostics and no successful structural inventory. Final resolution is blocked.",
+      "profile": {},
+      "sources": [
+        {
+          "path": "broken.zsh",
+          "language": "zsh",
+          "encoding": "utf-8",
+          "source": "function {"
+        }
+      ],
+      "expected": {
+        "extraction": {
+          "files": [
+            {
+              "path": "broken.zsh",
+              "language": "zsh",
+              "status": "FAILED"
+            }
+          ],
+          "symbols": [],
+          "references": [],
+          "imports": []
+        }
+      }
+    }
+  ]
+}

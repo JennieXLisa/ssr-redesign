@@ -29,7 +29,7 @@ Use `tests/fixtures/capture/`, `tests/fixtures/languages/<language>/`, `tests/fi
 | G17 Errors | Batched independent errors, prerequisite-aware validation, source/input units, actionable correction, no secrets/stacks, no failed query disguised as no matches. |
 | G18 Completion | Required file/component census equals published success census, zero outstanding applicable failures, explicit exclusions/limitations retained. |
 | G19 Packaging | Fresh wheel/resource loading on Linux x86-64 and macOS arm64; actual supported tool probes. Windows is documented as WSL2 rather than untested native support. |
-| G20 Restore/performance | PostgreSQL plus Git backup/restore, exact-source rereads, pinned benchmark at 2/4/8 workers with stage timing/RSS/failures. |
+| G20 Restore/performance | PostgreSQL plus Git backup/restore, exact-source rereads; both pinned corpora below at 1/2/4/8 heavy slots, three fresh-storage repetitions each, with stage timings/RSS and normalized success/failure comparison. |
 
 ## Required consistency queries
 
@@ -37,7 +37,77 @@ Audit work_units against the frozen applicable plan; count each file once per lo
 
 ## Benchmark record
 
-Record repository locator and resolved source commit, managed snapshot/tree, included file/line/byte counts, language distribution, excluded paths/counts, parser/compiler/scanner versions, rule digest, hardware/runtime, PostgreSQL settings and worker budget. Report capture, metadata planning, extraction, resolution, flagging, database publication and representative query times separately. Include peak RSS and retry/error counts. Do not turn a one-repository result into a universal indexing SLA or count hidden skips as performance improvement.
+[`benchmark-corpus.json`](../contracts/v1/benchmark-corpus.json) fixes two inputs.
+The real corpus is the entire `python/cpython` tree at `v3.12.0`: annotated tag
+`0fb6e700c2f94ae0717ee1be7d4e50b2dd480d14`, peeled commit
+`0fb18b02c8ad56299d6a2910be0bab8ad601ef24`. Prime verified those object IDs with
+`git ls-remote`; this is pin evidence, not capture or benchmark evidence. Use
+normal public-HTTPS remote intake and verify the resolved commit. Keep ordinary
+source-intake accounting, with no benchmark subset or extra path exclusions.
+Never build, import, install, test, source or otherwise execute target code.
+CPython includes intentionally invalid test sources: retain actual terminal
+failures and blocked downstream work, without weakening parsers or asserting
+`index_complete`. Measure reachable phases; a phase blocked by the inventory
+barrier is reported as blocked, not zero-time successful work.
+
+The synthetic corpus uses exact UTF-8 source bytes from every language fixture
+whose expected extraction files are **all** SUCCEEDED. It includes empty files,
+preserves Unicode/CRLF, and repeats each entire eligible fixture 100 times at
+`replica-NNNN/{fixture_id}/{source_path}`, starting with `replica-0001`.
+The pin is 20 cases and 28 files / 2,557 bytes per replica; the default census is
+2,800 unique paths / 255,700 bytes. Every path has its byte count and SHA-256;
+the full sorted census has a pinned digest. Identical content does not collapse
+distinct paths. This tiny-source volume workload is not real-world
+representativeness. Check fixture semantics individually with their own profiles
+using the language comparator; combined replication does not imply identical
+bindings, compatible profiles or an all-success runtime result.
+
+From the repository root, the default command emits manifest JSON only:
+
+```sh
+python3 -B stage-1-indexing/validation/reference_benchmark.py
+python3 -B stage-1-indexing/validation/regressions/test_benchmark.py
+```
+
+For materialization, add `--output /absolute/trusted/parent/new-corpus`; the
+parent must already exist and no component may be a symlink. The output must be
+new, even if an existing directory is empty. The generator writes only source
+bytes there and still emits the manifest on stdout; store that manifest outside
+the captured tree. `--replicas 1` is the temporary-directory smoke test, not the
+default benchmark. An I/O failure leaves an explicit error and possible partial
+directory for inspection, never an overwrite or automatic cleanup. Generator
+tests prove census/write behavior only; they run no parser or benchmark.
+
+For **each** corpus, freeze one explicit semantic profile, tools and rule
+selection, then run a serial baseline (1 heavy slot) and 2/4/8 heavy slots, with
+three fresh-storage repetitions per configuration: 12 measurements per corpus.
+Set `workers.scanner_slots=min(2, workers.heavy_slots)` before validating settings:
+the serial run uses one scanner slot, and the other runs use two. Do not submit
+scanner_slots=2 with heavy_slots=1; that violates the shared strict settings schema.
+Compiler/scanner work also consumes heavy slots. Each
+repetition gets a new disposable PostgreSQL database and managed Git store, with
+no extraction/resolution/flagging dataset reuse. Record OS/tool-cache state;
+fresh application storage does not claim cold filesystem caches. Do not execute
+builds to obtain compiler inputs; missing context remains explicit. Freeze
+per-path language overrides and any supplied build contexts in the profile.
+
+Record repository locator and resolved commit or generated census digest,
+managed snapshot/tree, included file/line/byte counts, language distribution,
+excluded paths/reasons/counts, application commit and dependency lock, exact
+installed parser/grammar/query/compiler/scanner versions and resource/executable
+digests, rule mode/manifest/digest, resolved semantic profile digests,
+hardware/runtime, PostgreSQL settings and worker budgets. Report every repetition
+and capture, metadata planning, extraction, resolution, flagging, database
+publication and representative query times separately, with peak RSS and
+retry/error counts. Compare the full normalized success records **and** file/work
+census, terminal failure classifications, blocked work and completeness state
+against the serial baseline. Replace run-local IDs with stable physical locators;
+retain semantic diagnostics and remove only documented timestamps, transient
+attempt data and worker/runtime diagnostics. A missing or differing result fails
+the comparison; terminal completion is not successful index completion. Report
+warm dataset reuse separately with reused identities/counts. No performance claim
+is established by these assets or by corpus generation; do not infer a universal
+indexing SLA or count hidden skips as improvement.
 
 ## Task receipt
 

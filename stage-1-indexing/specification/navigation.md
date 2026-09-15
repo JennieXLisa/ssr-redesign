@@ -59,12 +59,34 @@ Query after last_key and return only current committed matches. Fetch limit+1 ma
 
 During indexing, new records before a cursor position require refreshing from cursor=None. A cursor replay is a new live query and may differ. After a completed unchanged run, a fresh full traversal must return every recorded match exactly once. Proven symbol association can change grouping during processing; do not promise frozen live enumeration.
 
+### Exact query-key mappings
+
+QueryKey's three slots (`path`, `start_byte`, `record_id`) encode the following ordered tuples. `path` is compared after canonical decoding to original path bytes, not its escaped display spelling; integers use numeric order and IDs use UUID bytes. The name start_byte denotes a source offset except for the explicitly marked argument ordinal. There are no implicit operation-specific fields hidden in last_key.
+
+| Operation | path | start_byte | record_id |
+|---|---|---|---|
+| find_functions | Earliest visible occurrence path in group | That occurrence start | Group representative symbol UUID |
+| get_callers, get_callees, get_references | Reference file path | Reference start | Reference UUID |
+| find_flags | Flag file path | Match start | Flag UUID |
+| search_text | Match file path | Match start | Deterministic match UUID |
+| get_file_outline, list_occurrences | Occurrence file path | Occurrence start | Occurrence UUID |
+| find_files, list_directory | Entry path | 0 | File UUID, or directory UUIDv5(snapshot UUID, canonical JSON ["directory", path]) |
+| get_call_arguments | Parent reference file path | **Argument ordinal**, zero-based | Parent reference UUID |
+| get_binding_targets | Empty string | 0 | Target symbol UUID (proven group representative) |
+| list_diagnostics | Associated file path, or empty for run-wide diagnostic | Known source-byte position, otherwise 0 | Diagnostic UUID |
+
+query_digest is SHA-256 of storage.md canonical JSON containing the operation and its fully defaulted semantic request fields, excluding limit and cursor. Include symbol_id/reference_id/kind where required by auxiliary operations; usage/component/file_id filters; all pattern/mode/case/path/language settings; and categories. Treat categories as a set: reject invalid elements before deduplication, then sort unique valid strings; null and an empty list both mean no category filter. Sort object keys, not ordered pattern input text; no locale or Unicode normalization. The operation and run in the outer cursor must also match. Nested continuation tokens use the same auxiliary operation/digest as directly requesting that subpage.
+
+Validate every last_key field according to this table, including an argument ordinal's bounds and its reference identity; a syntactically valid UUID for another reference does not advance this one. Bound tokens before JSON decoding and reject duplicate keys. Opaque cursor decoding is untrusted input handling, not permission to query an arbitrary run or source path.
+
 ## Error contract
 
 Envelope is always `{'errors': [...]}` for failures. Every entry contains code, operation, field_path or null, component or null, position or null, message, expected or null, received or null, remediation, retryable and diagnostic_id or null. Positions identify units explicitly: input pattern Unicode scalar offset is zero-based; source bytes/lines follow source-reading.md. Do not populate a field_path for a storage fault to blame a valid argument.
 
-Closed codes: INDEX_INITIALIZING, INVALID_ARGUMENT, INVALID_PATTERN, UNKNOWN_LANGUAGE, RUN_NOT_FOUND, SYMBOL_NOT_FOUND, OCCURRENCE_NOT_FOUND, OCCURRENCE_MISMATCH, PATH_NOT_FOUND, PATH_OUTSIDE_SNAPSHOT, SOURCE_NOT_TEXT, SOURCE_RANGE_INVALID, INVALID_CONTINUATION, CURSOR_MISMATCH, RESPONSE_BUDGET_TOO_SMALL, RESPONSE_ITEM_TOO_LARGE, QUERY_TIMEOUT, STORAGE_UNAVAILABLE, STORAGE_INTEGRITY_ERROR and INTERNAL_ERROR. Domain capture/index commands add their separately documented operational codes; they do not rename navigation meanings.
+`NavigationErrorCode` and `OperationalErrorCode` in models.py are the closed code registries; `ErrorItem.code` accepts their union. Navigation retains its existing meanings. Capture/index/rule failures use the operational registry through the same ErrorResponse, including SUBMODULE_PIN_UNAVAILABLE and NONDETERMINISTIC_OUTPUT. Non-failure observations such as LFS_SKIPPED belong to diagnostic records, not a failed operation envelope. Unknown exception codes map to INTERNAL_ERROR with a sanitized diagnostic ID, never an unvalidated arbitrary string.
 
 Collect independent syntactic/type/bounds errors in request-field order. Then validate prerequisites in order: run, snapshot/files, symbol, occurrence association, token/range/source. Do not invent dependent mismatches when the run/symbol could not be loaded. Malformed regex plus invalid limit returns both. A failed query is never items=[]. Only established transient storage failures are retryable without argument changes; all diagnostic guidance states what is known and the next action, not speculative repairs.
 
-Error responses have an independent 65,536-byte ceiling. Bound echoed input to 256 characters, message to 768 and remediation to 1024, with safe truncation indicators when necessary. Do not include source bodies, DSNs/tokens or raw stacks. Navigation request shape has bounded field counts, so all independent argument errors fit; rule-file validation diagnostics use their separate paged inspection operation when a large selected catalogue is invalid. Persist a correlation record for operator diagnostics, not an automatic repair instruction.
+Error responses have an independent **65,536-byte target, not a hard ceiling** (`error_response_target_bytes`). This corrects the former incompatible hard ceiling and 32-entry maximum: categories, extra input keys and nested inputs can produce arbitrarily many independent errors. Return every independently detectable request error in the same errors array; never truncate, replace them with a summary, require another request, or claim they necessarily fit a fixed envelope. A batch exceeding the target remains a valid ErrorResponse. Transport adapters must not advertise a guaranteed error-size cap; a transport with a hard cap needs a separately approved protocol rather than silently violating S1-ER-R06. Source/metadata success-page limits are unchanged.
+
+Bound safe expected/received text to 256 characters, message to 768 and remediation to 1024, with explicit truncation indicators. Preserve the exact actionable field/index and code. Redact secrets before shortening; never copy an unknown input key or target text into guidance without sanitization. Do not include source bodies, DSNs/tokens or raw stacks. Rule-file inspection can page file diagnostics, but it cannot substitute for collecting independently detectable errors in the submitted navigation request. Persist a correlation record for operator diagnostics. Regression acceptance includes 33 invalid categories plus an invalid limit, unknown operational codes, and a batch whose serialized size exceeds the target without losing an entry.

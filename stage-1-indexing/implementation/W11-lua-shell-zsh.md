@@ -6,7 +6,7 @@ Requirement traceability: S1-IN-R08, S1-FN-R02, S1-FN-R09, S1-RF-R02, S1-RF-R03.
 
 ## Read before editing
 
-Read ../IMPLEMENTATION.md, the specification sections for this capability, and the directly related contracts. Reuse settled types/algorithms; do not restart a repository-wide architecture survey.
+Read ../IMPLEMENTATION.md, the specification sections for this capability, and the directly related contracts. Include [language-policies.md](../specification/language-policies.md), `contracts/v1/records.py`, and Lua/Bash/Zsh cases in `contracts/v1/language-fixtures.json`. Reuse settled types/algorithms; do not restart a repository-wide architecture survey.
 
 ## Intended files and boundary
 
@@ -20,8 +20,8 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 1. Implement Lua named/local/anonymous functions, table and colon-method ownership, call expressions and literal require records.
 2. Implement Bash functions, top-level commands, command/process substitutions and literal source relationships using the Bash grammar.
 3. Implement Zsh using its own pinned grammar and packaged queries; do not switch to Bash to suppress Zsh parse failures.
-4. Keep dynamic command/function expressions unresolved, preserving their exact source rather than pretending every word names an indexed function.
-5. Run the common span/ownership/error suite with shebang-based extensionless scripts and known dotfiles.
+4. Emit the language-policy declarations and invalidations: Lua local visibility differs from local-function recursion; shell function availability depends on definition/source execution and is not lexical merely because definitions are nested. Preserve expanded command words, builtin/dispatch prefixes and conditional definitions for conservative W12 binding.
+5. Run the common span/ownership/error suite with shebang-based extensionless scripts and known dotfiles. Compare actual published extraction projections to the authored language goldens; verify Zsh anonymous-function invocation and its body ownership under the dedicated installed grammar. W12 compares the separate final binding projections.
 
 ## Verification commands
 
@@ -36,6 +36,7 @@ uv run pytest tests/languages/test_lua_shell.py tests/languages/test_conformance
 - Extensionless recognized scripts are classified without execution.
 - Top-level commands have module ownership; nested callable bodies stay distinct.
 - Zsh syntax is either correctly parsed or explicitly failed, never silently relabeled.
+- Golden source cases cover colon/table functions, command/process substitutions, literal source links and expanded command negatives. Their executable integrity check does not compile queries or run adapters; provide installed-grammar and real publication evidence separately.
 
 ## Stop condition and receipt
 

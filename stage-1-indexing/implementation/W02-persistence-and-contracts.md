@@ -18,7 +18,7 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 
 ## Implementation recipe
 
-1. Adopt the reference schema.sql as the initial migration and the reference models as production contracts, divided by responsibility. Do not retain two DTO authorities. Export complete JSON Schemas from the production models.
+1. Adopt the reference schema.sql as the initial migration and models.py plus records.py as public/internal production contracts, divided by responsibility. Include scopes, imports, lexical declarations, typed JSON fields, run control_intent and the frozen per-file applicability plan. W07 consumes these contracts; it must not invent competing records. Do not retain two DTO authorities. Export complete JSON Schemas from the production models.
 2. Implement a migration ledger with filename/digest and an advisory migration lock. Apply each migration in one transaction. Refuse changed hashes for applied migrations; do not silently repair them.
 3. Implement narrow repositories for projects/captures, datasets/work, source records and navigation. All write methods accept an explicit caller-owned transaction; none commits internally.
 4. Enforce same-snapshot dataset composition, dataset-kind checks, file-range bounds, and result target/cardinality checks in the publication owner with deferred constraints where appropriate. Test both valid and maliciously mismatched references.
