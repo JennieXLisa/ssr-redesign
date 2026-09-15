@@ -249,6 +249,7 @@ class ReferenceItem(Model):
     path: str
     range: SourceRange
     owner_symbol_id: Id | None
+    owner_name: str | None
     receiver: ByteRange | None
     arguments: Annotated[list[Argument], Field(max_length=8)]
     resolution_state: Literal['PENDING','RUNNING','FAILED','SUCCEEDED']
@@ -261,6 +262,8 @@ class ReferenceItem(Model):
 
     @model_validator(mode='after')
     def target_count(self):
+        if (self.owner_symbol_id is None) != (self.owner_name is None):
+            raise ValueError('owner identity and name must both be present or both null')
         if self.resolution_state == 'SUCCEEDED' and self.outcome is None:
             raise ValueError('completed resolution requires an outcome')
         if self.resolution_state != 'SUCCEEDED' and self.outcome is not None:
@@ -464,6 +467,8 @@ class Progress(Model):
     extraction_id: Id
     resolution_id: Id
     flagging_id: Id
+    rule_mode: Literal['combined','custom_only']
+    rule_manifest_digest: Digest
     coverage: Coverage
 
 class DiagnosticRequest(Model):

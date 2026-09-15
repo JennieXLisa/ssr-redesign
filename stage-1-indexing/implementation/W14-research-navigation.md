@@ -23,7 +23,7 @@ Read ../IMPLEMENTATION.md, the specification sections for this capability, and t
 3. Implement regex content search over captured text, including comments/config/docs, with byte-accurate result ranges and optional known owner enrichment.
 4. Implement stateless query tokens binding operation/run/effective query and last key. Distinguish live cursor semantics from fixed source continuations; permit only a changed valid page limit.
 5. Read results plus coverage in one short read-only transaction; bound serialized metadata pages without losing the next record or returning a fake terminal cursor after an internal batch.
-6. Implement bounded nested argument/target/occurrence reads, actionable batched errors, rule-mode visibility and all CLI-to-owner entry points.
+6. Implement bounded nested argument/target/occurrence reads, actionable batched errors and all CLI-to-owner entry points. Populate Progress.rule_mode/rule_manifest_digest from the frozen run selection in every run state. Populate ReferenceItem.owner_name with owner_symbol_id from the same visible record; incoming callers must be readable without a second name lookup. Adopt these fields from models.py, regenerate schemas, and run test_navigation_fields.py as well as production CLI tests.
 7. Run the complete Search → select IDs → read → continue → callers/callees → open callsite workflow with the original checkout removed.
 
 ## Verification commands
